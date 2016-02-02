@@ -187,7 +187,7 @@
 (require 'yasnippet)
 (yas-global-mode 1)
 (setq yas-snippet-dirs
-      '("/home/attila/.emacs.d/snippets/"))
+      '("~/.emacs.d/snippets/"))
 (yas-initialize)
 
 ;; Company mode
@@ -273,7 +273,7 @@
 (require 'helm-config)
 
 ;; Search in css/scss selectors with helm
-(add-to-list 'load-path "/home/attila/.emacs.d/extensions/helm-css-scss")
+(add-to-list 'load-path "~/.emacs.d/extensions/helm-css-scss")
 (require 'helm-css-scss)
 ;; Allow comment inserting depth at each end of a brace
 (setq helm-css-scss-insert-close-comment-depth 2)
