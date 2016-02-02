@@ -499,10 +499,3 @@
   (interactive)
   (message (concat "RPC backend changed to " elpy-rpc-backend))
   )
-
-;; (defun blender-run ()
-;;   "Gives you the abality to controll Blender from Emacs"
-;;   (interactive)
-;;   (let ((command-to-blender buffer-file-name))
-;;   (concat command-to-blender " |run")
-;;   ))
