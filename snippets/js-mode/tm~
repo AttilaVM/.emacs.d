@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name : timing
+# key : tm
+# --
+if (${1:condition}) {
+  $0
+}

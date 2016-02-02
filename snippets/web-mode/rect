@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : svg rect
+#key : rect
+# --
+<rect x="${}" y="${}" width="${}" height="${}" rx="${}" ry="${}" id="${}"/>

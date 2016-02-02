@@ -1,0 +1,13 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : rect css
+#key : crect
+# --
+${}
+{
+    stroke: ${};
+    stroke-width: ${};
+    stroke-dasharray: ${};
+    stroke-opacity: ${};
+    fill: ${};
+    fill-opacity: ${1};
+}

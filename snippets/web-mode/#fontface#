@@ -1,0 +1,15 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : circle css
+#key : ccircle
+# --
+@font-face {
+    font-family: '${}';
+    src: url('fonts/brandon_light-webfont.eot');
+    src: url('fonts/brandon_light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/brandon_light-webfont.woff2') format('woff2'),
+         url('fonts/brandon_light-webfont.woff') format('woff'),
+         url('fonts/brandon_light-webfont.ttf') format('truetype'),
+         url('fonts/brandon_light-webfont.svg#brandon_grotesquelight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}

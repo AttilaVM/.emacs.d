@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : svg object
+#key : object
+# --
+<object type="image/svg+xml" data="${}">Your browser does not support SVG</object>

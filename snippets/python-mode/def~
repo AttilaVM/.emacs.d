@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: deftest
+# key: def
+# group: testing
+# --
+${#}
+def ${1:}(${2:}):
+    $0

@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# author: Attila Molnar
+# name: while loop
+# key: while
+# --
+for ${1:var} in ${2:stuff}; do
+    $0
+done
+
+while ${1:}; do
+$0
+done

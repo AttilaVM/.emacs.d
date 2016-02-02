@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : scale(<sx> [<sy>])
+#key : transform
+# --
+transform="scale(${})"

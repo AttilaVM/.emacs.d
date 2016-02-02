@@ -1,0 +1,10 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : line css
+#key : cline
+# --
+${}
+{
+    stroke: ${};
+    stroke-width: ${};
+    stroke-dasharray: ${};
+}

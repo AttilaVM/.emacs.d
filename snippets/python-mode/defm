@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: def method
+# key: defm
+# group: testing
+# --
+${#}
+def ${1:}(self${}):
+    $0

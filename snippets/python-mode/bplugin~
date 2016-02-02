@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: classmethod
+# key: bplugin
+# group: object oriented
+# --
+class ${1:}(${3:bpy.types.Operator}):
+    """${2:}"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "object.move_x"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Move X by One"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+
+	# The original script
+	scene = context.scene
+	for obj in scene.objects:
+	    obj.location.x += 1.0
+
+	return {'FINISHED'}            # this lets blender know the operator finished successfully.

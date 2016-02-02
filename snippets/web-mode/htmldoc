@@ -1,0 +1,23 @@
+#name : HTML doc with basic DOM
+#group : meta
+#key : htmldoc
+# --
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/TR/html5/">
+      <head>
+      <meta charset="utf-8"></meta>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="Author" content="Analogika Ltd."></meta>
+      <meta property="og:title" content="${}"></meta>
+      <meta property="og:type" content="website"></meta>
+      <meta property="og:site_name" content="${}"></meta>
+      <meta name="Description" content="${}">
+      <title>${}</title>$0
+      <meta name="HandheldFriendly" content="true" />
+      <meta name="viewport" content="width=device-width, height=device-height, user-scalable=yes" />
+      </head>
+
+      <body>
+	<header></header>
+      </body>
+</html>

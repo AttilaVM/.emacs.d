@@ -1,0 +1,11 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : svg linear gradient
+#key : gradient
+# --
+<linearGradient id="${}"
+                    x1="${}" y1="${}"
+                    x2="${}" y2="${}"
+                    spreadMethod="${$$(yas-choose-value '"pad" "reflect" "repeat")}">
+      <stop offset="${}"   stop-color="${}" stop-opacity="${}"/>
+      <stop offset="${}" stop-color="${}" stop-opacity="${}"/>
+    </linearGradient>

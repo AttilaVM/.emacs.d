@@ -1,0 +1,9 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : svg circe
+#key : circle
+# --
+ <defs>
+      <filter id="${}" y="${}" height="${}"
+      	      <feGaussianBlur in="SourceGraphic" stdDeviation="${}" y="-"/>
+      </filter>
+</defs>	

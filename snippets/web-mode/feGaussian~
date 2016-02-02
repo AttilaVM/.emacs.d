@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : <feGaussianBlur in="Source" stdDeviation=""/>
+#key : filter
+# --
+<feGaussianBlur in="${}" stdDeviation="${}"$0/>

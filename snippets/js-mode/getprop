@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name : Get objects properties
+# key : getprop
+# --
+console.log(Object.getOwnPropertyNames(${}));

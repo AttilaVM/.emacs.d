@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : rotate(<rotate-angle> [<cx> <cy>])
+#key : transform
+# --
+transform="rotate(${})"

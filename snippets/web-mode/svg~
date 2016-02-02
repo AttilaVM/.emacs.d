@@ -1,0 +1,7 @@
+#contributor : Jimmy Wu <frozenthrone88@gmail.com>
+#name : <svg xmlns="...">...</svg>
+#key : svg
+# --
+<svg xmlns="http://www.w3.org/2000/svg" width="${}" height="${}" viewbox="${}">
+	$0
+</svg>

@@ -1,0 +1,9 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : texture definition
+#key : texture
+# --
+<defs>
+  <pattern id="${}" patternUnits="userSpaceOnUse" x=${} y="${}" width="${}" height="${}">
+    <image xlink:href="${}" x="0" y="0" width="${}" height="${}" />
+  </pattern>
+</defs>

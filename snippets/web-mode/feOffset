@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : <feOffset in="source" dx="" dy=""/>
+#key : filter
+# --
+<feOffset in="${}" dx="${}" dy="${}" result="${}"/>

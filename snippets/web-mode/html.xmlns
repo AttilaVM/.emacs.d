@@ -1,0 +1,7 @@
+#contributor : Jimmy Wu <frozenthrone88@gmail.com>
+#name : <html xmlns=".../html5">...</html>
+#key : html
+# --
+<html xmlns="http://www.w3.org/TR/html5/">
+  $0
+</html>

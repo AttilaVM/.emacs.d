@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : svg polygon
+#key : polygon
+# --
+<polygon points="${}"/>

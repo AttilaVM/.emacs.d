@@ -1,0 +1,5 @@
+#name : Doctype HTML 5
+#group : meta
+#key : doctype
+# --
+<!DOCTYPE html>

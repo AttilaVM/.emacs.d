@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# author: Attila Molnar
+# name: while loop
+# key: while
+# --
+while ${1:}; do
+$0
+done

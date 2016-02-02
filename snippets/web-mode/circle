@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : svg circe
+#key : circle
+# --
+<circle cx="${1:}" cy="${2:}" r="${3:}" id="${4:}"></circle>

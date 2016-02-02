@@ -145,6 +145,10 @@
 
 (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
+(define-key helm-map (kbd "C-r")  'helm-ff-run-find-file-as-root)
+
+
+
 ;; Use helm to explore a git project-am
 (require 'helm-ls-git)
 (global-set-key (kbd "C-<f6>") 'helm-browse-project)
@@ -206,8 +210,8 @@
 
 
 ;; elpy python IDE
-(package-initialize)
-(add-to-list 'load-path "~/.emacs.d/extensions/elpy")
+;; (package-initialize)
+;; (add-to-list 'load-path "~/.emacs.d/extensions/elpy")
 ;; (load "elpy")
 (elpy-enable)
 (elpy-use-ipython)

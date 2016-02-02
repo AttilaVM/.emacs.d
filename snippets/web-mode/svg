@@ -1,0 +1,7 @@
+#contributor : Jimmy Wu <frozenthrone88@gmail.com>
+#name : <svg xmlns="...">...</svg>
+#key : svg
+# --
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="${$$(yas-choose-value '("xMin" "xMid" "xMax"))}${$$(yas-choose-value '("xMin" "xMid" "xMax"))} ${$$(yas-choose-value '("meet" "slice"))}" width="${}" height="${}" viewbox="${}">
+	$0
+</svg>
