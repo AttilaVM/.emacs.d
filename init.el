@@ -129,7 +129,12 @@
       helm-ff-file-name-history-use-recentf t)
 
 ;; Use helm for file finding
-(global-set-key (kbd "C-x c-f") 'helm-find-files)
+(global-unset-key (kbd "C-x C-f"))
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+
+;; Use helm for command prompt
+(global-set-key (kbd "M-x") 'helm-find-files)
+(global-set-key (kbd "M-x") 'helm-M-x)
 
 ;; Use helm-buffers-list instead of default helm buffer lister
 (global-set-key (kbd "s-x b") 'helm-buffers-list)
