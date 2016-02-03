@@ -13,9 +13,9 @@
 
 ;; Theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'monokai t)
+(load-theme 'zenburn t)
 
-;; Enable line numbers globaly
+;; Enable line numbers globally
 (global-linum-mode t)
 
 ;; Show parentheses
@@ -104,6 +104,16 @@
 
 ;;Auto-complete is a dependency of yasnipper
 (package-initialize)
+
+;; Avy
+(require 'avy)
+
+(global-set-key (kbd "C-:") 'avy-goto-char)
+(global-set-key (kbd "C-'") 'avy-goto-char-2)
+(global-unset-key (kbd "M-g g"))
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g w") 'avy-goto-word-1)
+(avy-setup-default)
 
 ;; Helm
 (require 'helm)
