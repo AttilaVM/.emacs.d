@@ -60,8 +60,19 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (global-set-key (kbd "C-s-a") 'org-agenda)
 (global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
-(global-set-key (kbd "C-<f1>") 'quick-calc)
-(global-set-key (kbd "M-<f1>") 'calc)
+;; Use C-h and M-h , instead of backspace, s-h for help
+(global-unset-key (kbd "<backspace>"))
+(global-unset-key (kbd "C-h"))
+(setq help-char (kbd "<f1>"))
+(global-set-key (kbd "C-h") 'delete-backward-char)
+(global-unset-key (kbd "<f1>"))
+(global-set-key (kbd "<f1>") help-map)
+(global-unset-key (kbd "M-h"))
+(global-set-key (kbd "s-h") 'mark-paragraph)
+(global-set-key (kbd "M-h") 'backward-kill-word)
+
+(global-set-key (kbd "<f2>") 'quick-calc)
+(global-set-key (kbd "C-<f2>") 'calc)
 (global-set-key (kbd "<C-kp-add>") 'increment-number-at-point)
 (global-set-key (kbd "<C-kp-subtract>") 'decrement-number-at-point)
 (global-set-key (kbd "<C-kp-1>") 'my-insert-file-name)
@@ -146,11 +157,13 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (add-something-to-mode-hooks '(c++ tcl emacs-lisp python text markdown latex) 'fic-ext-mode)
 
+(require 'magit)
+(global-set-key (kbd "C-<f3>") 'magit-status)
 
 ;; Avy
 (require 'avy)
 
-(global-set-key (kbd "C-:") 'avy-goto-char)
+(global-set-key (kbd "C-;") 'avy-goto-char)
 (global-set-key (kbd "C-'") 'avy-goto-char-2)
 (global-unset-key (kbd "M-g g"))
 (global-set-key (kbd "M-g g") 'avy-goto-line)
@@ -166,9 +179,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
-
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
 (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
 (when (executable-find "curl")
@@ -185,7 +195,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 ;; Use helm for command prompt
-(global-set-key (kbd "M-x") 'helm-find-files)
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 ;; Use helm-buffers-list instead of default helm buffer lister
@@ -204,7 +213,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (define-key helm-map (kbd "C-r")  'helm-ff-run-find-file-as-root)
 
-
+;; make sure C-h is no longer a prefix key
+(define-key helm-map (kbd "C-h") nil)
 
 ;; Use helm to explore a git project-am
 (require 'helm-ls-git)
@@ -236,6 +246,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; (ac-config-default)
 
 (require 'flyspell)
+(define-key flyspell-mode-map (kbd "C-;") nil)
 
 (require 'undo-tree)
 (global-undo-tree-mode)
@@ -245,6 +256,11 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (yas-global-mode 1)
 (setq yas-snippet-dirs
       '("~/.emacs.d/snippets/"))
+(define-key yas-minor-mode-map (kbd "C-j") 'yas-next-field)
+(define-key yas-minor-mode-map (kbd "C-l") 'yas-prev-field)
+(define-key yas-minor-mode-map (kbd "<tab>") nil)
+(define-key yas-minor-mode-map (kbd "TAB") nil)
+(define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
 (yas-initialize)
 
 ;; Company mode
