@@ -106,23 +106,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; (require 'ido)
 ;; (ido-mode t)
 
-;; Spell checking in comments for different modes
-(dolist (hook '(lisp-mode-hook
-		ruby-mode-hook
-		yaml-mode
-		;; python-mode-hook
-		elpy-mode
-		shell-mode-hook
-		conf-mode-hook
-		php-mode-hook
-		css-mode-hook
-		nxml-mode-hook
-		crontab-mode-hook
-		perl-mode-hook
-		javascript-mode-hook
-		LaTeX-mode-hook))
-  (add-hook hook 'flyspell-prog-mode))
-
 
 ;; Enable spell checking in text mode but disable in change-log and log-edit modes
 (dolist (hook '(text-mode-hook))
@@ -286,9 +269,12 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; (package-initialize)
 ;; (add-to-list 'load-path "~/.emacs.d/extensions/elpy")
 ;; (load "elpy")
+(require 'elpy)
 (elpy-enable)
 (elpy-use-ipython)
 (setq-default indent-tabs-mode nil)
+
+(add-to-list 'auto-mode-alist '("\\.py\\'" . elpy-mode))
 
 ;; Django mode
 (require 'python-django)
@@ -572,3 +558,20 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
   (interactive)
   (message (concat "RPC backend changed to " elpy-rpc-backend))
   )
+
+;; Spell checking in comments for different modes
+(dolist (hook '(lisp-mode-hook
+		ruby-mode-hook
+		yaml-mode
+		;; python-mode-hook
+		elpy-mode
+		shell-mode-hook
+		conf-mode-hook
+		php-mode-hook
+		css-mode-hook
+		nxml-mode-hook
+		crontab-mode-hook
+		perl-mode-hook
+		javascript-mode-hook
+		LaTeX-mode-hook))
+  (add-hook hook 'flyspell-prog-mode))
