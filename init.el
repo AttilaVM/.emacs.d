@@ -26,6 +26,34 @@
 (set-face-background 'show-paren-match (face-background 'default))
 (set-face-foreground 'show-paren-match "#009900")
 
+;; let emacs blink when something interesting happens.
+;; in KDE this marks the active Emacs icon in the tray.
+(defun x-urgency-hint (frame arg &optional source)
+  "Set the x-urgency hint for the frame to arg: 
+
+- If arg is nil, unset the urgency.
+- If arg is any other value, set the urgency.
+
+If you unset the urgency, you still have to visit the frame to make the urgency setting disappear (at least in KDE)."
+  (let* ((wm-hints (append (x-window-property 
+                            "WM_HINTS" frame "WM_HINTS" 
+                            source nil t) nil))
+         (flags (car wm-hints)))
+    ; (message flags)
+    (setcar wm-hints
+            (if arg
+                (logior flags #x00000100)
+              (logand flags #x1ffffeff)))
+    (x-change-window-property "WM_HINTS" wm-hints frame "WM_HINTS" 32 t)))
+
+(defun x-urgent (&optional arg)
+  "Mark the current emacs frame as requiring urgent attention. 
+
+With a prefix argument which does not equal a boolean value of nil, remove the urgency flag (which might or might not change display, depending on the window manager)."
+  (interactive "P")
+  (let (frame (car (car (cdr (current-frame-configuration)))))
+    (x-urgency-hint frame (not arg))))
+
 ;;-----------------Controls-----------------------
 ;; y or n for verification instead of yes or no
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -104,6 +132,20 @@
 
 ;;Auto-complete is a dependency of yasnipper
 (package-initialize)
+
+; go to the last change
+(require 'goto-chg)
+(global-set-key (kbd "s-;") 'goto-last-change)
+
+;; Highlight TODO, FIXME and BUG in comments 
+(require 'fic-ext-mode)
+(defun add-something-to-mode-hooks (mode-list something)
+  "helper function to add a callback to multiple hooks"
+  (dolist (mode mode-list)
+    (add-hook (intern (concat (symbol-name mode) "-mode-hook")) something)))
+
+(add-something-to-mode-hooks '(c++ tcl emacs-lisp python text markdown latex) 'fic-ext-mode)
+
 
 ;; Avy
 (require 'avy)
