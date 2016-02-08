@@ -63,7 +63,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Use C-h and M-h , instead of backspace, s-h for help
 (global-unset-key (kbd "<backspace>"))
 (global-unset-key (kbd "C-h"))
-(setq help-char (kbd "<f1>"))
+(setq help-char nil)
 (global-set-key (kbd "C-h") 'delete-backward-char)
 (global-unset-key (kbd "<f1>"))
 (global-set-key (kbd "<f1>") help-map)
@@ -199,11 +199,27 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; make sure C-h is no longer a prefix key
 (define-key helm-map (kbd "C-h") nil)
 
+(helm-mode 1)
+
 ;; Use helm to explore a git project-am
 (require 'helm-ls-git)
 (global-set-key (kbd "C-<f6>") 'helm-browse-project)
 
-(helm-mode 1)
+;; Basic projectile set up
+(projectile-global-mode)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
+
+;; helm-ack
+(require 'helm-config)
+(require 'helm-ack)
+
+(custom-set-variables
+ ;; Does not insert '--type' option
+ '(helm-ack-auto-set-filetype nil)
+ ;; Insert "thing-at-point 'symbol" as search pattern
+ '(helm-ack-thing-at-point 'symbol))
+
 
 (require 'auto-complete)
 
