@@ -344,8 +344,12 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; tern auto completion
 (eval-after-load 'tern
    '(progn
-      (require 'tern-auto-complete)
       (tern-ac-setup)))
+
+;; Hook JSCS to js and JSON modes
+(add-hook 'js-mode-hook #'jscs-indent-apply)
+(add-hook 'js2-mode-hook #'jscs-indent-apply)
+(add-hook 'json-mode-hook #'jscs-indent-apply)
 
 ;; Add Jquery doc for ac and js2
 (require 'jquery-doc)

@@ -10,22 +10,26 @@ function isPackageInstalled(){
 }
 
 # Install inconsolate font for the user
-inconsolataurl="http://www.fontsquirrel.com/fonts/download/Inconsolata"
+if ! fc-list | grep --quiet "Inconsolata"; then
 
-if ! [ -d ~/.fonts ]; then
-    mkdir ~/.fonts
+    inconsolataurl="http://www.fontsquirrel.com/fonts/download/Inconsolata"
+
+    if ! [ -d ~/.fonts ]; then
+        mkdir ~/.fonts
+    fi
+
+    cd ~/.fonts/
+
+    wget $inconsolataUrl -O inconsolata.zip
+
+    7z e inconsolata.zip
+
+    fc-cache -rv
+
 fi
 
-cd ~/.fonts/
-
-wget $inconsolataUrl -O inconsolata.zip
-
-7z e inconsolata.zip
-
-fc-cache -rv
-
 # Warn to install dependencies
-reaquariedPackages=( "ipython" "strace" "tern" )
+reaquariedPackages=( "ipython" "strace" "tern" "jscs" )
 
 for package in "${reaquariedPackages[@]}"
 do
