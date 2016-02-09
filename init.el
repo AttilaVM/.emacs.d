@@ -342,10 +342,12 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; tern-mode for IDE features like code completition, jump to definition etc... it requires a tern server
 (add-hook 'js-mode-hook (lambda () (tern-mode t)))
 ;; tern auto completion
-(eval-after-load 'tern
-   '(progn
-      (tern-ac-setup)))
+;; (eval-after-load 'tern
+;;    '(progn
+;;       (tern-ac-setup)))
 
+;; Hook json-mode to .jscsrc
+(add-to-list 'auto-mode-alist '("\\.jscsrc\\'" . json-mode))
 ;; Hook JSCS to js and JSON modes
 (add-hook 'js-mode-hook #'jscs-indent-apply)
 (add-hook 'js2-mode-hook #'jscs-indent-apply)
