@@ -25,7 +25,7 @@ wget $inconsolataUrl -O inconsolata.zip
 fc-cache -rv
 
 # Warn to install dependencies
-reaquariedPackages=( "ipython" "strace" )
+reaquariedPackages=( "ipython" "strace" "tern" )
 
 for package in "${reaquariedPackages[@]}"
 do

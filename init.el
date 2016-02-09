@@ -339,6 +339,14 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-hook 'js2-mode-hook 'ac-js2-mode)
 (setq js2-highlight-level 3)
 
+;; tern-mode for IDE features like code completition, jump to definition etc... it requires a tern server
+(add-hook 'js-mode-hook (lambda () (tern-mode t)))
+;; tern auto completion
+(eval-after-load 'tern
+   '(progn
+      (require 'tern-auto-complete)
+      (tern-ac-setup)))
+
 ;; Add Jquery doc for ac and js2
 (require 'jquery-doc)
 (add-hook 'js2-mode-hook 'jquery-doc-setup)
