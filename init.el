@@ -90,6 +90,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (global-set-key (kbd "<C-kp-5>") 'show-file-name)
 (global-set-key (kbd "<C-kp-6>") 'grab-screen-color)
 
+(global-unset-key (kbd "C-x o"))
+(global-set-key (kbd "s-o") 'other-window)
+
 
 ;;-----------------Repositories------------------
 
@@ -105,6 +108,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Interactive mode for easier file and buffer navigation
 ;; (require 'ido)
 ;; (ido-mode t)
+
+;; Set defalult-directory to .emacs.d to init helm-projectile at startup.
+(setq default-directory "~/.emacs.d")
 
 
 ;; Enable spell checking in text mode but disable in change-log and log-edit modes
@@ -201,6 +207,22 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (helm-mode 1)
 
+;; Yasnippet
+(require 'yasnippet)
+(yas-global-mode 1)
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets/"))
+(define-key yas-minor-mode-map (kbd "C-j") 'yas-next-field)
+(define-key yas-minor-mode-map (kbd "C-l") 'yas-prev-field)
+(define-key yas-minor-mode-map (kbd "<tab>") nil)
+(define-key yas-minor-mode-map (kbd "TAB") nil)
+(define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
+
+(require 'helm-c-yasnippet)
+(setq helm-yas-space-match-any-greedy t)
+(global-set-key (kbd "C-c y") 'helm-yas-complete)
+(yas-global-mode 1)
+
 ;; Use helm to explore a git project-am
 (require 'helm-ls-git)
 (global-set-key (kbd "C-<f6>") 'helm-browse-project)
@@ -249,18 +271,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (require 'undo-tree)
 (global-undo-tree-mode)
-
-;; Yasnippet
-(require 'yasnippet)
-(yas-global-mode 1)
-(setq yas-snippet-dirs
-      '("~/.emacs.d/snippets/"))
-(define-key yas-minor-mode-map (kbd "C-j") 'yas-next-field)
-(define-key yas-minor-mode-map (kbd "C-l") 'yas-prev-field)
-(define-key yas-minor-mode-map (kbd "<tab>") nil)
-(define-key yas-minor-mode-map (kbd "TAB") nil)
-(define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
-(yas-initialize)
 
 ;; Company mode
 (require 'company)

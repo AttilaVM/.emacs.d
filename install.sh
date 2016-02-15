@@ -12,7 +12,7 @@ function isPackageInstalled(){
 # Install inconsolate font for the user
 if ! fc-list | grep --quiet "Inconsolata"; then
 
-    inconsolataurl="http://www.fontsquirrel.com/fonts/download/Inconsolata"
+    inconsolataUrl="http://www.fontsquirrel.com/fonts/download/Inconsolata"
 
     if ! [ -d ~/.fonts ]; then
         mkdir ~/.fonts
@@ -29,7 +29,7 @@ if ! fc-list | grep --quiet "Inconsolata"; then
 fi
 
 # Warn to install dependencies
-reaquariedPackages=( "ipython" "strace" "tern" "jscs" )
+reaquariedPackages=( "ipython" "strace" "tern" "jscs" "tex" )
 
 for package in "${reaquariedPackages[@]}"
 do
