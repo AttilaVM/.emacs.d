@@ -240,10 +240,18 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (require 'helm-ack)
 
 (custom-set-variables
- ;; Does not insert '--type' option
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(LaTeX-command "latex -synctex=1")
+ '(ac-modes
+   (quote
+    (latex-mode lisp-mode lisp-interaction-mode slime-repl-mode c-mode cc-mode c++-mode go-mode java-mode malabar-mode clojure-mode clojurescript-mode scala-mode scheme-mode ocaml-mode tuareg-mode coq-mode haskell-mode agda-mode agda2-mode perl-mode cperl-mode python-mode ruby-mode lua-mode tcl-mode ecmascript-mode javascript-mode js-mode js2-mode php-mode css-mode scss-mode less-css-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode xml-mode sgml-mode web-mode ts-mode sclang-mode verilog-mode qml-mode)))
  '(helm-ack-auto-set-filetype nil)
- ;; Insert "thing-at-point 'symbol" as search pattern
- '(helm-ack-thing-at-point 'symbol))
+ '(helm-ack-thing-at-point (quote symbol))
+ '(js2-imenu-enabled-frameworks nil)
+ '(org-agenda-files (quote ("~/Documents/mytime.org"))))
 
 
 (require 'auto-complete)
@@ -351,6 +359,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'js2-mode-hook 'ac-js2-mode)
 (setq js2-highlight-level 3)
+;; Configure imenu for js2-mode
+(add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
 
 ;; tern-mode for IDE features like code completition, jump to definition etc... it requires a tern server
 (require 'tern)
@@ -440,16 +450,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (setq TeX-source-correlate-method 'synctex)
 ;; ##### Enable synctex generation. Even though the command shows
 ;; ##### as "latex" pdflatex is actually called
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(LaTeX-command "latex -synctex=1")
- '(ac-modes
-   (quote
-    (latex-mode lisp-mode lisp-interaction-mode slime-repl-mode c-mode cc-mode c++-mode go-mode java-mode malabar-mode clojure-mode clojurescript-mode scala-mode scheme-mode ocaml-mode tuareg-mode coq-mode haskell-mode agda-mode agda2-mode perl-mode cperl-mode python-mode ruby-mode lua-mode tcl-mode ecmascript-mode javascript-mode js-mode js2-mode php-mode css-mode scss-mode less-css-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode xml-mode sgml-mode web-mode ts-mode sclang-mode verilog-mode qml-mode)))
- '(org-agenda-files (quote ("~/Documents/mytime.org"))))
+
 
 ;; ##### Use Okular to open your document at the good
 ;; ##### point. It can detect the master file.
