@@ -163,6 +163,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (require 'helm)
 (require 'helm-config)
 
+;; Make helm adapt for frequently selected results
+(helm-adaptive-mode)
+
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
 ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
 ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
@@ -350,6 +353,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (setq js2-highlight-level 3)
 
 ;; tern-mode for IDE features like code completition, jump to definition etc... it requires a tern server
+(require 'tern)
 (add-hook 'js-mode-hook (lambda () (tern-mode t)))
 ;; tern auto completion
 ;; (eval-after-load 'tern
@@ -362,6 +366,11 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-hook 'js-mode-hook #'jscs-indent-apply)
 (add-hook 'js2-mode-hook #'jscs-indent-apply)
 (add-hook 'json-mode-hook #'jscs-indent-apply)
+
+;; Set up company mode for tern
+(require 'company-tern)
+(eval-after-load 'company
+    '(add-to-list 'company-backends 'company-tern))
 
 ;; Add Jquery doc for ac and js2
 (require 'jquery-doc)
