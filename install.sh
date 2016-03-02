@@ -9,6 +9,11 @@ function isPackageInstalled(){
     fi
 }
 
+function installer() {
+    sudo cp $1 /usr/local/bin/
+    sudo chmod +x "/usr/local/bin/$1"
+}
+
 # Install inconsolate font for the user
 if ! fc-list | grep --quiet "Inconsolata"; then
 
@@ -28,8 +33,17 @@ if ! fc-list | grep --quiet "Inconsolata"; then
 
 fi
 
+# Install bundled dependencies
+bundledPackages=( "emacs-pager" )
+
+for package in "${bundledPackages[@]}"
+do
+    :
+    installer $package
+done
+
 # Warn to install dependencies
-reaquariedPackages=( "ipython" "strace" "tern" "jscs" "tex" )
+reaquariedPackages=( "ipython" "strace" "tern" "jscs" "tex" "gtags" )
 
 for package in "${reaquariedPackages[@]}"
 do
@@ -42,3 +56,4 @@ if [ $systemCheck == false ];then
     exit
 fi
 
+echo 'Run "git config --global core.pager emacs-pager" to use Emacs for git show as a pager'

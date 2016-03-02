@@ -133,6 +133,14 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;;Auto-complete is a dependency of yasnipper
 (package-initialize)
 
+;; Start emacs server for emacs clients
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+;; Set up emacs as a pager .bashrc or zshrc should be modified!
+(require 'pager)
+
 ; go to the last change
 (require 'goto-chg)
 (global-set-key (kbd "s-;") 'goto-last-change)
@@ -280,6 +288,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (require 'flyspell)
 (define-key flyspell-mode-map (kbd "C-;") nil)
 
+;; Set up source code fintification
+(setq org-src-fontify-natively t)
+
 (require 'undo-tree)
 (global-undo-tree-mode)
 
@@ -292,6 +303,40 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Enable helm-cscope-mode
 (add-hook 'c-mode-hook 'helm-cscope-mode)
 (add-hook 'c++-mode-hook 'helm-cscope-mode)
+
+;; Set up helm-gtags for GNU GLOBAL source tagging system
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t
+ helm-gtags-prefix-key "\C-cg"
+ helm-gtags-suggested-key-mapping t
+ )
+
+(require 'helm-gtags)
+;; Enable helm-gtags-mode
+(add-hook 'dired-mode-hook 'helm-gtags-mode)
+(add-hook 'eshell-mode-hook 'helm-gtags-mode)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+
+;; Use company with Clang
+(require 'cc-mode)
+(setq company-backends (delete 'company-semantic company-backends))
+(define-key c-mode-map  [(tab)] 'company-complete)
+(define-key c++-mode-map  [(tab)] 'company-complete)
+;; Set up header completition
+(add-to-list 'company-backends 'company-c-headers)
+
 ;; Set key bindings
 (eval-after-load "helm-cscope"
   '(progn
@@ -361,6 +406,11 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (setq js2-highlight-level 3)
 ;; Configure imenu for js2-mode
 (add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
+
+;; Configure refactoring
+(require 'js2-refactor)
+(add-hook 'js2-mode-hook #'js2-refactor-mode)
+(js2r-add-keybindings-with-prefix "C-c C-r")
 
 ;; tern-mode for IDE features like code completition, jump to definition etc... it requires a tern server
 (require 'tern)
