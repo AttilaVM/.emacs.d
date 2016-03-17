@@ -139,7 +139,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (require 'tramp)
 
 ;; Prevent tramp from using /dev/null and recreating it as a regular file when history size is reached.
-(setq tramp-histfile-override "~/.tramp_history")
+(defvar tramp-histfile-override "~/.tramp_history" "Prevent tramp from using /dev/null and recreating it as a regular file when history size is reached.")
 
 (defvar tramp-default-proxies-alist)
 (add-to-list 'tramp-default-proxies-alist
@@ -669,6 +669,13 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
     )
   )
+
+(defun magit-display-noselect-toggle ()
+  "Display magit buffer but do not select window"
+  (interactive)(if (equal magit-display-buffer-noselect nil)
+                   (setq magit-display-buffer-noselect t) (setq magit-display-buffer-noselect nil)))
+
+(define-key magit-log-mode-map (kbd "s-<f3>") 'magit-display-noselect-toggle)
 
 (setq elpy-rpc-backend "jedi")
 (defun elpy-toggle-backend ()
