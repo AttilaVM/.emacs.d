@@ -112,6 +112,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Set defalult-directory to .emacs.d to init helm-projectile at startup.
 (setq default-directory "~/.emacs.d")
 
+;; Set startup buffer
+(setq initial-buffer-choice "~/Documents/reminder.org")
 
 ;; Enable spell checking in text mode but disable in change-log and log-edit modes
 (dolist (hook '(text-mode-hook))
@@ -132,6 +134,16 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;;Auto-complete is a dependency of yasnipper
 (package-initialize)
+
+;; Configure tramp hosts
+(require 'tramp)
+
+;; Prevent tramp from using /dev/null and recreating it as a regular file when history size is reached.
+(setq tramp-histfile-override "~/.tramp_history")
+
+(defvar tramp-default-proxies-alist)
+(add-to-list 'tramp-default-proxies-alist
+             '("gyuri" "root" "/ssh:attila@gyuri:"))
 
 ;; Start emacs server for emacs clients
 (require 'server)
@@ -337,6 +349,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Set up header completition
 (add-to-list 'company-backends 'company-c-headers)
 
+;; Open .h files as c++ files FIXME: Automatic C and C++ distinction
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
 ;; Set key bindings
 (eval-after-load "helm-cscope"
   '(progn
@@ -360,6 +375,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;; Django mode
 (require 'python-django)
+
+;; Haskell confing
+(add-hook 'haskell-mode-hook #'hindent-mode)
 
 ;; Set up web mode fore file extensions
 (require 'web-mode)
