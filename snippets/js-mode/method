@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: method
+# key: m
+# --
+// $1
+this.$2 = function $2($3) {
+         $0
+};

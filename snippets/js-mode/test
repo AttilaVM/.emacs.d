@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name: test
+#key: test
+# --
+if (${1:enumerate})
+{
+`yas-selected-text`$0
+} // $1

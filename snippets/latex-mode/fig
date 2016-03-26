@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: figure
+# key: fig
+# --
+\begin{center}
+  \makebox[${1:$$(yas-choose-value '("\\\textwidth" "\\\paperwidth"))}]{\includegraphics[width=${2:$$(yas-choose-value '("\\\textwidth" "\\\paperwidth"))}]{$0}}
+\end{center}

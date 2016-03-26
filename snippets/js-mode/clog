@@ -2,4 +2,4 @@
 # name : console.log
 # key : clog
 # --
-console.log(${});
+console.log(`yas-selected-text`${});

@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: variable default
+# key: dv
+# --
+$1 = typeof($1) ${2:$$(yas-choose-value '("!==" "===" "=="))} "${3:$$(yas-choose-value '("undefined" "null" "false" "string" "number" "boolean" "object"))}" ? $1 : $4;

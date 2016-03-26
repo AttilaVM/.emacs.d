@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: property default
+# key: dp
+# --
+this.$1 = typeof($1) !== "${2:$$(yas-choose-value '("undefined" "null" "false"))}" ? $1 : $3;

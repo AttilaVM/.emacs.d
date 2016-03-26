@@ -684,6 +684,20 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
   (message (concat "RPC backend changed to " elpy-rpc-backend))
   )
 
+;; source: http://stackoverflow.com/questions/14664829/emacs-auctex-prefix-arguments
+(defun my-run-latex ()
+  "Compile .tex into pdf without ask for save confirmation"
+  (interactive)
+  (if (buffer-modified-p)
+      (progn  
+        (setq TeX-save-query nil) 
+        (TeX-save-document (TeX-master-file))
+        (TeX-command "LaTeX" 'TeX-master-file -1))
+    (TeX-view)))
+;; f
+(define-key LaTeX-mode-map (kbd "C-c C-c") 'my-run-latex)
+(define-key LaTeX-mode-map (kbd "s-c s-c") 'TeX-command-master)
+
 ;; Spell checking in comments for different modes
 (dolist (hook '(lisp-mode-hook
 		ruby-mode-hook
