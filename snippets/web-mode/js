@@ -1,5 +1,5 @@
 #contributor : Molnar Attila <ate.molnar2@gmail.com>
-#name : link in javaScript
+#name : in-house javaScript
 #key : js
 # --
-<script type="text/javascript" src="${}"></script>
+<script type="text/javascript" src="${1:$$(my-yas-insert-file-name "~/repo/js/")}"></script>

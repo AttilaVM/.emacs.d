@@ -230,6 +230,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (helm-mode 1)
 
+;; (require 'helm-fuzzier)
+;; (helm-fuzzier-mode 1)
+
 ;; Yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
@@ -618,6 +621,11 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 	  (t
 	   (insert filename))))
 
+(defun my-yas-insert-file-name (dir)
+  "Insert absolute path inside yassnipets from given directory"
+  (let ((default-directory dir))
+    (unless yas-modified-p
+      (expand-file-name (completing-read "File: " 'read-file-name-internal)))))
 
 ;;-----------------Tweaks---------------------------
 (setq dired-recursive-copies (quote always)) ; “always” means no asking
