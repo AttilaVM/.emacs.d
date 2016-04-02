@@ -1,6 +1,10 @@
 Milestones:
+        separate key-bindings from init.el
         Effective Blender-mode usage
-        Helm mode config
         Dynamic loading
 
 Issues:
+        first helm isearch fails
+
+Complete:
+        Helm mode config

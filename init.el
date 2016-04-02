@@ -1,5 +1,7 @@
 (setq max-specpdl-size 10000)
 (setq max-lisp-eval-depth 10000)
+
+(load "~/.emacs.d/user.el")
 ;;----------------Appearance--------------------
 
 ;; Disable menu- and toolbar
@@ -10,10 +12,6 @@
 ;; Set global font type
 (add-to-list 'default-frame-alist '(font . "inconsolata-12" ))
 (set-face-attribute 'default t :font "inconsolata-12" )
-
-;; Theme
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'monokai t)
 
 ;; Enable line numbers globally
 (global-linum-mode t)
@@ -366,15 +364,14 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 
 ;; elpy python IDE
-;; (package-initialize)
-;; (add-to-list 'load-path "~/.emacs.d/extensions/elpy")
-;; (load "elpy")
+;; Elpy works on the top of python mode
+(require 'python)
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (require 'elpy)
 (elpy-enable)
 (elpy-use-ipython)
 (setq-default indent-tabs-mode nil)
-
-(add-to-list 'auto-mode-alist '("\\.py\\'" . elpy-mode))
+;; (add-to-list 'auto-mode-alist '("\\.py\\'" . elpy-mode))
 
 ;; Django mode
 (require 'python-django)
@@ -452,6 +449,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (require 'company-tern)
 (eval-after-load 'company
     '(add-to-list 'company-backends 'company-tern))
+
+;; Abality to run nodejs REPL inside emacs
+(require 'nodejs-repl)
 
 ;; Add Jquery doc for ac and js2
 (require 'jquery-doc)
@@ -722,3 +722,16 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 		javascript-mode-hook
 		LaTeX-mode-hook))
   (add-hook hook 'flyspell-prog-mode))
+
+(defun my-restart-python-console ()
+  "Restart python console before evaluate buffer or region to avoid various uncanny conflicts, like not reloding modules even when they are changed"
+  (interactive)
+  (let ((running-process (get-buffer-process "*Python*")))
+    (if (equal (get-buffer-process "*Python*") nil)
+        (elpy-shell-send-region-or-buffer)
+      (message (concat "killing: " (prin1-to-string (get-process running-process))))
+         (kill-process running-process)
+    (while (not (equal (get-buffer-process "*Python*") nil))
+      (sleep-for 0.01))
+    (kill-buffer "*Python*"))
+    (elpy-shell-send-region-or-buffer)))
