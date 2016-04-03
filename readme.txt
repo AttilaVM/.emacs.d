@@ -1,5 +1,4 @@
 Milestones:
-        separate key-bindings from init.el
         Effective Blender-mode usage
         Dynamic loading
 
@@ -8,3 +7,5 @@ Issues:
 
 Complete:
         Helm mode config
+        separate key-bindings from init.el
+

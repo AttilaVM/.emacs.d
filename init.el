@@ -56,40 +56,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; y or n for verification instead of yes or no
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(global-set-key (kbd "C-s-a") 'org-agenda)
-(global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
-;; Use C-h and M-h , instead of backspace, s-h for help
-(global-unset-key (kbd "<backspace>"))
-(global-unset-key (kbd "C-h"))
-(setq help-char nil)
-(global-set-key (kbd "C-h") 'delete-backward-char)
-(global-unset-key (kbd "<f1>"))
-(global-set-key (kbd "<f1>") help-map)
-(global-unset-key (kbd "M-h"))
-(global-set-key (kbd "s-h") 'mark-paragraph)
-(global-set-key (kbd "M-h") 'backward-kill-word)
-
-(global-set-key (kbd "<f2>") 'quick-calc)
-(global-set-key (kbd "C-<f2>") 'calc)
-(global-set-key (kbd "<C-kp-add>") 'increment-number-at-point)
-(global-set-key (kbd "<C-kp-subtract>") 'decrement-number-at-point)
-(global-set-key (kbd "<C-kp-1>") 'my-insert-file-name)
-(global-set-key (kbd "<C-kp-2>") 'helm-colors)
-(global-set-key (kbd "s-l") 'clearConsole)
-
-;; Redefine undo/redo
-;; (define-key minor-mode-map (kbd "C-s-/") nil)
-;; (define-key minor-mode-map (kbd "M-s-/") nil)
-
-(global-set-key (kbd "C-s-/") 'undo-tree-redo)
-(global-set-key (kbd "M-s-/") 'undo-tree-visualize)
-
-(global-set-key (kbd "<C-kp-3>") 'scss-compile)
-(global-set-key (kbd "<C-kp-5>") 'show-file-name)
-(global-set-key (kbd "<C-kp-6>") 'grab-screen-color)
-
-(global-unset-key (kbd "C-x o"))
-(global-set-key (kbd "s-o") 'other-window)
 
 
 ;;-----------------Repositories------------------
@@ -153,7 +119,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ; go to the last change
 (require 'goto-chg)
-(global-set-key (kbd "s-;") 'goto-last-change)
 
 ;; Highlight TODO, FIXME and BUG in comments 
 (require 'fic-ext-mode)
@@ -164,17 +129,11 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (add-something-to-mode-hooks '(c++ tcl emacs-lisp python text markdown latex) 'fic-ext-mode)
 
+;; configure magit
 (require 'magit)
-(global-set-key (kbd "C-<f3>") 'magit-status)
 
 ;; Avy
 (require 'avy)
-
-(global-set-key (kbd "C-;") 'avy-goto-char)
-(global-set-key (kbd "C-'") 'avy-goto-char-2)
-(global-unset-key (kbd "M-g g"))
-(global-set-key (kbd "M-g g") 'avy-goto-line)
-(global-set-key (kbd "M-g w") 'avy-goto-word-1)
 (avy-setup-default)
 
 ;; Helm
@@ -183,13 +142,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;; Make helm adapt for frequently selected results
 (helm-adaptive-mode)
-
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-unset-key (kbd "C-x c"))
-(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
 (when (executable-find "curl")
   (setq helm-google-suggest-use-curl-p t))
@@ -200,56 +152,21 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
       helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
       helm-ff-file-name-history-use-recentf t)
 
-;; Use helm for file finding
-(global-unset-key (kbd "C-x C-f"))
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-
-;; Use helm for command prompt
-(global-set-key (kbd "M-x") 'helm-M-x)
-
-;; Use helm-buffers-list instead of default helm buffer lister
-(global-set-key (kbd "s-x b") 'helm-buffers-list)
-
-;; get the list of the bookmarks (C-x r m for saving bookmarks) 
-(global-set-key (kbd "C-x r r") 'helm-bookmarks)
-
-;; More easier way to acces Emacs's internal "clipboard" 
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
-
-;; Use helm with isearch 
-(global-set-key (kbd "s-s") 'helm-occur-from-isearch)
-
-(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-
-(define-key helm-map (kbd "C-r")  'helm-ff-run-find-file-as-root)
-
-;; make sure C-h is no longer a prefix key
-(define-key helm-map (kbd "C-h") nil)
-
 (helm-mode 1)
-
-;; (require 'helm-fuzzier)
-;; (helm-fuzzier-mode 1)
 
 ;; Yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
 (setq yas-snippet-dirs
       '("~/.emacs.d/snippets/"))
-(define-key yas-minor-mode-map (kbd "C-j") 'yas-next-field)
-(define-key yas-minor-mode-map (kbd "C-l") 'yas-prev-field)
-(define-key yas-minor-mode-map (kbd "<tab>") nil)
-(define-key yas-minor-mode-map (kbd "TAB") nil)
-(define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
 
 (require 'helm-c-yasnippet)
 (setq helm-yas-space-match-any-greedy t)
-(global-set-key (kbd "C-c y") 'helm-yas-complete)
+
 (yas-global-mode 1)
 
 ;; Use helm to explore a git project-am
 (require 'helm-ls-git)
-(global-set-key (kbd "C-<f6>") 'helm-browse-project)
 
 ;; Basic projectile set up
 (projectile-global-mode)
@@ -286,20 +203,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (global-flycheck-mode)
 
-
-;;icicles
-;; (require 'icicles)
-;; (icy-mode nil)
-;; (add-hook 'icicle-ido-like-mode-hook
-;;	    (lambda () (setq icicle-default-value
-;;			(if icicle-ido-like-mode t 'insert-end))))
-
-;; If i want to use auto-complete instead of company I will uncomment these
-;; (require 'auto-complete-config)
-;; (ac-config-default)
-
 (require 'flyspell)
-(define-key flyspell-mode-map (kbd "C-;") nil)
 
 ;; Set up source code fintification
 (setq org-src-fontify-natively t)
@@ -318,6 +222,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-hook 'c++-mode-hook 'helm-cscope-mode)
 
 ;; Set up helm-gtags for GNU GLOBAL source tagging system
+;; FIXME \c-cg can only be defined here, throw error if assigned in control.el
 (setq
  helm-gtags-ignore-case t
  helm-gtags-auto-update t
@@ -335,33 +240,15 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-hook 'c++-mode-hook 'helm-gtags-mode)
 (add-hook 'asm-mode-hook 'helm-gtags-mode)
 
-(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
-
 ;; Use company with Clang
 (require 'cc-mode)
 (setq company-backends (delete 'company-semantic company-backends))
-(define-key c-mode-map  [(tab)] 'company-complete)
-(define-key c++-mode-map  [(tab)] 'company-complete)
+
 ;; Set up header completition
 (add-to-list 'company-backends 'company-c-headers)
 
 ;; Open .h files as c++ files FIXME: Automatic C and C++ distinction
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
-;; Set key bindings
-(eval-after-load "helm-cscope"
-  '(progn
-     (define-key helm-cscope-mode-map (kbd "M-s-9") 'helm-cscope-find-symbol)
-     (define-key helm-cscope-mode-map (kbd "<C-kp-7>") 'helm-cscope-find-global-definition)
-     (define-key helm-cscope-mode-map (kbd "<C-kp-0>") 'helm-cscope-find-called-function)
-     (define-key helm-cscope-mode-map (kbd "<C-kp-9>") 'helm-cscope-find-calling-this-funtcion)
-     (define-key helm-cscope-mode-map (kbd "<C-kp-8>") 'helm-cscope-select)))
-
 
 ;; elpy python IDE
 ;; Elpy works on the top of python mode
@@ -409,7 +296,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
        'handlebars-mode)
       (showcss-mode 'toggle)
     (message "Not in an html mode")))
-(global-set-key (kbd "<C-kp-4>") 'sm/toggle-showcss)
 
 ;; Use Syntactically Awesome Stylesheets
 (autoload 'scss-mode "scss-mode")
@@ -428,7 +314,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Configure refactoring
 (require 'js2-refactor)
 (add-hook 'js2-mode-hook #'js2-refactor-mode)
-(js2r-add-keybindings-with-prefix "C-c C-r")
 
 ;; tern-mode for IDE features like code completition, jump to definition etc... it requires a tern server
 (require 'tern)
@@ -470,16 +355,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (setq helm-css-scss-split-with-multiple-windows nil)
 ;; Split direction. 'split-window-vertically or 'split-window-horizontally
 (setq helm-css-scss-split-direction 'split-window-vertically)
-;; Set local keybind map for css-mode / scss-mode / less-css-mode
-(dolist ($hook '(css-mode-hook scss-mode-hook less-css-mode-hook))
-  (add-hook
-   $hook (lambda ()
-	   (local-set-key (kbd "s-i") 'helm-css-scss)
-	   (local-set-key (kbd "s-I") 'helm-css-scss-back-to-last-point))))
-
-(define-key isearch-mode-map (kbd "s-i") 'helm-css-scss-from-isearch)
-(define-key helm-css-scss-map (kbd "s-i") 'helm-css-scss-multi-from-helm-css-scss)
-
 ;; Toggle-in server mode for CLI Emacs clients
 '(server-mode t)
 
@@ -683,7 +558,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
   (interactive)(if (equal magit-display-buffer-noselect nil)
                    (setq magit-display-buffer-noselect t) (setq magit-display-buffer-noselect nil)))
 
-(define-key magit-log-mode-map (kbd "s-<f3>") 'magit-display-noselect-toggle)
 
 (setq elpy-rpc-backend "jedi")
 (defun elpy-toggle-backend ()
@@ -702,9 +576,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
         (TeX-save-document (TeX-master-file))
         (TeX-command "LaTeX" 'TeX-master-file -1))
     (TeX-view)))
-;; f
-(define-key LaTeX-mode-map (kbd "C-c C-c") 'my-run-latex)
-(define-key LaTeX-mode-map (kbd "s-c s-c") 'TeX-command-master)
 
 ;; Spell checking in comments for different modes
 (dolist (hook '(lisp-mode-hook
@@ -735,3 +606,5 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
       (sleep-for 0.01))
     (kill-buffer "*Python*"))
     (elpy-shell-send-region-or-buffer)))
+
+(load "~/.emacs.d/control.el")

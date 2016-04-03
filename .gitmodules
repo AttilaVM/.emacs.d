@@ -1,6 +1,3 @@
-[submodule "extensions/js2-mode"]
-	path = extensions/js2-mode
-	url = https://github.com/mooz/js2-mode
 [submodule "extensions/emacs-pager"]
 	path = extensions/emacs-pager
 	url = https://github.com/mbriggs/emacs-pager
