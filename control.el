@@ -131,4 +131,6 @@
 ;; ELPY: Restart python console before evaluate buffer or region to avoid various uncanny conflicts, like not reloding modules even when they are changed
 (define-key elpy-mode-map (kbd "s-c s-c") 'my-restart-python-console)
 
-
+;; Jump to a new line below or above
+(global-set-key (kbd "<C-return>") 'my-newline-below)
+(global-set-key (kbd "M-RET") 'my-newline-above)

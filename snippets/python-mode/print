@@ -2,4 +2,6 @@
 # name: print
 # key: p
 # --
-print($0)
+`(if (region-active-p)
+   (concat (yas-selected-text-replace "print(") ")")
+   "print($1)")`

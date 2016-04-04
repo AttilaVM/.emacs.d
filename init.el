@@ -533,6 +533,25 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (setq grab-screen-color-mode "html")
 
+(defun yas-selected-text-replace (beg)
+  "Replace selected text in snippets"
+  (let ((insertion (concat beg yas-selected-text)))
+    (delete-region (mark) (point))
+    insertion))
+
+(defun my-newline-below()
+  "Jum to the end of the line and inser a linebreak"
+  (interactive)
+  (move-end-of-line nil)
+  (newline))
+
+(defun my-newline-above()
+  "Insert a new line above the point"
+  (interactive)
+  (move-beginning-of-line nil)
+  (newline)
+  (forward-line -1))
+
 (defun grab-screen-color-mode-set (mode)
   "Set up the insertion format of grab-screen-color"
   (interactive
