@@ -132,5 +132,5 @@
 (define-key elpy-mode-map (kbd "s-c s-c") 'my-restart-python-console)
 
 ;; Jump to a new line below or above
-(global-set-key (kbd "<C-return>") 'my-newline-below)
-(global-set-key (kbd "M-RET") 'my-newline-above)
+(global-set-key (kbd "<M-RET>") 'my-newline-below)
+(global-set-key (kbd "<S-M-RET>") 'my-newline-above)
