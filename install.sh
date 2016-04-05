@@ -33,6 +33,9 @@ if ! fc-list | grep --quiet "Inconsolata"; then
 
 fi
 
+# Create files if they are not exists
+touch user.el control.el proxies.el
+
 # Install bundled dependencies
 bundledPackages=( "emacs-pager" )
 

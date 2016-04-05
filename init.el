@@ -69,10 +69,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;;-----------------Global Function------------------
 
-;; Interactive mode for easier file and buffer navigation
-;; (require 'ido)
-;; (ido-mode t)
-
 ;; Set defalult-directory to .emacs.d to init helm-projectile at startup.
 (setq default-directory "~/.emacs.d")
 
@@ -101,13 +97,11 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;; Configure tramp hosts
 (require 'tramp)
+(setq enable-recursive-minibuffers nil)
+(load "~/.emacs.d/proxies.el")
 
 ;; Prevent tramp from using /dev/null and recreating it as a regular file when history size is reached.
 (defvar tramp-histfile-override "~/.tramp_history" "Prevent tramp from using /dev/null and recreating it as a regular file when history size is reached.")
-
-(defvar tramp-default-proxies-alist)
-(add-to-list 'tramp-default-proxies-alist
-             '("gyuri" "root" "/ssh:attila@gyuri:"))
 
 ;; Start emacs server for emacs clients
 (require 'server)
@@ -139,6 +133,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Helm
 (require 'helm)
 (require 'helm-config)
+
+(setq enable-recursive-minibuffers t)
 
 ;; Make helm adapt for frequently selected results
 (helm-adaptive-mode)
