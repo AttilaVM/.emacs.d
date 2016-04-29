@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if file with any kind of type exists
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-e" "! -e"))} ${2:} ];then
+${3:}
+fi
+$0

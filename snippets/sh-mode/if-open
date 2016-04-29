@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if file descriptor FD is open and refers to a terminal.
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-t" "! -t"))} ${2:} ];then
+${3:}
+fi
+$0

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if character device exists
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-c" "! -c"))} ${2:} ];then
+${3:}
+fi
+$0

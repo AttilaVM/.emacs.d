@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if file SUID (set user ID) bit is set.
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-u" "! -u"))} ${2:} ];then
+${3:}
+fi
+$0

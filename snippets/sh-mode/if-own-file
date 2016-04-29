@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if file is owned by current user
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-O" "! -O"))} ${2:} ];then
+${3:}
+fi
+$0

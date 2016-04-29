@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if named pipe exists
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-p" "! -p"))} ${2:} ];then
+${3:}
+fi
+$0

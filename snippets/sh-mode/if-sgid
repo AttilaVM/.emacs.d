@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if file with true SGID bit exists
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-g" "! -g"))} ${2:} ];then
+${3:}
+fi
+$0

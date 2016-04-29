@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if directory exists
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-d" "! -d"))} ${2:} ];then
+${3:}
+fi
+$0

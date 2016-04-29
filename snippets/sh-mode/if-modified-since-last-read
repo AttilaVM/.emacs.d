@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if file has been modified since last read
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-N" "! -N"))} ${2:} ];then
+${3:}
+fi
+$0
