@@ -34,6 +34,13 @@
 (global-unset-key (kbd "C-x o"))
 (global-set-key (kbd "s-o") 'other-window)
 
+;; Running shell command with different ways
+(global-unset-key (kbd "M-!")) ;; shell-command
+(global-unset-key (kbd "M-&")) ;; async-shell-command
+(global-unset-key (kbd "M-|")) ;; shell command or region
+(global-set-key (kbd "C-!") 'shell-command)
+(global-set-key (kbd "M-!") 'async-shell-command)
+(global-set-key (kbd "C-M-!") 'shell-command-on-region)
 ;;---------------------GLOBAL PACKAGE DEPENDENT-------------
 ;; undo tree
 (global-set-key (kbd "C-s-/") 'undo-tree-redo)
@@ -107,6 +114,8 @@
 (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
 ;; flyspell
 (define-key flyspell-mode-map (kbd "C-;") nil)
+;; Emacs-lisp TODO make an eval-buffer-or-region function for it
+(define-key emacs-lisp-mode-map (kbd "C-c C-C") 'eval-buffer)
 ;; cc-mode
 (define-key c-mode-map  [(tab)] 'company-complete)
 (define-key c++-mode-map  [(tab)] 'company-complete)
@@ -122,6 +131,10 @@
 (define-key isearch-mode-map (kbd "s-i") 'helm-css-scss-from-isearch)
 (define-key helm-css-scss-map (kbd "s-i") 'helm-css-scss-multi-from-helm-css-scss)
 
+;; nxml-mode
+;; (define-key nxml-mode-map (kbd "s-n") 'nxml-forward-element)
+;; (define-key nxml-mode-map (kbd "s-p") 'nxml-backward-element)
+
 ;;------------------HELPER FUNCTIONS------------------------
 ;; Display magit buffer but do not select window for easy log reading
 (define-key magit-log-mode-map (kbd "s-<f3>") 'magit-display-noselect-toggle)
@@ -134,3 +147,7 @@
 ;; Jump to a new line below or above
 (global-set-key (kbd "<M-RET>") 'my-newline-below)
 (global-set-key (kbd "<S-M-RET>") 'my-newline-above)
+
+;;----------------CROSS MODE-------------------------
+(define-key elpy-mode-map (kbd "s-c f") 'elpy-autopep8-fix-code)
+(define-key js2-mode-map (kbd "s-c f") 'jscs-fix)

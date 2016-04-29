@@ -99,6 +99,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (require 'tramp)
 (setq enable-recursive-minibuffers nil)
 (load "~/.emacs.d/proxies.el")
+(setq tramp-shell-prompt-pattern "^[^$>\n]*[#$%>] *\\(\[[0-9;]*[a-zA-Z] *\\)*")
 
 ;; Prevent tramp from using /dev/null and recreating it as a regular file when history size is reached.
 (defvar tramp-histfile-override "~/.tramp_history" "Prevent tramp from using /dev/null and recreating it as a regular file when history size is reached.")
@@ -254,7 +255,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (elpy-enable)
 (elpy-use-ipython)
 (setq-default indent-tabs-mode nil)
-;; (add-to-list 'auto-mode-alist '("\\.py\\'" . elpy-mode))
+;; Set $PYTHONPATH to elpy module
+(setenv "PYTHONPATH" (concat (getenv "PYTHONPATH") ":" user-home-dir "/.emacs.d/elpa/elpy-20160131.118"))
+
 
 ;; Django mode
 (require 'python-django)
@@ -353,6 +356,13 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (setq helm-css-scss-split-direction 'split-window-vertically)
 ;; Toggle-in server mode for CLI Emacs clients
 '(server-mode t)
+
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+;;  Unlike python-mode, this mode follows the Emacs convention of not binding the ENTER key to `newline-and-indent'.  To get this behavior, add the key definition to `yaml-mode-hook':
+(add-hook 'yaml-mode-hook
+          '(lambda ()
+        (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 (load "auctex.el" nil t t)
 (require 'tex-mik)
@@ -621,5 +631,17 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
       (sleep-for 0.01))
     (kill-buffer "*Python*"))
     (elpy-shell-send-region-or-buffer)))
+
+(defun append-to-list (list-var elements)
+  "Append ELEMENTS to the end of LIST-VAR.
+
+The return value is the new value of LIST-VAR."
+  (unless (consp elements)
+    (error "ELEMENTS must be a list"))
+  (let ((list (symbol-value list-var)))
+    (if list
+        (setcdr (last list) elements)
+      (set list-var elements)))
+  (symbol-value list-var))
 
 (load "~/.emacs.d/control.el")
