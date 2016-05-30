@@ -9,15 +9,16 @@
 (global-set-key (kbd "C-s-a") 'org-agenda)
 (global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
 ;; Use C-h and M-h , instead of backspace, s-h for help
-(global-unset-key (kbd "<backspace>"))
-(global-unset-key (kbd "C-h"))
-(setq help-char nil)
-(global-set-key (kbd "C-h") 'delete-backward-char)
-(global-unset-key (kbd "<f1>"))
-(global-set-key (kbd "<f1>") help-map)
-(global-unset-key (kbd "M-h"))
-(global-set-key (kbd "s-h") 'mark-paragraph)
-(global-set-key (kbd "M-h") 'backward-kill-word)
+;; (global-unset-key (kbd "<backspace>"))
+;; (global-unset-key (kbd "C-h"))
+;; (setq help-char nil)
+;; (global-set-key (kbd "C-h") 'delete-backward-char)
+;; (global-unset-key (kbd "<f1>"))
+;; (global-set-key (kbd "<f1>") help-map)
+;; (global-unset-key (kbd "M-h"))
+;; (global-set-key (kbd "s-h") 'mark-paragraph)
+;; (global-set-key (kbd "M-h") 'backward-kill-word)
+
 ;; Calc
 (global-set-key (kbd "<f2>") 'quick-calc)
 (global-set-key (kbd "C-<f2>") 'calc)
@@ -131,7 +132,11 @@
 (define-key c-mode-map  [(tab)] 'company-complete)
 (define-key c++-mode-map  [(tab)] 'company-complete)
 ;; js2-refactor-mode
-(js2r-add-keybindings-with-prefix "C-c C-r")
+(defun controll-js ()
+  "Add javascript bindings"
+  (js2r-add-keybindings-with-prefix "C-c C-r")
+  (define-key js2-mode-map (kbd "s-c f") 'jscs-fix)
+)
 ;; css-mode / scss-mode / less-css-mode
 (dolist ($hook '(css-mode-hook scss-mode-hook less-css-mode-hook))
   (add-hook
@@ -150,17 +155,24 @@
 ;;------------------HELPER FUNCTIONS------------------------
 ;; Display magit buffer but do not select window for easy log reading
 (define-key magit-log-mode-map (kbd "s-<f3>") 'magit-display-noselect-toggle)
+
 ;; Complie latex without asking too many questions baby!
-(define-key LaTeX-mode-map (kbd "C-c C-c") 'my-run-latex)
-(define-key LaTeX-mode-map (kbd "s-c s-c") 'TeX-command-master)
+(defun controll-latex ()
+  "Add latex bindings"
+		(define-key LaTeX-mode-map (kbd "C-c C-c") 'my-run-latex)
+		(define-key LaTeX-mode-map (kbd "s-c s-c") 'TeX-command-master))
+
 ;; ELPY: Restart python console before evaluate buffer or region to avoid various uncanny conflicts, like not reloding modules even when they are changed
-(define-key elpy-mode-map (kbd "s-c s-c") 'my-restart-python-console)
-(define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep)
+(defun controll-python ()
+  "Add python, elpy and django bindings"
+  (define-key elpy-mode-map (kbd "s-c s-c") 'my-restart-python-console)
+  (define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep)
+  ;; conventional syntax checker binding
+  (define-key elpy-mode-map (kbd "s-c f") 'elpy-autopep8-fix-code)
+  )
 
 ;; Jump to a new line below or above
 (global-set-key (kbd "<M-RET>") 'my-newline-below)
 (global-set-key (kbd "<S-M-RET>") 'my-newline-above)
 
 ;;----------------CROSS MODE-------------------------
-(define-key elpy-mode-map (kbd "s-c f") 'elpy-autopep8-fix-code)
-(define-key js2-mode-map (kbd "s-c f") 'jscs-fix)

@@ -90,6 +90,18 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;;----------------Packages-------------------------
 
+;; (defvar loaded-modes '("~/emacs.d/init.el") "Store loaded hooked modes to preven reloding them evrery time, when the mode activates" )
+
+(setq loaded-modes '("~/emacs.d/init.el"))
+(listp loaded-modes)
+(defun layer-loader (mode-file control-init)
+  "Load hooked mode config"
+  (unless (memq mode-file loaded-modes)
+      (message "load")
+  	(load mode-file)
+  	(funcall control-init)
+  	(add-to-list 'loaded-modes 'mode-file)
+  	))
 
 
 ;;Auto-complete is a dependency of yasnipper
@@ -134,7 +146,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
   (dolist (mode mode-list)
     (add-hook (intern (concat (symbol-name mode) "-mode-hook")) something)))
 
-(add-something-to-mode-hooks '(c++ tcl emacs-lisp python text markdown latex) 'fic-ext-mode)
+(add-something-to-mode-hooks '(c++ tcl emacs-lisp python text markdown latex js latex) 'fic-ext-mode)
 
 ;; configure magit
 (require 'magit)
@@ -191,7 +203,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(LaTeX-command "latex -synctex=1")
+
  '(ac-modes
    (quote
     (latex-mode lisp-mode lisp-interaction-mode slime-repl-mode c-mode cc-mode c++-mode go-mode java-mode malabar-mode clojure-mode clojurescript-mode scala-mode scheme-mode ocaml-mode tuareg-mode coq-mode haskell-mode agda-mode agda2-mode perl-mode cperl-mode python-mode ruby-mode lua-mode tcl-mode ecmascript-mode javascript-mode js-mode js2-mode php-mode css-mode scss-mode less-css-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode xml-mode sgml-mode web-mode ts-mode sclang-mode verilog-mode qml-mode)))
@@ -200,6 +212,15 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
  '(js2-imenu-enabled-frameworks nil)
  '(org-agenda-files (quote ("~/Documents/mytime.org"))))
 
+;; Search in css/scss selectors with helm
+(add-to-list 'load-path "~/.emacs.d/extensions/helm-css-scss")
+(require 'helm-css-scss)
+;; Allow comment inserting depth at each end of a brace
+(setq helm-css-scss-insert-close-comment-depth 2)
+;; If this value is t, split window appears inside the current window
+(setq helm-css-scss-split-with-multiple-windows nil)
+;; Split direction. 'split-window-vertically or 'split-window-horizontally
+(setq helm-css-scss-split-direction 'split-window-vertically)
 
 (require 'auto-complete)
 
@@ -260,30 +281,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Open .h files as c++ files FIXME: Automatic C and C++ distinction
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
-;; elpy python IDE
-;; Elpy works on the top of python mode
-(require 'python)
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-(require 'elpy)
-(elpy-enable)
-(elpy-use-ipython)
-(setq-default indent-tabs-mode nil)
-;; Set $PYTHONPATH to elpy module
-(setenv "PYTHONPATH" (concat (getenv "PYTHONPATH") ":" user-home-dir "/.emacs.d/elpa/elpy-20160131.118"))
-
-;; Make defintition jumping more robust
-;; see https://github.com/jorgenschaefer/elpy/wiki/Customizations
-(defun elpy-goto-definition-or-rgrep ()
-  "Go to the definition of the symbol at point, if found. Otherwise, run `elpy-rgrep-symbol'."
-    (interactive)
-    (ring-insert find-tag-marker-ring (point-marker))
-    (condition-case nil (elpy-goto-definition)
-        (error (elpy-rgrep-symbol
-                   (concat "\\(def\\|class\\)\s" (thing-at-point 'symbol) "(")))))
-
-;; Django mode
-(require 'python-django)
-
 ;; Haskell confing
 (add-hook 'haskell-mode-hook #'hindent-mode)
 
@@ -331,58 +328,16 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode))
 
 
+(add-hook 'js-mode-hook (lambda ()
+			  (layer-loader "~/.emacs.d/confs/js.el" 'controll-js)))
+(add-hook 'python-mode-hook (lambda()
+			      (layer-loader "~/.emacs.d/confs/python.el" 'controll-python)))
+(add-hook 'latex-mode-hook (lambda()
+			      (layer-loader "~/.emacs.d/confs/latex.el" 'controll-latex)))
+
 (require 'impatient-mode)
 
-;; JavaScript IDE capabilities
-(require 'js2-mode)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-hook 'js2-mode-hook 'ac-js2-mode)
-(setq js2-highlight-level 3)
-;; Configure imenu for js2-mode
-(add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
 
-;; Configure refactoring
-(require 'js2-refactor)
-(add-hook 'js2-mode-hook #'js2-refactor-mode)
-
-;; tern-mode for IDE features like code completition, jump to definition etc... it requires a tern server
-(require 'tern)
-(add-hook 'js-mode-hook (lambda () (tern-mode t)))
-;; tern auto completion
-;; (eval-after-load 'tern
-;;    '(progn
-;;       (tern-ac-setup)))
-
-;; Hook json-mode to .jscsrc
-(add-to-list 'auto-mode-alist '("\\.jscsrc\\'" . json-mode))
-;; Hook JSCS to js and JSON modes
-(add-hook 'js-mode-hook #'jscs-indent-apply)
-(add-hook 'js2-mode-hook #'jscs-indent-apply)
-(add-hook 'json-mode-hook #'jscs-indent-apply)
-
-;; Set up company mode for tern
-(require 'company-tern)
-(eval-after-load 'company
-    '(add-to-list 'company-backends 'company-tern))
-
-;; Abality to run nodejs REPL inside emacs
-(require 'nodejs-repl)
-
-(require 'grunt)
-
-;; helm
-(require 'helm)
-(require 'helm-config)
-
-;; Search in css/scss selectors with helm
-(add-to-list 'load-path "~/.emacs.d/extensions/helm-css-scss")
-(require 'helm-css-scss)
-;; Allow comment inserting depth at each end of a brace
-(setq helm-css-scss-insert-close-comment-depth 2)
-;; If this value is t, split window appears inside the current window
-(setq helm-css-scss-split-with-multiple-windows nil)
-;; Split direction. 'split-window-vertically or 'split-window-horizontally
-(setq helm-css-scss-split-direction 'split-window-vertically)
 ;; Toggle-in server mode for CLI Emacs clients
 '(server-mode t)
 
@@ -392,72 +347,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-hook 'yaml-mode-hook
           '(lambda ()
         (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
-
-(load "auctex.el" nil t t)
-(require 'tex-mik)
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-(add-hook 'LaTeX-mode-hook 'visual-line-mode)
-(add-hook 'LaTeX-mode-hook 'flyspell-mode)
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-(setq reftex-plug-into-AUCTeX t)
-
-;; compile to PDF automaticly
-(setq TeX-PDF-mode t)
-(require 'tex)
-;; (TeX-global-PDF-mode t)
-
-;; Autocomplete latexx
-(require 'auto-complete-auctex)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;        LaTeX         ;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; ##### Run emacs in server mode in order to be able to use
-;; ##### emacsclient in Okular. Don't forget to configure
-;; ##### Okular to use emacs in
-;; ##### "Configuration/Configure Okular/Editor"
-;; ##### => Editor => Emacsclient. (you should see
-;; ##### emacsclient -a emacs --no-wait +%l %f
-;; ##### in the field "Command".
-
-(setq-default TeX-master nil)
-;; ##### Enable synctex correlation. From Okular just press
-;; ##### Shift + Left click to go to the good line.
-(setq TeX-source-correlate-method 'synctex)
-;; ##### Enable synctex generation. Even though the command shows
-;; ##### as "latex" pdflatex is actually called
-
-
-;; ##### Use Okular to open your document at the good
-;; ##### point. It can detect the master file.
-(add-hook 'LaTeX-mode-hook '(lambda ()
-		  (add-to-list 'TeX-expand-list
-		       '("%u" Okular-make-url))))
-
-(defun Okular-make-url () (concat
-	       "file://"
-	       (expand-file-name (funcall file (TeX-output-extension) t)
-			 (file-name-directory (TeX-master-file)))
-	       "#src:"
-	       (TeX-current-line)
-	       (expand-file-name (TeX-master-directory))
-	       "./"
-	       (TeX-current-file-name-master-relative)))
-
-;; ## Use these lines if you want a confirmation of the
-;; ## command line to run...
-;; (setq TeX-view-program-selection '((output-pdf "Okular")))
-;; (setq TeX-view-program-list '(("Okular" "okular --unique %u")))
-;; ## And theses if you don't want any confirmation.
-(eval-after-load "tex"
-  '(add-to-list 'TeX-command-list
-		'("View" "okular --unique %u" TeX-run-discard-or-function nil t :help "View file"))
- )
 
 
 ;;C customization
@@ -503,12 +392,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
       (or (looking-at "[0123456789]+")
 	  (error "No number at point"))
       (replace-match (number-to-string (1- (string-to-number (match-string 0))))))
-
-;; clear Ipython console
-(defun clearConsole ()
-  (interactive)
-  (let ((comint-buffer-maximum-size 0))
-    (comint-truncate-buffer)))
 
 (defun my-insert-file-name (filename &optional args)
     "Insert name of file FILENAME into buffer after point.
@@ -621,23 +504,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
                    (setq magit-display-buffer-noselect t) (setq magit-display-buffer-noselect nil)))
 
 
-(setq elpy-rpc-backend "jedi")
-(defun elpy-toggle-backend ()
-  "Toggle between jedi and rope backends for Elpy"
-  (interactive)
-  (message (concat "RPC backend changed to " elpy-rpc-backend))
-  )
-
-;; source: http://stackoverflow.com/questions/14664829/emacs-auctex-prefix-arguments
-(defun my-run-latex ()
-  "Compile .tex into pdf without ask for save confirmation"
-  (interactive)
-  (if (buffer-modified-p)
-      (progn  
-        (setq TeX-save-query nil) 
-        (TeX-save-document (TeX-master-file))
-        (TeX-command "LaTeX" 'TeX-master-file -1))
-    (TeX-view)))
 
 ;; Spell checking in comments for different modes
 (dolist (hook '(lisp-mode-hook
@@ -656,18 +522,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 		LaTeX-mode-hook))
   (add-hook hook 'flyspell-prog-mode))
 
-(defun my-restart-python-console ()
-  "Restart python console before evaluate buffer or region to avoid various uncanny conflicts, like not reloding modules even when they are changed"
-  (interactive)
-  (let ((running-process (get-buffer-process "*Python*")))
-    (if (equal (get-buffer-process "*Python*") nil)
-        (elpy-shell-send-region-or-buffer)
-      (message (concat "killing: " (prin1-to-string (get-process running-process))))
-         (kill-process running-process)
-    (while (not (equal (get-buffer-process "*Python*") nil))
-      (sleep-for 0.01))
-    (kill-buffer "*Python*"))
-    (elpy-shell-send-region-or-buffer)))
 
 (defun append-to-list (list-var elements)
   "Append ELEMENTS to the end of LIST-VAR.
