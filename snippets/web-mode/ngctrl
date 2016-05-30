@@ -1,5 +1,5 @@
 #contributor : Molnar Attila <ate.molnar2@gmail.com>
-#name : div
-#key : d
+#name : Angular Controller
+#key : nc
 # --
-<div$0></div>
+ng-controller="$0"

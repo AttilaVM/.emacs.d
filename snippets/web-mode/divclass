@@ -1,5 +1,0 @@
-#contributor : Molnar Attila <ate.molnar2@gmail.com>
-#name : div with id and class
-#key : div
-# --
-<div id="${}" class="${}"></div>

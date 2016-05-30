@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : local javaScript
+#key : js
+# --
+<script type="$1"></script>

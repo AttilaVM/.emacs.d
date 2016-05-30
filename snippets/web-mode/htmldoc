@@ -3,7 +3,7 @@
 #key : htmldoc
 # --
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/TR/html5/">
+<html>
       <head>
       <meta charset="utf-8"></meta>
       <meta name="viewport" content="width=device-width, initial-scale=1">

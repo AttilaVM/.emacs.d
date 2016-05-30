@@ -1,0 +1,8 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : Yeoman copy template
+#key : yoc
+# --
+this.fs.copyTpl(
+                this.templatePath('$1'),
+                this.destinationPath('$2')$0
+                )

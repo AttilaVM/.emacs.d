@@ -1,0 +1,7 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : EJS if
+#key : ejsif
+# --
+<% if ($1) { %>
+  `yas-selected-text`
+<% } %>

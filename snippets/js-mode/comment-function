@@ -1,12 +1,9 @@
 # -*- mode: snippet; require-final-newline: nil -*-
-# name: method
-# key: m
+# name: Function comment
+# key: c
 # --
 /**
  * $1
  * @param $2
  * @return $3
  */
-this.$4 = function $4($5) {
-         $0
-};

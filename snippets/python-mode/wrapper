@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: wrapper
+# key: wrapper
+# group: object oriented
+# --
+def $1(func):
+    """$2"""
+    def extendedFunc(*args, **kargs):
+        return ${3:func(*args, **kargs)}
+    return extendedFunc

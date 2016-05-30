@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Math section aligned
+# key: math
+# --
+{\centering
+  \par
+  \begin{align}
+    $0
+  \end{align}
+  \par
+}

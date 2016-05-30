@@ -1,0 +1,15 @@
+#contributor : Attila Molnar <ate.molnar2@gmail.com>
+#name : package.json for grunt
+# key: package
+# --
+{
+  "name": "$1",
+  "version": "$2",
+  "description": "$3",
+  "author": "Attila V. Molnar",
+  "license": "$4"
+  "devDependencies": {
+    "grunt": "`(replace-regexp-in-string "\n$" "" (shell-command-to-string "grunt-init -V | sed -n 2p | sed 's/v/~/g' | sed 's/[^0-9.~]//g'"))`",
+    $0
+  }
+}

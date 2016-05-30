@@ -1,5 +1,5 @@
 #contributor : Molnar Attila <ate.molnar2@gmail.com>
-#name : div
-#key : d
+#name : EJS output (html escaped)
+#key : ejso
 # --
-<div$0></div>
+<%= $1 %>$0

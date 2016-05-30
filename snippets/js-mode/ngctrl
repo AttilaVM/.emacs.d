@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Angular Controller
+# key: ngctrl
+# --
+  /**
+  * $1
+  */
+  app.controller('$2', function $2() {
+    $0
+  });

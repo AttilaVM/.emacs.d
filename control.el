@@ -55,6 +55,17 @@
 (global-unset-key (kbd "M-g g"))
 (global-set-key (kbd "M-g g") 'avy-goto-line)
 (global-set-key (kbd "M-g w") 'avy-goto-word-1)
+
+;; overide paired expressin jump
+;; forward
+(global-unset-key (kbd "<C-M-right>"))
+(global-unset-key (kbd "C-M-f"))
+(global-set-key (kbd "s-f") 'forward-sexp)
+;; backward
+(global-unset-key (kbd "<C-M-left>"))
+(global-unset-key (kbd "C-M-b"))
+(global-set-key (kbd "s-b") 'backward-sexp)
+
 ;; helm--------------------------------------------
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 
@@ -131,6 +142,7 @@
 (define-key isearch-mode-map (kbd "s-i") 'helm-css-scss-from-isearch)
 (define-key helm-css-scss-map (kbd "s-i") 'helm-css-scss-multi-from-helm-css-scss)
 
+(global-set-key (kbd "C-M-g") 'grunt-exec)
 ;; nxml-mode
 ;; (define-key nxml-mode-map (kbd "s-n") 'nxml-forward-element)
 ;; (define-key nxml-mode-map (kbd "s-p") 'nxml-backward-element)
@@ -143,6 +155,7 @@
 (define-key LaTeX-mode-map (kbd "s-c s-c") 'TeX-command-master)
 ;; ELPY: Restart python console before evaluate buffer or region to avoid various uncanny conflicts, like not reloding modules even when they are changed
 (define-key elpy-mode-map (kbd "s-c s-c") 'my-restart-python-console)
+(define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep)
 
 ;; Jump to a new line below or above
 (global-set-key (kbd "<M-RET>") 'my-newline-below)

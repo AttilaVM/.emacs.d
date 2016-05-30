@@ -95,6 +95,18 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;;Auto-complete is a dependency of yasnipper
 (package-initialize)
 
+(require 'autopair)
+(autopair-global-mode)
+
+(require 'editorconfig)
+(editorconfig-mode 1)
+
+(require 'hexl)
+(add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
+
+(load "~/.emacs.d/extensions/liquidsoap-mode.el")
+(add-to-list 'auto-mode-alist '("\\.liq\\'" . liquidsoap-mode))
+
 ;; Configure tramp hosts
 (require 'tramp)
 (setq enable-recursive-minibuffers nil)
@@ -194,6 +206,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Rainbow parenthese
 (require 'rainbow-delimiters)
 (add-hook 'emacs-lisp-mode-hook' rainbow-delimiters-mode)
+(add-hook 'js2-mode-hook' rainbow-delimiters-mode)
 
 
 (package-install 'flycheck)
@@ -258,12 +271,27 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Set $PYTHONPATH to elpy module
 (setenv "PYTHONPATH" (concat (getenv "PYTHONPATH") ":" user-home-dir "/.emacs.d/elpa/elpy-20160131.118"))
 
+;; Make defintition jumping more robust
+;; see https://github.com/jorgenschaefer/elpy/wiki/Customizations
+(defun elpy-goto-definition-or-rgrep ()
+  "Go to the definition of the symbol at point, if found. Otherwise, run `elpy-rgrep-symbol'."
+    (interactive)
+    (ring-insert find-tag-marker-ring (point-marker))
+    (condition-case nil (elpy-goto-definition)
+        (error (elpy-rgrep-symbol
+                   (concat "\\(def\\|class\\)\s" (thing-at-point 'symbol) "(")))))
 
 ;; Django mode
 (require 'python-django)
 
 ;; Haskell confing
 (add-hook 'haskell-mode-hook #'hindent-mode)
+
+;; Markdown mode-line
+(require 'markdown-mode)
+(add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 
 ;; Set up web mode fore file extensions
 (require 'web-mode)
@@ -299,6 +327,9 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Use Syntactically Awesome Stylesheets
 (autoload 'scss-mode "scss-mode")
 (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
+
+(add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode))
+
 
 (require 'impatient-mode)
 
@@ -337,9 +368,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;; Abality to run nodejs REPL inside emacs
 (require 'nodejs-repl)
 
-;; Add Jquery doc for ac and js2
-(require 'jquery-doc)
-(add-hook 'js2-mode-hook 'jquery-doc-setup)
+(require 'grunt)
 
 ;; helm
 (require 'helm)
@@ -519,7 +548,15 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "light slate blue"))))
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "cyan"))))
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "lime green"))))
+ '(rainbow-delimiters-depth-4-face ((t (:foreground "yellow green"))))
+ '(rainbow-delimiters-depth-5-face ((t (:foreground "yellow"))))
+ '(rainbow-delimiters-depth-6-face ((t (:foreground "goldenrod"))))
+ '(rainbow-delimiters-depth-7-face ((t (:foreground "dark orange"))))
+ '(rainbow-delimiters-depth-8-face ((t (:foreground "orange red"))))
+ '(rainbow-delimiters-depth-9-face ((t (:foreground "red2")))))
 
 
 ;;-------------web-mode snippets------------------------
@@ -643,5 +680,7 @@ The return value is the new value of LIST-VAR."
         (setcdr (last list) elements)
       (set list-var elements)))
   (symbol-value list-var))
+
+
 
 (load "~/.emacs.d/control.el")

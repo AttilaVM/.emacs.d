@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: wrapper-with-argument
+# key: wrapper
+# group: object oriented
+# --
+
+def $1($2):
+    """$3"""
+    def decorator(func):
+        def extendedFunc(*args, **kargs):
+            $0
+        return extendedFunc
+    return decorator

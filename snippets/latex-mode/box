@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: box
+# key: box
+# --
+\Aboxed{`yas-selected-text`$0}

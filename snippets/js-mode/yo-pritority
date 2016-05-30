@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: variable default
+# key: yop
+# --
+${2:$$(yas-choose-value '("initializing" "prompting:" "configuring" "default" "writing: function writing() " "conflicts" "install: function ()" "end"))} {$0}

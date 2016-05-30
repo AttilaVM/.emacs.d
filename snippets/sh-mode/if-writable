@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if file is writable
+# key: if
+# --
+if [ ${1:$$(yas-choose-value '("-w" "! -w"))} ${2:} ];then
+${3:}
+fi
+$0

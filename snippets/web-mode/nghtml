@@ -1,0 +1,14 @@
+#name : HTML doc with basic DOM
+#group : meta
+#key : nghtml
+# --
+<!DOCTYPE html>
+<html ng-app="$1">
+      <head>
+      <title>${}</title>$0
+      </head>
+
+      <body>
+	<header></header>
+      </body>
+</html>
