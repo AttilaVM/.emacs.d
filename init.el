@@ -88,6 +88,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 	  (lambda ()
 	    (if whitespace-cleanup-on-save (whitespace-cleanup))))
 
+(setq backup-directory-alist '(("." . "~/.emacs.d/backup")))
+
 ;;----------------Packages-------------------------
 
 (add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
@@ -128,6 +130,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (package-initialize)
 
 (load "~/.emacs.d/confs/ibuffer.el")
+(load "~/.emacs.d/confs/guide-key.el")
 
 (require 'autopair)
 (autopair-global-mode)
@@ -313,6 +316,12 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (require 'web-mode)
 ;; turn on pair tag highlight for html
 (web-mode-toggle-current-element-highlight)
+
+(require 'company-web-html)
+
+(add-hook 'web-mode-hook (lambda ()
+                          (set (make-local-variable 'company-backends) '(company-web-html))
+                          (company-mode t)))
 
 ;;Show css properties of an html element
 (autoload 'showcss-mode "show_css"

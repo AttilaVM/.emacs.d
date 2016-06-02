@@ -2,6 +2,4 @@
 #name : EJS if
 #key : ejsif
 # --
-<% if ($1) { %>
-  `yas-selected-text`
-<% } %>
+<% if ($1) { %> `yas-selected-text` <% } %>
