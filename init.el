@@ -90,22 +90,44 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;;----------------Packages-------------------------
 
-;; (defvar loaded-modes '("~/emacs.d/init.el") "Store loaded hooked modes to preven reloding them evrery time, when the mode activates" )
+(add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
 
-(setq loaded-modes '("~/emacs.d/init.el"))
-(listp loaded-modes)
-(defun layer-loader (mode-file control-init)
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
+
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.svg\\'" . xml-mode))
+
+
+(add-to-list 'auto-mode-alist '("\\.liq\\'" . liquidsoap-mode))
+
+(defvar loaded-modes '("~/emacs.d/init.el") "Store loaded hooked modes to preven reloding them evrery time, when the mode activates" )
+
+(defun layer-loader (mode-file &optional control-init)
   "Load hooked mode config"
   (unless (memq mode-file loaded-modes)
       (message "load")
   	(load mode-file)
   	(funcall control-init)
-  	(add-to-list 'loaded-modes 'mode-file)
+  	(add-to-list 'loaded-modes mode-file)
   	))
 
 
 ;;Auto-complete is a dependency of yasnipper
 (package-initialize)
+
+(load "~/.emacs.d/confs/ibuffer.el")
 
 (require 'autopair)
 (autopair-global-mode)
@@ -114,10 +136,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (editorconfig-mode 1)
 
 (require 'hexl)
-(add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
 
-(load "~/.emacs.d/extensions/liquidsoap-mode.el")
-(add-to-list 'auto-mode-alist '("\\.liq\\'" . liquidsoap-mode))
 
 ;; Configure tramp hosts
 (require 'tramp)
@@ -292,16 +311,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;; Set up web mode fore file extensions
 (require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.svg\\'" . xml-mode))
 ;; turn on pair tag highlight for html
 (web-mode-toggle-current-element-highlight)
 
@@ -328,12 +337,18 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode))
 
 
-(add-hook 'js-mode-hook (lambda ()
+(add-hook 'js2-mode-hook (lambda ()
 			  (layer-loader "~/.emacs.d/confs/js.el" 'controll-js)))
 (add-hook 'python-mode-hook (lambda()
 			      (layer-loader "~/.emacs.d/confs/python.el" 'controll-python)))
 (add-hook 'latex-mode-hook (lambda()
-			      (layer-loader "~/.emacs.d/confs/latex.el" 'controll-latex)))
+			     (layer-loader "~/.emacs.d/confs/latex.el" 'controll-latex)))
+
+(add-hook 'latex-mode-hook (lambda()
+			     (layer-loader "~/.emacs.d/confs/latex.el" 'controll-latex)))
+
+(load "~/.emacs.d/extensions/liquidsoap-mode.el")
+
 
 (require 'impatient-mode)
 
@@ -342,7 +357,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 '(server-mode t)
 
 (require 'yaml-mode)
-(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
 ;;  Unlike python-mode, this mode follows the Emacs convention of not binding the ENTER key to `newline-and-indent'.  To get this behavior, add the key definition to `yaml-mode-hook':
 (add-hook 'yaml-mode-hook
           '(lambda ()
@@ -503,6 +517,30 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
   (interactive)(if (equal magit-display-buffer-noselect nil)
                    (setq magit-display-buffer-noselect t) (setq magit-display-buffer-noselect nil)))
 
+
+;; Copied from https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org
+(defun my/smarter-move-beginning-of-line (arg)
+  "Move point back to indentation of beginning of line.
+
+Move point to the first non-whitespace character on this line.
+If point is already there, move to the beginning of the line.
+Effectively toggle between the first non-whitespace character and
+the beginning of the line.
+
+If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+point reaches the beginning or end of the buffer, stop there."
+  (interactive "^p")
+  (setq arg (or arg 1))
+
+  ;; Move lines first
+  (when (/= arg 1)
+    (let ((line-move-visual nil))
+      (forward-line (1- arg))))
+
+  (let ((orig-point (point)))
+    (back-to-indentation)
+    (when (= orig-point (point))
+      (move-beginning-of-line 1))))
 
 
 ;; Spell checking in comments for different modes

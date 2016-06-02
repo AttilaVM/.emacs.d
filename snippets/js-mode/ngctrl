@@ -1,6 +1,6 @@
 # -*- mode: snippet; require-final-newline: nil -*-
 # name: Angular Controller
-# key: ngctrl
+# key: nc
 # --
   /**
   * $1

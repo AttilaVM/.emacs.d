@@ -67,6 +67,9 @@
 (global-unset-key (kbd "C-M-b"))
 (global-set-key (kbd "s-b") 'backward-sexp)
 
+;; Use ibuffer for buffer managemnet
+(global-unset-key (kbd "C-x C-b"))
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 ;; helm--------------------------------------------
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 
@@ -155,6 +158,10 @@
 ;;------------------HELPER FUNCTIONS------------------------
 ;; Display magit buffer but do not select window for easy log reading
 (define-key magit-log-mode-map (kbd "s-<f3>") 'magit-display-noselect-toggle)
+
+;; remap C-a to `smarter-move-beginning-of-line'
+(global-set-key [remap move-beginning-of-line]
+                'my/smarter-move-beginning-of-line)
 
 ;; Complie latex without asking too many questions baby!
 (defun controll-latex ()
