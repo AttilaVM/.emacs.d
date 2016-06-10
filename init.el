@@ -131,6 +131,7 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (load "~/.emacs.d/confs/ibuffer.el")
 (load "~/.emacs.d/confs/guide-key.el")
+(load "~/.emacs.d/confs/kite-mini.el")
 
 (require 'autopair)
 (autopair-global-mode)
@@ -582,6 +583,27 @@ The return value is the new value of LIST-VAR."
       (set list-var elements)))
   (symbol-value list-var))
 
+(defun my/copy-lines-matching-re (re)
+  "find all lines matching the regexp RE in the current buffer
+putting the matching lines in a buffer named *matching*"
+  (interactive "sRegexp to match: ")
+  (let ((result-buffer (get-buffer-create "*matching*"))
+	(original-buffer (buffer-name)))
+    (with-current-buffer result-buffer 
+      (erase-buffer))
+    (save-match-data 
+      (save-excursion
+        (goto-char (point-min))
+        (while (re-search-forward re nil t)
+          (princ (buffer-substring-no-properties (line-beginning-position) 
+                                                 (line-beginning-position 2))
+                 result-buffer))))
+    (pop-to-buffer result-buffer)
+    (kill-region (point-min) (point-max))
+    (kill-buffer)
+    (pop-to-buffer original-buffer)))
 
 
+;; load keybindings
+(load "~/.emacs.d/confs/after-save.el")
 (load "~/.emacs.d/control.el")

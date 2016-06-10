@@ -3,6 +3,14 @@
 ;;; Commentary:
 ;; Global package agnostic, global package dependent, local package reletad and sef defined interactive function bindings
 
+;;;; Conventions:
+;; s-.      To toggle folding of one block
+;; C-s-.    To toggle folding of all block in current buffer
+;; M-.      Jump to definition
+;; C-c C-d  Get tag documentation
+;; s-r      Refactor prefix
+
+
 ;;; Code:
 
 ;;---------------GLOBAL PACKAGE AGNOSTIC----------------------
@@ -97,6 +105,15 @@
 ;; ???
 (global-set-key (kbd "<C-kp-4>") 'sm/toggle-showcss)
 
+;; Rebind scrolling other window
+(global-unset-key (kbd "C-M-v"))
+(global-unset-key (kbd "C-M-S-v"))
+(global-set-key (kbd "s-<down>") 'scroll-other-window)
+(global-set-key (kbd "s-<up>") 'scroll-other-window-down)
+
+;; Get all bindings for major mode
+(global-set-key (kbd "C-h C-m") 'discover-my-major)
+(global-set-key (kbd "C-h M-m") 'discover-my-mode)
 ;;---------------LOCAL BINDINGS---------------
 ;; helm--------------------------------------
 (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
@@ -126,7 +143,7 @@
 (define-key yas-minor-mode-map (kbd "C-l") 'yas-prev-field)
 (define-key yas-minor-mode-map (kbd "<tab>") nil)
 (define-key yas-minor-mode-map (kbd "TAB") nil)
-(define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
+(define-key yas-minor-mode-map (kbd "<backtab>") 'yas/expand)
 ;; flyspell
 (define-key flyspell-mode-map (kbd "C-;") nil)
 ;; Emacs-lisp TODO make an eval-buffer-or-region function for it
@@ -139,6 +156,13 @@
   "Add javascript bindings"
   (js2r-add-keybindings-with-prefix "C-c C-r")
   (define-key js2-mode-map (kbd "s-c f") 'jscs-fix)
+  (define-key js2-mode-map (kbd "C-c C-o") nil)
+  (define-key js2-mode-map (kbd "s-.") 'js2-mode-toggle-element)
+  (define-key js2-mode-map (kbd "C-c C-f") nil)
+  (define-key js2-mode-map (kbd "C-s-.") 'js2-mode-toggle-hide-functions)
+  (define-key tern-mode-keymap (kbd "C-c C-r") nil)
+  (define-key tern-mode-keymap (kbd "s-r v") 'tern-rename-variable)
+  
 )
 ;; css-mode / scss-mode / less-css-mode
 (dolist ($hook '(css-mode-hook scss-mode-hook less-css-mode-hook))
@@ -162,6 +186,8 @@
 ;; remap C-a to `smarter-move-beginning-of-line'
 (global-set-key [remap move-beginning-of-line]
                 'my/smarter-move-beginning-of-line)
+
+(global-set-key (kbd "s-w") 'my/copy-lines-matching-re)
 
 ;; Complie latex without asking too many questions baby!
 (defun controll-latex ()
