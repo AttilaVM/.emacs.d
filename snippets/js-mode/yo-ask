@@ -1,0 +1,13 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: function
+# key: yoa
+# --
+
+$1: function $1Tasks() {
+             return this.prompt([
+            $0
+				 
+	     ]).then(function saveUserInput(answers) {
+	     $2
+	     });
+}

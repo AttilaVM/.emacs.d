@@ -1,0 +1,12 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: blend4web module
+# key: b4wm
+# --
+/**
+* $1
+*
+* @author  Attila V. Molnar
+* @version $2
+* @since   `(replace-regexp-in-string "\n$" "" (shell-command-to-string "date --iso-8601"))` 
+*/
+b4w.module["__$3"] = function(exports, require) {$0};
