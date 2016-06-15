@@ -1,7 +1,8 @@
 # -*- mode: snippet; require-final-newline: nil -*-
-# name: function
+# name: Simple function
 # key: f
 # --
 function ${1:name}(${2:arg}) {
-         `yas-selected-text`$0
+	 `yas/selected-text`
+         `(yas/hacks-selected-text-replace)`$0
 }

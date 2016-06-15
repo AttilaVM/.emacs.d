@@ -55,7 +55,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 ;;-----------------Controls-----------------------
 ;; y or n for verification instead of yes or no
 (fset 'yes-or-no-p 'y-or-n-p)
-
+;; Make Emacs delete selected region on insertion event, similary to other editors.
+(delete-selection-mode 1)
 
 
 ;;-----------------Repositories------------------
@@ -319,10 +320,11 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (web-mode-toggle-current-element-highlight)
 
 (require 'company-web-html)
-
+(require 'emmet-mode)
 (add-hook 'web-mode-hook (lambda ()
                           (set (make-local-variable 'company-backends) '(company-web-html))
-                          (company-mode t)))
+                          (company-mode t)
+			  (emmet-mode t)))
 
 ;;Show css properties of an html element
 (autoload 'showcss-mode "show_css"
@@ -483,12 +485,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (setq grab-screen-color-mode "html")
 
-(defun yas-selected-text-replace (beg)
-  "Replace selected text in snippets"
-  (let ((insertion (concat beg yas-selected-text)))
-    (delete-region (mark) (point))
-    insertion))
-
 (defun my-newline-below()
   "Jum to the end of the line and inser a linebreak"
   (interactive)
@@ -605,5 +601,6 @@ putting the matching lines in a buffer named *matching*"
 
 
 ;; load keybindings
+(load "~/.emacs.d/confs/yas.el")
 (load "~/.emacs.d/confs/after-save.el")
 (load "~/.emacs.d/control.el")

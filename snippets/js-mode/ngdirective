@@ -1,0 +1,12 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Angular Directive
+# key: nd
+# --
+`(yas/hacks-replace-previous-char ";" ".")`
+/**
+* $2
+*/
+directive('$3', [$4, function($5){
+            ${6:$$(yas-choose-value '("return function(scope, element, attr){" "{"))$7}}
+            
+  } ]);

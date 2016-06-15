@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Set timeout
+# key: st
+# --
+/**
+* $1
+*/
+setTimeout(function($4) {
+    $0  
+    }${2:$$(yas-choose-value '(" " ".bind(this)"))}, $3);

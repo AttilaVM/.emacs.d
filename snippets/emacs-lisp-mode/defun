@@ -1,8 +1,8 @@
 # -*- mode: snippet -*-
-# name: defun
-# key: f
+# name: Interactive function
+# key: fi
 # --
 (defun ${1:fun} (${2:args})
    "$3"
   ${4:(interactive${5: "P"})}
-  $0)
+  `yas/selected-text` `(yas/hacks-selected-text-replace)`$0)

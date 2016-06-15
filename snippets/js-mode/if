@@ -2,5 +2,5 @@
 #name : if
 # --
 if (${1:condition}) {
-  `yas-selected-text`$0
+  `yas-selected-text``(yas/hacks-selected-text-replace)`$0
 }
