@@ -81,6 +81,10 @@
 ;; helm--------------------------------------------
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 
+;; Multiple cursor
+(global-set-key (kbd "s-n") 'mc/edit-lines)
+(global-set-key (kbd "M-s-s") 'mc/mark-next-like-this)
+
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
 ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
 ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
@@ -152,18 +156,16 @@
 (define-key c-mode-map  [(tab)] 'company-complete)
 (define-key c++-mode-map  [(tab)] 'company-complete)
 ;; js2-refactor-mode
-(defun controll-js ()
-  "Add javascript bindings"
-  (js2r-add-keybindings-with-prefix "C-c C-r")
-  (define-key js2-mode-map (kbd "s-c f") 'jscs-fix)
-  (define-key js2-mode-map (kbd "C-c C-o") nil)
-  (define-key js2-mode-map (kbd "s-.") 'js2-mode-toggle-element)
-  (define-key js2-mode-map (kbd "C-c C-f") nil)
-  (define-key js2-mode-map (kbd "C-s-.") 'js2-mode-toggle-hide-functions)
-  (define-key tern-mode-keymap (kbd "C-c C-r") nil)
-  (define-key tern-mode-keymap (kbd "s-r v") 'tern-rename-variable)
+
+(js2r-add-keybindings-with-prefix "C-c C-r")
+(define-key js2-mode-map (kbd "s-c f") 'jscs-fix)
+(define-key js2-mode-map (kbd "C-c C-o") nil)
+(define-key js2-mode-map (kbd "s-.") 'js2-mode-toggle-element)
+(define-key js2-mode-map (kbd "C-c C-f") nil)
+(define-key js2-mode-map (kbd "C-s-.") 'js2-mode-toggle-hide-functions)
+(define-key tern-mode-keymap (kbd "C-c C-r") nil)
+(define-key tern-mode-keymap (kbd "s-r v") 'tern-rename-variable)
   
-)
 ;; css-mode / scss-mode / less-css-mode
 (dolist ($hook '(css-mode-hook scss-mode-hook less-css-mode-hook))
   (add-hook

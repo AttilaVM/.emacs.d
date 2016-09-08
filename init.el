@@ -57,6 +57,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (fset 'yes-or-no-p 'y-or-n-p)
 ;; Make Emacs delete selected region on insertion event, similary to other editors.
 (delete-selection-mode 1)
+;; Do not load outdated byte code
+(setq load-prefer-newer t)
 
 
 ;;-----------------Repositories------------------
@@ -136,6 +138,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (require 'autopair)
 (autopair-global-mode)
+
+(require 'multiple-cursors)
 
 (require 'editorconfig)
 (editorconfig-mode 1)
@@ -348,14 +352,10 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 (add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode))
 
+(load "~/.emacs.d/confs/js.el")
 
-(add-hook 'js2-mode-hook (lambda ()
-			  (layer-loader "~/.emacs.d/confs/js.el" 'controll-js)))
 (add-hook 'python-mode-hook (lambda()
 			      (layer-loader "~/.emacs.d/confs/python.el" 'controll-python)))
-(add-hook 'latex-mode-hook (lambda()
-			     (layer-loader "~/.emacs.d/confs/latex.el" 'controll-latex)))
-
 (add-hook 'latex-mode-hook (lambda()
 			     (layer-loader "~/.emacs.d/confs/latex.el" 'controll-latex)))
 

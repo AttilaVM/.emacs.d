@@ -1,6 +1,7 @@
 Milestones:
         Effective Blender-mode usage
         Dynamic loading
+        npm-mode
 
 Issues:
         first helm isearch fails

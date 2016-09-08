@@ -3,5 +3,6 @@
 # key: f
 # group: definitions
 # --
-def ${1:fun}(${2:args}):
+def ${2:fun}(${3:}):
+    """$1"""
     $0
