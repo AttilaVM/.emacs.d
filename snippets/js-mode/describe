@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : describe
+#key : describe
+#desc : TODO make function name camel case version of the description argument.
+# --
+describe('$1', function ${1:$(my/camelize yas-text)}() {
+  $0
+});

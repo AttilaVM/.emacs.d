@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : gulp.task
+#key : gulp.task
+# --
+gulp.task('$1', function ${1:$(my/camelize yas-text)}() {
+  $0
+});

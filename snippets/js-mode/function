@@ -2,7 +2,6 @@
 # name: Simple function
 # key: f
 # --
-function ${1:name}(${2:arg}) {
-	 `yas/selected-text`
-         `(yas/hacks-selected-text-replace)`$0
+function $1($2) {
+	 `yas/selected-text``(yas/hacks-selected-text-replace)`$0
 }

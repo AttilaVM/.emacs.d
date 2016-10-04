@@ -1,5 +1,5 @@
 #contributor : Molnar Attila <ate.molnar2@gmail.com>
 #name : EJS output (html escaped)
-#key : ejso
+#key : ejs
 # --
 <%= $1 %>$0

@@ -1,0 +1,4 @@
+# name: property method
+# key: pm
+# --
+$1: function $1($2) {$0}

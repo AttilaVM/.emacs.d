@@ -136,6 +136,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (load "~/.emacs.d/confs/guide-key.el")
 (load "~/.emacs.d/confs/kite-mini.el")
 
+(ace-popup-menu-mode 1)
+
 (require 'autopair)
 (autopair-global-mode)
 
@@ -224,7 +226,6 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 
 ;; helm-ack
 (require 'helm-config)
-(require 'helm-ack)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -353,11 +354,8 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
 (add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode))
 
 (load "~/.emacs.d/confs/js.el")
-
-(add-hook 'python-mode-hook (lambda()
-			      (layer-loader "~/.emacs.d/confs/python.el" 'controll-python)))
-(add-hook 'latex-mode-hook (lambda()
-			     (layer-loader "~/.emacs.d/confs/latex.el" 'controll-latex)))
+(load "~/.emacs.d/confs/latex.el")
+(load "~/.emacs.d/confs/python.el")
 
 (load "~/.emacs.d/extensions/liquidsoap-mode.el")
 
@@ -522,6 +520,16 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
   "Display magit buffer but do not select window"
   (interactive)(if (equal magit-display-buffer-noselect nil)
                    (setq magit-display-buffer-noselect t) (setq magit-display-buffer-noselect nil)))
+
+;; Taken from https://www.emacswiki.org/emacs/RevertBuffer
+(defun revert-all-buffers ()
+    "Refreshes all open buffers from their respective files."
+    (interactive)
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
+          (revert-buffer t t t) )))
+    (message "Refreshed open files.") )
 
 
 ;; Copied from https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org

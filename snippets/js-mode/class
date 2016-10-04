@@ -1,8 +1,10 @@
 # -*- mode: snippet -*-
 #name : Class
+#key : cl
 # --
-var ${1:name} = new Class({
-  initialize: function($2) {
-    $0
+
+class $1 {
+  constructor($2) {
+  ${2:$(my/constructor-generator yas-text "this." ";")} $0  
   }
-});
+}

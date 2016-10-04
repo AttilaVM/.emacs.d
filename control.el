@@ -65,6 +65,9 @@
 (global-set-key (kbd "M-g g") 'avy-goto-line)
 (global-set-key (kbd "M-g w") 'avy-goto-word-1)
 
+;; Seilver Searcher mode: ag
+(global-set-key (kbd "C-s-s") 'helm-ag-project-root)
+
 ;; overide paired expressin jump
 ;; forward
 (global-unset-key (kbd "<C-M-right>"))
@@ -176,6 +179,8 @@
 (define-key isearch-mode-map (kbd "s-i") 'helm-css-scss-from-isearch)
 (define-key helm-css-scss-map (kbd "s-i") 'helm-css-scss-multi-from-helm-css-scss)
 
+(define-key emmet-mode-keymap (kbd "s-<tab>") 'emmet-expand-line)
+
 (global-set-key (kbd "C-M-g") 'grunt-exec)
 ;; nxml-mode
 ;; (define-key nxml-mode-map (kbd "s-n") 'nxml-forward-element)
@@ -192,19 +197,17 @@
 (global-set-key (kbd "s-w") 'my/copy-lines-matching-re)
 
 ;; Complie latex without asking too many questions baby!
-(defun controll-latex ()
-  "Add latex bindings"
-		(define-key LaTeX-mode-map (kbd "C-c C-c") 'my-run-latex)
-		(define-key LaTeX-mode-map (kbd "s-c s-c") 'TeX-command-master))
+
+(define-key LaTeX-mode-map (kbd "C-c C-c") 'my-run-latex)
+(define-key LaTeX-mode-map (kbd "s-c s-c") 'TeX-command-master)
 
 ;; ELPY: Restart python console before evaluate buffer or region to avoid various uncanny conflicts, like not reloding modules even when they are changed
-(defun controll-python ()
-  "Add python, elpy and django bindings"
-  (define-key elpy-mode-map (kbd "s-c s-c") 'my-restart-python-console)
-  (define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep)
-  ;; conventional syntax checker binding
-  (define-key elpy-mode-map (kbd "s-c f") 'elpy-autopep8-fix-code)
-  )
+
+(define-key elpy-mode-map (kbd "s-c s-c") 'my-restart-python-console)
+(define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep)
+;; conventional syntax checker binding
+(define-key elpy-mode-map (kbd "s-c f") 'elpy-autopep8-fix-code)
+
 
 ;; Jump to a new line below or above
 (global-set-key (kbd "<M-RET>") 'my-newline-below)

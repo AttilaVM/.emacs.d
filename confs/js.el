@@ -8,6 +8,10 @@
 
 (add-something-to-mode-hooks '(js) 'fic-ext-mode)
 
+;; automaticly fix styling with eslint on save
+(eval-after-load 'js2-mode
+       '(add-hook 'js2-mode-hook (lambda () (add-hook 'after-save-hook 'eslint-fix nil t))))
+
 ;; Configure refactoring
 (require 'js2-refactor)
 (add-hook 'js2-mode-hook #'js2-refactor-mode)
@@ -16,15 +20,13 @@
 (require 'tern)
 (add-hook 'js-mode-hook (lambda () (tern-mode t)))
 ;; tern auto completion
-;; (eval-after-load 'tern
-;;    '(progn
-;;       (tern-ac-setup)))
+(eval-after-load 'tern
+   '(progn
+      (tern-ac-setup)))
 
 ;; Hook json-mode to .jscsrc
 (add-to-list 'auto-mode-alist '("\\.jscsrc\\'" . json-mode))
 ;; Hook JSCS to js and JSON modes
-(add-hook 'js-mode-hook #'jscs-indent-apply)
-(add-hook 'js2-mode-hook #'jscs-indent-apply)
 (add-hook 'json-mode-hook #'jscs-indent-apply)
 
 ;; Set up company mode for tern

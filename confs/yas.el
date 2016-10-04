@@ -34,3 +34,20 @@
 	    (progn
 	      (search-backward yas/selected-text)
 	      (replace-match ""))))))
+
+(defun my/camelize (s)
+  "Convert under_score string S to CamelCase string."
+  (store-substring (mapconcat 'identity (mapcar
+                        (lambda (word) (capitalize (downcase word)))
+                        (split-string s "[-_ ]+")) "") 0 (if (> (length s) 0)
+                                                             (downcase (substring s 0 1)))))
+
+
+(defun my/constructor-generator (s prefix postfix)
+  "Helps snippets"
+  (mapconcat 'identity (mapcar
+                        (lambda (word) (concat prefix word " = " word postfix))
+                        (split-string s ", ")) "\n" ))
+
+  
+;; 
