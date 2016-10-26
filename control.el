@@ -14,18 +14,27 @@
 ;;; Code:
 
 ;;---------------GLOBAL PACKAGE AGNOSTIC----------------------
+
+;; I do not want to put Emacs into the background, when I am not in the terminal
+(when (display-graphic-p)
+  (progn
+    (global-unset-key (kbd "C-z"))
+    (global-unset-key (kbd "C-x C-z"))))
+
+;; I do recusive edit rarely, but often look around my point
+(global-unset-key (kbd "C-]"))
+(global-unset-key (kbd "C-x X a"))
+(global-set-key (kbd "<C-escape> r") 'recursive-edit)
+(global-set-key (kbd "C-]") 'recenter-top-bottom)
+
+;; Sometimes when using a complex major mode is easier to explore menus.
+(global-set-key (kbd "<C-f11> m") 'menu-bar-toggle)
+
 (global-set-key (kbd "C-s-a") 'org-agenda)
 (global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
-;; Use C-h and M-h , instead of backspace, s-h for help
-;; (global-unset-key (kbd "<backspace>"))
-;; (global-unset-key (kbd "C-h"))
-;; (setq help-char nil)
-;; (global-set-key (kbd "C-h") 'delete-backward-char)
-;; (global-unset-key (kbd "<f1>"))
-;; (global-set-key (kbd "<f1>") help-map)
-;; (global-unset-key (kbd "M-h"))
-;; (global-set-key (kbd "s-h") 'mark-paragraph)
-;; (global-set-key (kbd "M-h") 'backward-kill-word)
+
+(global-unset-key (kbd "M-o"))
+(global-set-key (kbd "M-o") 'rotate-windows)
 
 ;; Calc
 (global-set-key (kbd "<f2>") 'quick-calc)
@@ -34,7 +43,6 @@
 (global-set-key (kbd "<C-kp-subtract>") 'decrement-number-at-point)
 (global-set-key (kbd "<C-kp-1>") 'my-insert-file-name)
 (global-set-key (kbd "<C-kp-2>") 'helm-colors)
-(global-set-key (kbd "s-l") 'clearConsole)
 
 (global-set-key (kbd "<C-kp-3>") 'scss-compile)
 (global-set-key (kbd "<C-kp-5>") 'show-file-name)
@@ -99,11 +107,11 @@
 (global-set-key (kbd "M-x") 'helm-M-x)
 ;; Use helm-buffers-list instead of default helm buffer lister
 (global-set-key (kbd "s-x b") 'helm-buffers-list)
-;; get the list of the bookmarks (C-x r m for saving bookmarks) 
+;; get the list of the bookmarks (C-x r m for saving bookmarks)
 (global-set-key (kbd "C-x r r") 'helm-bookmarks)
-;; More easier way to acces Emacs's internal "clipboard" 
+;; More easier way to acces Emacs's internal "clipboard"
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-;; Use helm with isearch 
+;; Use helm with isearch
 (global-set-key (kbd "s-s") 'helm-occur-from-isearch)
 ;; helm-ls-git
 (global-set-key (kbd "C-<f6>") 'helm-browse-project)
@@ -168,16 +176,8 @@
 (define-key js2-mode-map (kbd "C-s-.") 'js2-mode-toggle-hide-functions)
 (define-key tern-mode-keymap (kbd "C-c C-r") nil)
 (define-key tern-mode-keymap (kbd "s-r v") 'tern-rename-variable)
-  
-;; css-mode / scss-mode / less-css-mode
-(dolist ($hook '(css-mode-hook scss-mode-hook less-css-mode-hook))
-  (add-hook
-   $hook (lambda ()
-	   (local-set-key (kbd "s-i") 'helm-css-scss)
-	   (local-set-key (kbd "s-I") 'helm-css-scss-back-to-last-point))))
 
-(define-key isearch-mode-map (kbd "s-i") 'helm-css-scss-from-isearch)
-(define-key helm-css-scss-map (kbd "s-i") 'helm-css-scss-multi-from-helm-css-scss)
+;; css-mode / scss-mode / less-css-mode
 
 (define-key emmet-mode-keymap (kbd "s-<tab>") 'emmet-expand-line)
 
@@ -188,11 +188,10 @@
 
 ;;------------------HELPER FUNCTIONS------------------------
 ;; Display magit buffer but do not select window for easy log reading
-(define-key magit-log-mode-map (kbd "s-<f3>") 'magit-display-noselect-toggle)
 
 ;; remap C-a to `smarter-move-beginning-of-line'
 (global-set-key [remap move-beginning-of-line]
-                'my/smarter-move-beginning-of-line)
+		'my/smarter-move-beginning-of-line)
 
 (global-set-key (kbd "s-w") 'my/copy-lines-matching-re)
 
@@ -201,12 +200,7 @@
 (define-key LaTeX-mode-map (kbd "C-c C-c") 'my-run-latex)
 (define-key LaTeX-mode-map (kbd "s-c s-c") 'TeX-command-master)
 
-;; ELPY: Restart python console before evaluate buffer or region to avoid various uncanny conflicts, like not reloding modules even when they are changed
 
-(define-key elpy-mode-map (kbd "s-c s-c") 'my-restart-python-console)
-(define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep)
-;; conventional syntax checker binding
-(define-key elpy-mode-map (kbd "s-c f") 'elpy-autopep8-fix-code)
 
 
 ;; Jump to a new line below or above

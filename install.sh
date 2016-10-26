@@ -46,7 +46,7 @@ do
 done
 
 # Warn to install dependencies
-reaquariedPackages=( "ipython" "strace" "tern" "jscs" "tex" "gtags" "7z" )
+reaquariedPackages=( "ipython" "strace" "tern" "jscs" "tex" "gtags" "7z" "ag" "lein" )
 
 for package in "${reaquariedPackages[@]}"
 do

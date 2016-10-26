@@ -1,4 +1,8 @@
-
+(use-package yasnippet
+  :config
+  (yas-global-mode 1)
+  (setq yas-snippet-dirs
+      '("~/.emacs.d/snippets/")))
 
 (defun yas/hacks-replace-previous-char (target replacement)
   "Replace the first oocurence of target-chat with replacement-char while searching backward"

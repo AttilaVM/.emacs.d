@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: matrix
+# key: matrix
+# --
+matrix(${1:scaleX}, ${2: skewY}, ${3:skewX}, ${4:scaleY}, ${5:translateX}, ${translateY})

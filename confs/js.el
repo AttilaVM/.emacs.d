@@ -6,8 +6,6 @@
 ;; Configure imenu for js2-mode
 (add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
 
-(add-something-to-mode-hooks '(js) 'fic-ext-mode)
-
 ;; automaticly fix styling with eslint on save
 (eval-after-load 'js2-mode
        '(add-hook 'js2-mode-hook (lambda () (add-hook 'after-save-hook 'eslint-fix nil t))))
