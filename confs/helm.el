@@ -10,22 +10,22 @@
 (use-package helm
   :config
   (progn (require 'helm-config)
-         (setq enable-recursive-minibuffers t)
-         ;; make helm adapt to my choices
-         (helm-adaptive-mode)
-         ;; Make helm use the active window for interaction
-         (setq
-          ;; Open helm buffer in current winsow
-          helm-split-window-in-side-p           t
-          ;; cylcle throught helm results
-          helm-move-to-line-cycle-in-source     t
-          ;; search for library in `require' and `declare-function' sexp.
-          helm-ff-search-library-in-sexp        t
-          ; scroll 8 lines other window using M-<next>/M-<prior>
-          helm-scroll-amount                    8
-          ;; Use the recent file, when finding files
-          helm-ff-file-name-history-use-recentf t)
-         (helm-mode 1)))
+	 (setq enable-recursive-minibuffers t)
+	 ;; make helm adapt to my choices
+	 (helm-adaptive-mode)
+	 ;; Make helm use the active window for interaction
+	 (setq
+	  ;; Open helm buffer in current winsow
+	  helm-split-window-in-side-p           t
+	  ;; cylcle throught helm results
+	  helm-move-to-line-cycle-in-source     t
+	  ;; search for library in `require' and `declare-function' sexp.
+	  helm-ff-search-library-in-sexp        t
+	  ; scroll 8 lines other window using M-<next>/M-<prior>
+	  helm-scroll-amount                    8
+	  ;; Use the recent file, when finding files
+	  helm-ff-file-name-history-use-recentf t)
+	 (helm-mode 1)))
 
 
 (use-package helm-c-yasnippet
@@ -35,7 +35,7 @@
 (use-package projectile
   :config
   (progn (setq projectile-completion-system 'helm)
-         (helm-projectile-on))
+	 (helm-projectile-on))
   :bind
   ("C-c p p" . helm-projectile-switch-project)
   ("C-c p f" . helm-projectile-find-file)
@@ -57,10 +57,10 @@
 (use-package helm-gtags
   :config
   (my/add-hooks '(dired-mode-hook
-                  eshell-mode-hook
-                  c-mode-hook
-                  c++-mode-hook
-                  asm-mode-hook) 'helm-gtags-mode )
+		  eshell-mode-hook
+		  c-mode-hook
+		  c++-mode-hook
+		  asm-mode-hook) 'helm-gtags-mode )
   ;; Set up helm-gtags for GNU GLOBAL source tagging system
   ;; FIXME \c-cg can only be defined here, throw error if assigned in control.el
   (setq
@@ -71,5 +71,18 @@
    helm-gtags-prefix-key "\C-cg"
    helm-gtags-suggested-key-mapping t
    ))
+
+;; Use helm to inser ASCII arts
+(use-package helm-rage
+  :bind
+  (("s-i m" . helm-rage)))
+
+;; use helm to inser unicode characters
+(use-package helm-unicode
+  :bind
+  (("s-i u" . helm-unicode)))
+
+
+
 
 ;;; helm.el ends here

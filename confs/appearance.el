@@ -13,8 +13,15 @@
 (scroll-bar-mode -1)
 
 ;; Set global font type
-(add-to-list 'default-frame-alist '(font . "inconsolata-12" ))
-(set-face-attribute 'default t :font "inconsolata-12" )
+;; (add-to-list 'default-frame-alist '(font . "inconsolata-12" ))
+;; (set-face-attribute 'default t :font "inconsolata-12" )
+
+(add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline-11" ))
+(set-face-attribute 'default t :font "Inconsolata-dz for Powerline-11")
+
+
+;; Set termina font type-break
+
 
 ;; Enable line numbers globally
 (global-linum-mode t)
@@ -24,8 +31,8 @@
 ;; Show parentheses
 (show-paren-mode 1)
 
-;; Set marker color to green
 (require 'paren)
+;; Set marker color to green
 (set-face-background 'show-paren-match (face-background 'default))
 (set-face-foreground 'show-paren-match "#009900")
 
@@ -65,14 +72,14 @@
 
 If you unset the urgency, you still have to visit the frame to make the urgency setting disappear (at least in KDE)."
   (let* ((wm-hints (append (x-window-property
-                            "WM_HINTS" frame "WM_HINTS"
-                            source nil t) nil))
-         (flags (car wm-hints)))
+			    "WM_HINTS" frame "WM_HINTS"
+			    source nil t) nil))
+	 (flags (car wm-hints)))
     ; (message flags)
     (setcar wm-hints
-            (if arg
-                (logior flags #x00000100)
-              (logand flags #x1ffffeff)))
+	    (if arg
+		(logior flags #x00000100)
+	      (logand flags #x1ffffeff)))
     (x-change-window-property "WM_HINTS" wm-hints frame "WM_HINTS" 32 t)))
 
 (defun x-urgent (&optional arg)

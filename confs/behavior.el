@@ -22,17 +22,29 @@
 ;; Set defalult-directory to .emacs.d to init helm-projectile at startup.
 (setq default-directory "~/.emacs.d")
 
-;; BUG Doesn't seem to work
+;; BUG: Doesn't seem to work
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup")))
 
+;; Use zsh for term
+(when (file-executable-p "/bin/zsh")
+  (setq explicit-shell-file-name "bin/zsh"))
+
 ;; Set startup buffer
-(setq initial-buffer-choice "~/Documents/reminder.org")
+(when (file-exists-p user/home-buffer)
+  (progn
+    (setq initial-buffer-choice user/home-buffer)
+    (global-set-key (kbd "<XF86HomePage>") 'my/change-to-home-buffer)))
+
 
 ;; Remove trailing white spaces on save
 (defvar whitespace-cleanup-on-save t)
 (add-hook 'before-save-hook
-          (lambda ()
-            (if whitespace-cleanup-on-save (whitespace-cleanup))))
+	  (lambda ()
+	    (if whitespace-cleanup-on-save (whitespace-cleanup))))
+
+;; Automaticly make executable script fils
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
 
 
 ;;; behavior.el ends here

@@ -34,18 +34,21 @@
 
 
 
+;; User specific information
+(load "~/.emacs.d/user.el")
 
 ;; functions to make Emacs configuration easier
 (load "~/.emacs.d/confs/mylib.el")
 
 ;; Define most fundemental Emacs behaviors, appearance and user specific settings
 (load "~/.emacs.d/confs/behavior.el")
-(load "~/.emacs.d/user.el")
 (load "~/.emacs.d/confs/appearance.el")
-
 (load "~/.emacs.d/confs/helpers.el")
 (load "~/.emacs.d/confs/nav.el")
 (load "~/.emacs.d/confs/edit.el")
+(load "~/.emacs.d/confs/ai.el")
+(load "~/.emacs.d/confs/term.el")
+(load "~/.emacs.d/confs/dired.el")
 (load "~/.emacs.d/confs/vc.el")
 (load "~/.emacs.d/confs/guide.el")
 (load "~/.emacs.d/confs/network.el")
@@ -59,6 +62,10 @@
 
 ;; Project management and higher capabilities
 (load "~/.emacs.d/confs/helm.el")
+
+;; Multimedia
+(load "~/.emacs.d/confs/emms.el")
+
 
 (ace-popup-menu-mode 1)
 

@@ -34,7 +34,10 @@
 (global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
 
 (global-unset-key (kbd "M-o"))
-(global-set-key (kbd "M-o") 'rotate-windows)
+(global-set-key (kbd "s-o") 'rotate-windows)
+(global-set-key (kbd "C-o") 'other-window)
+(global-set-key (kbd "M-O") 'other-frame)
+
 
 ;; Calc
 (global-set-key (kbd "<f2>") 'quick-calc)
@@ -49,7 +52,6 @@
 (global-set-key (kbd "<C-kp-6>") 'grab-screen-color)
 
 (global-unset-key (kbd "C-x o"))
-(global-set-key (kbd "s-o") 'other-window)
 
 ;; Running shell command with different ways
 (global-unset-key (kbd "M-!")) ;; shell-command
