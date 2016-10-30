@@ -64,7 +64,10 @@
 (load "~/.emacs.d/confs/helm.el")
 
 ;; Multimedia
-(load "~/.emacs.d/confs/emms.el")
+(when(executable-find "rtorrent")
+  (load "~/.emacs.d/confs/mentor.el"))
+(when(or (executable-find "vlc") (executable-find "mplayer"))
+  (load "~/.emacs.d/confs/emms.el"))
 
 
 (ace-popup-menu-mode 1)
@@ -92,37 +95,28 @@
  '(js2-imenu-enabled-frameworks nil)
  '(org-agenda-files (quote ("~/Documents/mytime.org"))))
 
-;; Search in css/scss selectors with helm
 
-(require 'auto-complete)
-
-;; Rainbow parenthese
-(add-hook 'emacs-lisp-mode-hook' rainbow-delimiters-mode)
-(add-hook 'clojure-mode-hook' rainbow-delimiters-mode)
-(add-hook 'js2-mode-hook' rainbow-delimiters-mode)
-
-
-(package-install 'flycheck)
-
-(global-flycheck-mode)
-
-(require 'flyspell)
+(use-package flyspell)
 
 ;; Set up source code fintification
 (setq org-src-fontify-natively t)
 
-(require 'undo-tree)
+(use-package undo-tree)
 
 
 ;; Company mode
-(require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
+(use-package company
+  :config
+  (add-hook 'after-init-hook 'global-company-mode))
 
 
 
-;; Use company with Clang
-(require 'cc-mode)
-(setq company-backends (delete 'company-semantic company-backends))
+
+ ;; Use company with Clang
+(use-package cc-mode
+  :config
+    (setq company-backends (delete 'company-semantic company-backends))
+)
 
 ;; Set up header completition
 (add-to-list 'company-backends 'company-c-headers)
@@ -134,7 +128,7 @@
 (add-hook 'haskell-mode-hook #'hindent-mode)
 
 ;; Markdown mode-line
-(require 'markdown-mode)
+(use-package markdown-mode)
 (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
