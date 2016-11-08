@@ -46,5 +46,14 @@
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
 
+;; Set Emacs default browser
+(setq gnus-button-url 'browse-url-generic
+      browse-url-browser-function gnus-button-url
+      browse-url-generic-program (my/get-first-match
+				  '("conkeror" "vivaldi" "google-chrome-stable" "chromium" "firefox")
+				  (function (lambda (command)
+					      (if (executable-find command)
+						  command
+						nil)))))
 
 ;;; behavior.el ends here

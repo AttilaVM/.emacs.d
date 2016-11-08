@@ -46,6 +46,7 @@
 (load "~/.emacs.d/confs/helpers.el")
 (load "~/.emacs.d/confs/nav.el")
 (load "~/.emacs.d/confs/edit.el")
+(load "~/.emacs.d/confs/workgroups.el")
 (load "~/.emacs.d/confs/ai.el")
 (load "~/.emacs.d/confs/term.el")
 (load "~/.emacs.d/confs/dired.el")
@@ -55,6 +56,7 @@
 
 ;; Language specific
 (load "~/.emacs.d/confs/clojure.el")
+(load "~/.emacs.d/confs/web.el")
 (load "~/.emacs.d/confs/data_analysis.el")
 (load "~/.emacs.d/confs/ibuffer.el")
 

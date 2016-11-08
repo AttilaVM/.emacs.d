@@ -57,7 +57,7 @@
    ("<C-f6>" . emms-seek-backward)
    ("<M-f6>" . my/emms-seek-beg)
    ("<C-f7>" . emms-seek-forward)
-   ("<M-f7>" . my/emms-jump-forward)
+   ("<M-f5>" . my/emms-jump-forward)
    ("<XF86Forward>" . emms-next)
    ("<XF86Back>" . emms-previous)
    ;; ("<C-f8> s" . emms-start)
@@ -73,6 +73,8 @@
    ;; Scoring
    ("<C-f8> s +" . emms-score-up-playing)
    ("<C-f8> s -" . emms-score-down-playing)
+   ("<C-f10>" . emms-score-up-playing)
+   ("<C-f9>" . emms-score-down-playing)
    ("<C-f8> s n" . emms-score-set-playing)
    ("<C-f8> s t" . emms-score-set-tolerance)
    ("<C-f8> s m" . emms-score-change-mood)
@@ -99,7 +101,7 @@
 
 ;; TODO give notebook hostname
   (when (string= system-name "attilaWorkStation")
-    (progn (defvar emms-source-file-default-directory "/mnt/storage/music")
+    (progn (defvar emms-source-file-default-directory "~/music")
 	   (emms-add-playlist-directory "~/music/playlists")))
 
 (use-package helm-emms)

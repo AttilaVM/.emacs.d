@@ -14,3 +14,9 @@
    ;; (setq buffer-face-mode-face '(:family "Powerline-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1" :height 130))
    (setq buffer-face-mode-face '(:family "unknown-Inconsolata-dz" :height 130))
    (buffer-face-mode))
+
+(defun my/get-first-match (list filter)
+  (when list
+    (if (funcall filter (car list))
+		(car list)
+		(my/get-first-match (cdr list) filter))))
