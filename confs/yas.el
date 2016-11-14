@@ -6,7 +6,7 @@
 
 (defun yas/hacks-replace-previous-char (target replacement)
   "Replace the first oocurence of target-chat with replacement-char while searching backward"
-  
+
   (let ((char-at-point nil)
 	(continue-flag t)
 	(target-char (string-to-char target))
@@ -42,16 +42,23 @@
 (defun my/camelize (s)
   "Convert under_score string S to CamelCase string."
   (store-substring (mapconcat 'identity (mapcar
-                        (lambda (word) (capitalize (downcase word)))
-                        (split-string s "[-_ ]+")) "") 0 (if (> (length s) 0)
-                                                             (downcase (substring s 0 1)))))
+			(lambda (word) (capitalize (downcase word)))
+			(split-string s "[-_ ]+")) "") 0 (if (> (length s) 0)
+							     (downcase (substring s 0 1)))))
 
 
 (defun my/constructor-generator (s prefix postfix)
   "Helps snippets"
   (mapconcat 'identity (mapcar
-                        (lambda (word) (concat prefix word " = " word postfix))
-                        (split-string s ", ")) "\n" ))
+			(lambda (word) (concat prefix word " = " word postfix))
+			(split-string s ", ")) "\n" ))
 
-  
-;; 
+(defun my/angular-di-generator (s)
+  "Helps snippets"
+  (let ((di-string (replace-regexp-in-string "'" "" s)))
+    (replace-regexp-in-string "[^a-zA-Z\$]*$" ""
+     (mapconcat 'identity (mapcar
+			(lambda (word) (concat word ", "))
+			(split-string di-string ", ")) "" ))))
+
+;;

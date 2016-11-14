@@ -54,10 +54,10 @@
   :bind
   (
    ;; Navigation
-   ("<C-f6>" . emms-seek-backward)
-   ("<M-f6>" . my/emms-seek-beg)
-   ("<C-f7>" . emms-seek-forward)
-   ("<M-f5>" . my/emms-jump-forward)
+   ("<f6>" . emms-seek-backward)
+   ("<f6>" . my/emms-seek-beg)
+   ("<f7>" . emms-seek-forward)
+   ("<f5>" . my/emms-jump-forward)
    ("<XF86Forward>" . emms-next)
    ("<XF86Back>" . emms-previous)
    ;; ("<C-f8> s" . emms-start)
@@ -73,8 +73,8 @@
    ;; Scoring
    ("<C-f8> s +" . emms-score-up-playing)
    ("<C-f8> s -" . emms-score-down-playing)
-   ("<C-f10>" . emms-score-up-playing)
-   ("<C-f9>" . emms-score-down-playing)
+   ("<f10>" . emms-score-up-playing)
+   ("<f9>" . emms-score-down-playing)
    ("<C-f8> s n" . emms-score-set-playing)
    ("<C-f8> s t" . emms-score-set-tolerance)
    ("<C-f8> s m" . emms-score-change-mood)

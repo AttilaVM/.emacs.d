@@ -66,11 +66,14 @@
 (load "~/.emacs.d/confs/helm.el")
 
 ;; Multimedia
-(when(executable-find "rtorrent")
+(when (executable-find "rtorrent")
   (load "~/.emacs.d/confs/mentor.el"))
-(when(or (executable-find "vlc") (executable-find "mplayer"))
+(when (or (executable-find "vlc") (executable-find "mplayer"))
   (load "~/.emacs.d/confs/emms.el"))
 
+;; Browsing
+(when (executable-find "conkeror")
+  (load "~/.emacs.d/confs/conkeror.el"))
 
 (ace-popup-menu-mode 1)
 

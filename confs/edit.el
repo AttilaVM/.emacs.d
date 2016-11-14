@@ -52,6 +52,13 @@
   :config
   (editorconfig-mode 1))
 
+;; Enable camelCase word jumps for given languages
+(my/add-hooks '(js-mode-hook
+		python-mode-hook
+		java-mode-hook
+		c-mode-hook
+		stylus-mode-hook) 'subword-mode)
+
 (defun my/smarter-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 
@@ -80,15 +87,15 @@ point reaches the beginning or end of the buffer, stop there."
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive (list (read-string "New Name: " (buffer-name))))
   (let ((name (buffer-name))
-        (filename (buffer-file-name)))
+	(filename (buffer-file-name)))
     (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
+	(message "Buffer '%s' is not visiting a file!" name)
       (if (get-buffer new-name)
-          (message "A buffer named '%s' already exists!" new-name)
-        (progn
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil))))))
+	  (message "A buffer named '%s' already exists!" new-name)
+	(progn
+	  (rename-file filename new-name 1)
+	  (rename-buffer new-name)
+	  (set-visited-file-name new-name)
+	  (set-buffer-modified-p nil))))))
 
 ;;; edit.el ends here

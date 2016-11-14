@@ -5,6 +5,6 @@
   /**
   * $1
   */
-  app.controller('$2', function $2() {
+  .controller('$2', [ $3 function $2(${3:$(my/angular-di-generator yas-text)}) {
     $0
-  });
+  }]);

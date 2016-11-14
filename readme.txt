@@ -23,6 +23,7 @@ Ideas:
 
 
 Issues:
+	dired+ already binds C-o
 	linum mode makes org-mode extremly small
 	      Is it true for other modes? (Possibly the ones with folding)
 	      Diable it on larger files

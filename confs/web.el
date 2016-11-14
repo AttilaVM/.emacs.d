@@ -15,4 +15,6 @@
     (message "There is a better stylus mode avaliable at: https://github.com/vladh/stylus-mode")
     (use-package stylus-mode)))
 
+(use-package jade-mode)
+
 ;;; helm.el ends here

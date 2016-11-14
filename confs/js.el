@@ -36,3 +36,12 @@
 (require 'nodejs-repl)
 
 (require 'grunt)
+
+(use-package import-js
+  :config
+  (defun my/import-js-choose-directory (directory)
+  "sample that uses interactive to get a directory"
+  (interactive (list (read-directory-name "js project root? "
+					  (file-name-directory buffer-file-name))))
+  (setq import-js-project-root directory)
+  (message "You chose %s." directory)))
