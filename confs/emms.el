@@ -55,7 +55,7 @@
   (
    ;; Navigation
    ("<f6>" . emms-seek-backward)
-   ("<f6>" . my/emms-seek-beg)
+   ("<M-f6>" . my/emms-seek-beg)
    ("<f7>" . emms-seek-forward)
    ("<f5>" . my/emms-jump-forward)
    ("<XF86Forward>" . emms-next)

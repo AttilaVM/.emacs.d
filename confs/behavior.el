@@ -18,6 +18,8 @@
 (delete-selection-mode -1)
 ;; Do not load outdated byte code
 (setq load-prefer-newer t)
+;; Save opened session (opened files, window configuration...)
+;; (desktop-save-mode 1)
 
 ;; Set defalult-directory to .emacs.d to init helm-projectile at startup.
 (setq default-directory "~/.emacs.d")

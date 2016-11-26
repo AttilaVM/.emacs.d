@@ -46,6 +46,9 @@
 			(split-string s "[-_ ]+")) "") 0 (if (> (length s) 0)
 							     (downcase (substring s 0 1)))))
 
+(defun my/char-cleaner (s)
+  "Remove characters from string which collide with variable naming scheme"
+  (replace-regexp-in-string "[^a-zA-Z]*" "" s))
 
 (defun my/constructor-generator (s prefix postfix)
   "Helps snippets"

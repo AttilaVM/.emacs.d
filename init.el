@@ -2,7 +2,8 @@
 			 ("marmalade" . "https://marmalade-repo.org/packages/")
 			 ("melpa" . "http://melpa.org/packages/")
 			 ("org" . "http://orgmode.org/elpa/")
-			 ("elpy" . "http://jorgenschaefer.github.io/packages/")))
+			 ("elpy" . "http://jorgenschaefer.github.io/packages/")
+			 ("SC"   . "http://joseito.republika.pl/sunrise-commander/")))
 
 (package-initialize)
 ;; Make sure that use-package is installed
@@ -56,6 +57,7 @@
 
 ;; Language specific
 (load "~/.emacs.d/confs/clojure.el")
+(load "~/.emacs.d/confs/shell.el")
 (load "~/.emacs.d/confs/web.el")
 (load "~/.emacs.d/confs/data_analysis.el")
 (load "~/.emacs.d/confs/ibuffer.el")
@@ -64,6 +66,7 @@
 
 ;; Project management and higher capabilities
 (load "~/.emacs.d/confs/helm.el")
+(load "~/.emacs.d/confs/sunrise-commander.el")
 
 ;; Multimedia
 (when (executable-find "rtorrent")
