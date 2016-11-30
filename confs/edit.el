@@ -82,6 +82,52 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
+(defun my-newline-below()
+  "Jum to the end of the line and inser a linebreak"
+  (interactive)
+  (move-end-of-line nil)
+  (insert "\n")
+  (indent-for-tab-command))
+
+(defun my-newline-above()
+  "Insert a new line above the point"
+  (interactive)
+  (move-beginning-of-line nil)
+  (insert "\n")
+  (forward-line -1)
+  (indent-for-tab-command))
+
+;; TODO duplicate selected lines
+(defun my/duplicate-line-below ()
+  "Duplicate active line"
+  (interactive)
+  ;; insertion = newline + active line
+  (let ((insertion (concat "\n" (buffer-substring (line-beginning-position) (line-end-position)))))
+    (end-of-line)
+    (insert insertion)
+    ;; Indent (tab) command in certain modes with automatic indention will lead to right identation
+    ;; Doing it at the end of the line will not cause any harm in others modes, expect in the ones
+    ;; where multiple identation levels carry differen meanings (python, yaml etc...)
+    ;; which is still a TODO task;
+    (end-of-line)
+    (indent-for-tab-command)))
+
+(defun my/duplicate-line-above ()
+  "Duplicate active line above"
+  (interactive)
+  ;; insertion = newline + active line
+  (let ((insertion (concat (buffer-substring (line-beginning-position) (line-end-position)))))
+    (beginning-of-line)
+    (insert "\n")
+    (forward-line -1)
+    (insert insertion)
+    ;; Indent (tab) command in certain modes with automatic indention will lead to right identation
+    ;; Doing it at the end of the line will not cause any harm in others modes, expect in the ones
+    ;; where multiple identation levels carry differen meanings (python, yaml etc...)
+    ;; which is still a TODO task;
+    (end-of-line)
+    (indent-for-tab-command)))
+
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
@@ -98,4 +144,10 @@ point reaches the beginning or end of the buffer, stop there."
 	  (set-visited-file-name new-name)
 	  (set-buffer-modified-p nil))))))
 
+(global-set-key (kbd "s-l C-n") 'my/duplicate-line-below)
+(global-set-key (kbd "s-l C-p") 'my/duplicate-line-above)
+
+;; Jump to a new line below or above
+(global-set-key (kbd "<M-return>") 'my-newline-below)
+(global-set-key (kbd "<M-s-return>") 'my-newline-above)
 ;;; edit.el ends here

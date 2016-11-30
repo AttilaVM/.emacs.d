@@ -2,6 +2,7 @@
 #name : it
 #key : it
 # --
-it('$1', function ${1:$(my/char-cleaner (my/camelize yas-text))}Test() {
+/** @test {$1} */
+it('$2', function ${2:$(my/char-cleaner (my/camelize yas-text))}Test() {
   $0
 });

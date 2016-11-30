@@ -3,5 +3,6 @@
 #key : forin
 # --
 for (var $1 in $2) {
+  if(!$2.hasOwnProperty($1)) continue;
   $0
 }

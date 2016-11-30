@@ -14,20 +14,21 @@
   :config
   (elpy-use-ipython)
   (setq elpy-rpc-backend "jedi")
+
+  ;; clear Ipython console. use it only in ipython buffer
+  (defun my/clear-console ()
+    (interactive)
+    (let ((comint-buffer-maximum-size 0))
+      (comint-truncate-buffer)))
+
   :bind
   ;; ELPY: Restart python console before evaluate buffer or region to avoid various uncanny conflicts
   ;; like not reloding modules even when they are changed
-  (("s-c s-c" . my-restart-python-console)
-   ("M-." . elpy-goto-definition-or-rgrep)
-   ("s-c f" . elpy-autopep8-fix-code)))
-
-;; clear Ipython console. use it only in ipython buffer
-(defun clearConsole ()
-  (interactive)
-  (let ((comint-buffer-maximum-size 0))
-    (comint-truncate-buffer)))
-(global-set-key (kbd "s-l") 'clearConsole)
-
+  (:map python-mode-map
+	("s-c s-c" . my-restart-python-console)
+	("M-." . elpy-goto-definition-or-rgrep)
+	("s-c f" . elpy-autopep8-fix-code)
+	("s-l" . my/clear-console)))
 
 ;; Make defintition jumping more robust
 ;; see https://github.com/jorgenschaefer/elpy/wiki/Customizations

@@ -204,9 +204,4 @@
 
 
 
-
-;; Jump to a new line below or above
-(global-set-key (kbd "<M-RET>") 'my-newline-below)
-(global-set-key (kbd "<S-M-RET>") 'my-newline-above)
-
 ;;----------------CROSS MODE-------------------------

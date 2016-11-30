@@ -54,6 +54,7 @@
 (use-package highlight-symbol
   :config
   (highlight-symbol-add-symbol "TODO")
+  (highlight-symbol-add-symbol "@todo")
   (highlight-symbol-add-symbol "FIXME")
   (highlight-symbol-add-symbol "BUG")
   (highlight-symbol-mode 1))

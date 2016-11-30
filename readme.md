@@ -2,6 +2,7 @@
 
 ## Milestones: ##
 
+- [x] unit-testing
 - [x] helm everywhere
 - [ ] implement js-import
 - [ ] helm-package

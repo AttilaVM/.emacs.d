@@ -292,19 +292,6 @@
 
 (setq grab-screen-color-mode "html")
 
-(defun my-newline-below()
-  "Jum to the end of the line and inser a linebreak"
-  (interactive)
-  (move-end-of-line nil)
-  (newline))
-
-(defun my-newline-above()
-  "Insert a new line above the point"
-  (interactive)
-  (move-beginning-of-line nil)
-  (newline)
-  (forward-line -1))
-
 (defun grab-screen-color-mode-set (mode)
   "Set up the insertion format of grab-screen-color"
   (interactive
