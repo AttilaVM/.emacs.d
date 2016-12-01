@@ -58,6 +58,7 @@
 ;; Language specific
 (load "~/.emacs.d/confs/clojure.el")
 (load "~/.emacs.d/confs/shell.el")
+(load "~/.emacs.d/confs/haskell.el")
 (load "~/.emacs.d/confs/web.el")
 (load "~/.emacs.d/confs/data_analysis.el")
 (load "~/.emacs.d/confs/ibuffer.el")
@@ -78,11 +79,10 @@
 (when (executable-find "conkeror")
   (load "~/.emacs.d/confs/conkeror.el"))
 
+(load "~/.emacs.d/confs/w3m.el")
+
+
 (ace-popup-menu-mode 1)
-
-
-
-
 
 ;; Set up emacs as a pager .bashrc or zshrc should be modified!
 (require 'pager)
@@ -132,8 +132,6 @@
 ;; Open .h files as c++ files FIXME: Automatic C and C++ distinction
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
-;; Haskell confing
-(add-hook 'haskell-mode-hook #'hindent-mode)
 
 ;; Markdown mode-line
 (use-package markdown-mode)

@@ -98,7 +98,7 @@ point reaches the beginning or end of the buffer, stop there."
   (indent-for-tab-command))
 
 ;; TODO duplicate selected lines
-(defun my/duplicate-line-below ()
+(defun my/line-duplicate-below ()
   "Duplicate active line"
   (interactive)
   ;; insertion = newline + active line
@@ -112,7 +112,7 @@ point reaches the beginning or end of the buffer, stop there."
     (end-of-line)
     (indent-for-tab-command)))
 
-(defun my/duplicate-line-above ()
+(defun my/line-duplicate-above ()
   "Duplicate active line above"
   (interactive)
   ;; insertion = newline + active line
@@ -127,6 +127,34 @@ point reaches the beginning or end of the buffer, stop there."
     ;; which is still a TODO task;
     (end-of-line)
     (indent-for-tab-command)))
+
+(defun my/line-select ()
+  "Select active line"
+  (interactive)
+  (end-of-line)
+  (set-mark (line-beginning-position)))
+
+(defun my/line-cut ()
+  "Cut active line"
+  (interactive)
+    (kill-region (line-beginning-position) (line-end-position)))
+
+(defun my/line-copy ()
+  "Copy active line"
+  (interactive)
+    (kill-ring-save (line-beginning-position) (line-end-position)))
+
+(defun my/line-query-replace ()
+  "Query replace in active line"
+  (interactive)
+  (my/line-select)
+  (call-interactively 'query-replace))
+
+(defun my/line-query-replace-reqexp ()
+  "Query replace regexp in active line"
+  (interactive)
+  (my/line-select)
+  (call-interactively 'query-replace-regexp))
 
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
@@ -144,8 +172,13 @@ point reaches the beginning or end of the buffer, stop there."
 	  (set-visited-file-name new-name)
 	  (set-buffer-modified-p nil))))))
 
-(global-set-key (kbd "s-l C-n") 'my/duplicate-line-below)
-(global-set-key (kbd "s-l C-p") 'my/duplicate-line-above)
+(global-set-key (kbd "s-l C-n") 'my/line-duplicate-below)
+(global-set-key (kbd "s-l C-p") 'my/line-duplicate-above)
+(global-set-key (kbd "s-l C-SPC") 'my/line-select)
+(global-set-key (kbd "s-l M-w") 'my/line-copy)
+(global-set-key (kbd "s-l C-w") 'my/line-cut)
+(global-set-key (kbd "s-l M-%") 'my/line-query-replace)
+(global-set-key (kbd "s-l C-M-%") 'my/line-query-replace-reqexp)
 
 ;; Jump to a new line below or above
 (global-set-key (kbd "<M-return>") 'my-newline-below)

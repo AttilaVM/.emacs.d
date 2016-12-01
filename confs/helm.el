@@ -38,6 +38,7 @@
 	 (helm-projectile-on))
   :bind
   ("C-c p p" . helm-projectile-switch-project)
+  ("C-c p +" . projectile-add-known-project)
   ("C-c p f" . helm-projectile-find-file)
   ("C-c p b" . helm-projectile-switch-to-buffer)
   ;; Extreamly fast mehotd search in all recent project files.

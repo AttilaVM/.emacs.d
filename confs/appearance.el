@@ -59,6 +59,8 @@
   (highlight-symbol-add-symbol "BUG")
   (highlight-symbol-mode 1))
 
+(use-package highlight-blocks)
+
 ;; (use-package fic-ext-mode
 ;;   :config
 ;;   (fic-ext-mode 1))
