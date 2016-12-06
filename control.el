@@ -61,9 +61,7 @@
 (global-set-key (kbd "M-!") 'async-shell-command)
 (global-set-key (kbd "C-M-!") 'shell-command-on-region)
 ;;---------------------GLOBAL PACKAGE DEPENDENT-------------
-;; undo tree
-(global-set-key (kbd "C-s-/") 'undo-tree-redo)
-(global-set-key (kbd "M-s-/") 'undo-tree-visualize)
+
 ;; goto-chg
 (global-set-key (kbd "s-;") 'goto-last-change)
 ;; magit
@@ -110,7 +108,7 @@
 ;; Use helm-buffers-list instead of default helm buffer lister
 (global-set-key (kbd "s-x b") 'helm-buffers-list)
 ;; get the list of the bookmarks (C-x r m for saving bookmarks)
-(global-set-key (kbd "C-x r r") 'helm-bookmarks)
+(global-set-key (kbd "s-b") 'helm-bookmarks)
 ;; More easier way to acces Emacs's internal "clipboard"
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 ;; Use helm with isearch

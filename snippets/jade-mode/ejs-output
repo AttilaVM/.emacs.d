@@ -1,5 +1,5 @@
 #contributor : Molnar Attila <ate.molnar2@gmail.com>
-#name : div
-#key : gradient
+#name : EJS output (html escaped)
+#key : ejs
 # --
-<div id="${}"></div>
+<%= $1 %>$0

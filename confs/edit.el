@@ -12,10 +12,22 @@
 
 ;; Using tabs for indentation can make elpy cranky
 (setq-default indent-tabs-mode-mode nil)
+(setq tab-width 2)
 
 (use-package undo-tree
   :config
-  (global-undo-tree-mode))
+  (global-undo-tree-mode)
+
+  ;; Unbind register interactions
+  (define-key undo-tree-map (kbd "C-x r u") nil)
+  (define-key undo-tree-map (kbd "C-x r U") nil)
+  ;; Undefine C-x r as local prefix key
+  (define-key undo-tree-map (kbd "C-x r") nil)
+
+  :bind (("C-s-/" . undo-tree-redo)
+	 ("M-s-/" . undo-tree-visualize)
+	 ("s-r u" . undo-tree-save-state-to-register)
+	 ("s-r U" . undo-tree-restore-state-from-register)))
 
 (use-package smartparens
 
@@ -47,6 +59,8 @@
 (use-package multiple-cursors)
 
 (use-package buffer-move)
+
+(use-package hide-region)
 
 (use-package editorconfig
   :config
@@ -156,6 +170,29 @@ point reaches the beginning or end of the buffer, stop there."
   (my/line-select)
   (call-interactively 'query-replace-regexp))
 
+(defun my/line-move (n)
+  "Move the current line up or down by N lines."
+  (interactive "p")
+  (setq col (current-column))
+  (beginning-of-line) (setq start (point))
+  (end-of-line) (forward-char) (setq end (point))
+  (let ((line-text (delete-and-extract-region start end)))
+    (forward-line n)
+    (insert line-text)
+    ;; restore point to original column in moved line
+    (forward-line -1)
+    (forward-char col)))
+
+(defun my/line-move-up (n)
+  "Move the current line up by N lines."
+  (interactive "p")
+  (my/line-move (if (null n) -1 (- n))))
+
+(defun my/line-move-down (n)
+  "Move the current line down by N lines."
+  (interactive "p")
+  (my/line-move (if (null n) 1 n)))
+
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
@@ -172,6 +209,13 @@ point reaches the beginning or end of the buffer, stop there."
 	  (set-visited-file-name new-name)
 	  (set-buffer-modified-p nil))))))
 
+;; Originaly used as the register prefix key,
+;; which is completly substituted by helm inteaction with the kill ring
+;; It will be used to revert active buffer
+(global-unset-key (kbd "C-x r"))
+(global-set-key (kbd "C-x r") 'revert-buffer)
+
+;; My handy line-interaction functions
 (global-set-key (kbd "s-l C-n") 'my/line-duplicate-below)
 (global-set-key (kbd "s-l C-p") 'my/line-duplicate-above)
 (global-set-key (kbd "s-l C-SPC") 'my/line-select)
@@ -179,6 +223,9 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key (kbd "s-l C-w") 'my/line-cut)
 (global-set-key (kbd "s-l M-%") 'my/line-query-replace)
 (global-set-key (kbd "s-l C-M-%") 'my/line-query-replace-reqexp)
+;; Move lines up&down
+(global-set-key (kbd "M-s-<down>") 'my/line-move-down)
+(global-set-key (kbd "M-s-<up>") 'my/line-move-up)
 
 ;; Jump to a new line below or above
 (global-set-key (kbd "<M-return>") 'my-newline-below)

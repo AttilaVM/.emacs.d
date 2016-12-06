@@ -56,6 +56,7 @@
 (load "~/.emacs.d/confs/network.el")
 
 ;; Language specific
+(load "~/.emacs.d/confs/typescript.el")
 (load "~/.emacs.d/confs/clojure.el")
 (load "~/.emacs.d/confs/shell.el")
 (load "~/.emacs.d/confs/haskell.el")
