@@ -34,8 +34,10 @@
 
 (use-package projectile
   :config
-  (progn (setq projectile-completion-system 'helm)
-	 (helm-projectile-on))
+  (setq projectile-completion-system 'helm)
+  (setq projectile-known-projects-file "~/.emacs.d/projectile-bookmarks.eld")
+  (setq projectile-enable-caching t)
+  (helm-projectile-on)
   :bind
   ("C-c p p" . helm-projectile-switch-project)
   ("C-c p +" . projectile-add-known-project)

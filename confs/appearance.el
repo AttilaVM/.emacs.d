@@ -93,4 +93,13 @@ With a prefix argument which does not equal a boolean value of nil, remove the u
   (let (frame (car (car (cdr (current-frame-configuration)))))
     (x-urgency-hint frame (not arg))))
 
+(global-unset-key (kbd "C-x ^"))
+(global-unset-key (kbd "C-x }"))
+(global-unset-key (kbd "C-x {"))
+(global-unset-key (kbd "C-x ^"))
+
+(global-set-key (kbd "s-9") ' enlarge-window-horizontally)
+(global-set-key (kbd "s-8") ' shrink-window-horizontally)
+(global-set-key (kbd "s-7") ' enlarge-window)
+(global-set-key (kbd "s-6") ' shrink-window)
 ;;; appearance.el ends here

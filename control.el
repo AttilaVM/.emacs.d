@@ -108,7 +108,7 @@
 ;; Use helm-buffers-list instead of default helm buffer lister
 (global-set-key (kbd "s-x b") 'helm-buffers-list)
 ;; get the list of the bookmarks (C-x r m for saving bookmarks)
-(global-set-key (kbd "s-b") 'helm-bookmarks)
+(global-set-key (kbd "C-c p j") 'helm-bookmarks)
 ;; More easier way to acces Emacs's internal "clipboard"
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 ;; Use helm with isearch

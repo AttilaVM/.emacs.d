@@ -71,6 +71,7 @@
 		python-mode-hook
 		java-mode-hook
 		c-mode-hook
+		haskell-mode-hook
 		stylus-mode-hook) 'subword-mode)
 
 (defun my/smarter-move-beginning-of-line (arg)
