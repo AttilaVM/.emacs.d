@@ -62,6 +62,6 @@
     (elpy-shell-send-region-or-buffer)))
 
 ;; Django mode
-(require 'python-django)
+(use-package python-django)
 
 ;;; python.el ends here

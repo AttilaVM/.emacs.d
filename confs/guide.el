@@ -7,10 +7,19 @@
 ;; Version: 0.3
 ;;; Code:
 
-(require 'guide-key)
+(use-package guide-key
+  :config
+  (setq guide-key/guide-key-sequence t)
+  (setq guide-key/idle-delay 0.5)
+  (guide-key-mode 1))
 ;; (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c C-e" "C-c C-t" "C-c" "C-c p" "C-x"))
-(setq guide-key/guide-key-sequence t)
-(setq guide-key/idle-delay 0.5)
-(guide-key-mode 1)  ;
+  ;
+
+(use-package discover-my-major
+  :bind
+  (("C-h C-m" . discover-my-major)
+   ("C-h M-m" . discover-my-mode)))
+
+
 
 ;;; guide.el ends here

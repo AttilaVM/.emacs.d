@@ -21,6 +21,9 @@
 ;; Save opened session (opened files, window configuration...)
 ;; (desktop-save-mode 1)
 
+;; Toggle-in server mode for CLI Emacs clients
+'(server-mode t)
+
 ;; Set defalult-directory to .emacs.d to init helm-projectile at startup.
 (setq default-directory "~/.emacs.d")
 
@@ -48,6 +51,15 @@
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
 
+;; I do not want to put Emacs into the background, when I am not in the terminal
+(when (display-graphic-p)
+  (progn
+    (global-unset-key (kbd "C-z"))
+    (global-unset-key (kbd "C-x C-z"))))
+
+;; Set up emacs as a pager .bashrc or zshrc should be modified!
+(use-package pager)
+
 ;; Set Emacs default browser
 (setq gnus-button-url 'browse-url-generic
       browse-url-browser-function gnus-button-url
@@ -58,4 +70,6 @@
 						  command
 						nil)))))
 
+;; Open disk image files in the hex editor
+(add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
 ;;; behavior.el ends here

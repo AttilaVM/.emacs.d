@@ -10,7 +10,8 @@
 (use-package cider
   :init
   :config
-  (add-hook 'clojure-mode-hook' cider-mode))
+  (add-hook 'clojure-mode-hook' cider-mode)
+  (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode)))
 
 
 (use-package elein)

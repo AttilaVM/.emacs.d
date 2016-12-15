@@ -36,10 +36,11 @@
 (set-face-background 'show-paren-match (face-background 'default))
 (set-face-foreground 'show-paren-match "#009900")
 
-;; Set different colors for different parenthesis depth
 (use-package rainbow-delimiters
   :config
-  (my/add-hooks '(emacs-lisp-mode clojure-mode-hook js2-mode-hook) 'rainbow-delimiters-mode)
+  ;; Enable it in all programing modes
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+  ;; Set colors to travel through the VIS spectrum from red to blue
   '(rainbow-delimiters-depth-1-face ((t (:foreground "light slate blue"))))
   '(rainbow-delimiters-depth-2-face ((t (:foreground "cyan"))))
   '(rainbow-delimiters-depth-3-face ((t (:foreground "lime green"))))

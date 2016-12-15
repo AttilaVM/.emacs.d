@@ -3,6 +3,12 @@
   (dolist (hook hooks)
     (add-hook hook mode)))
 
+(defun my/load-when-readable (path)
+  "Load file is readable, otherwise complain in a message"
+  (if (file-readable-p path)
+  (load path)
+  (message (concat path " is not found or not readable"))))
+
 (defun my/change-to-home-buffer ()
   (interactive)
   (find-file user/home-buffer))
@@ -20,3 +26,21 @@
     (if (funcall filter (car list))
 		(car list)
 		(my/get-first-match (cdr list) filter))))
+
+
+(defun append-to-list (list-var elements)
+	"Append ELEMENTS to the end of LIST-VAR.
+
+The return value is the new value of LIST-VAR."
+	(unless (consp elements)
+		(error "ELEMENTS must be a list"))
+	(let ((list (symbol-value list-var)))
+		(if list
+	(setcdr (last list) elements)
+			(set list-var elements)))
+	(symbol-value list-var))
+
+
+(global-set-key (kbd "<C-kp-add>") 'increment-number-at-point)
+(global-set-key (kbd "<C-kp-subtract>") 'decrement-number-at-point)
+(global-set-key (kbd "<C-kp-1>") 'my-insert-file-name)

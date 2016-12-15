@@ -9,6 +9,53 @@
 
 ;; Why the hell is this key even present on a modern keyboard?
 (global-unset-key (kbd "<insert>"))
+(global-unset-key (kbd "C-x o"))
+
+;; overide paired expressin jump
+;; forward
+(global-unset-key (kbd "<C-M-right>"))
+(global-unset-key (kbd "C-M-f"))
+(global-set-key (kbd "s-f") 'forward-sexp)
+;; backward
+(global-unset-key (kbd "<C-M-left>"))
+(global-unset-key (kbd "C-M-b"))
+(global-set-key (kbd "s-b") 'backward-sexp)
+
+;; I do recusive edit rarely, but often look around my point
+(global-unset-key (kbd "C-]"))
+(global-unset-key (kbd "C-x X a"))
+(global-set-key (kbd "<C-escape> r") 'recursive-edit)
+(global-set-key (kbd "C-]") 'recenter-top-bottom)
+
+;; Rebind scrolling other window
+(global-unset-key (kbd "C-M-v"))
+(global-unset-key (kbd "C-M-S-v"))
+(global-set-key (kbd "s-<down>") 'scroll-other-window)
+(global-set-key (kbd "s-<up>") 'scroll-other-window-down)
+
+;; Sometimes when using a complex major mode is easier to explore menus.
+(global-set-key (kbd "<C-f11> m") 'menu-bar-toggle)
+
+;; Check misspelled word forward
+(global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
+
+;; Calc
+(global-set-key (kbd "<f2>") 'quick-calc)
+(global-set-key (kbd "C-<f2>") 'calc)
+
+;; window navigation
+(global-unset-key (kbd "M-o"))
+(global-set-key (kbd "s-o") 'rotate-windows)
+(global-set-key (kbd "C-o") 'other-window)
+(global-set-key (kbd "M-O") 'other-frame)
+
+;; Running shell command with different ways
+(global-unset-key (kbd "M-!")) ;; shell-command
+(global-unset-key (kbd "M-&")) ;; async-shell-command
+(global-unset-key (kbd "M-|")) ;; shell command or region
+(global-set-key (kbd "C-!") 'shell-command)
+(global-set-key (kbd "M-!") 'async-shell-command)
+(global-set-key (kbd "C-M-!") 'shell-command-on-region)
 
 ;; Using tabs for indentation can make elpy cranky
 (setq-default indent-tabs-mode-mode nil)
@@ -29,6 +76,12 @@
 	 ("s-r u" . undo-tree-save-state-to-register)
 	 ("s-r U" . undo-tree-restore-state-from-register)))
 
+;; Use Company mode instead of auto-complete mode
+(use-package company
+	:config
+	(add-hook 'after-init-hook 'global-company-mode))
+
+
 (use-package smartparens
 
   :init
@@ -43,7 +96,9 @@
       (backward-char)
       (call-interactively 'sp-clone-sexp)))
   :bind
-  (("s-p f" . sp-forward-sexp)
+  (("C-M-j" . sp-up-sexp)
+   ("C-M-l" . sp-down-sexp)
+   ("s-p f" . sp-forward-sexp)
    ("s-p b" . sp-backward-sexp)
    ("s-p d" . sp-kill-sexp)
    ("s-p <backspace>" . sp-backward-kill-sexp)
@@ -52,11 +107,24 @@
 
 (use-package avy
   :config
-  (avy-setup-default))
+  (avy-setup-default)
+  ;; Unset kbd from default line jump function
+  (global-unset-key (kbd "M-g g"))
+  :bind
+  ( "C-;" . avy-goto-char)
+  ( "C-'" . avy-goto-char-2)
+  ( "M-g g" . avy-goto-line)
+  ( "M-g w" . avy-goto-word-1))
 
-(use-package goto-chg)
+;; Jump back to previous edits
+(use-package goto-chg
+  :bind
+(("s-;" . goto-last-change)))
 
-(use-package multiple-cursors)
+(use-package multiple-cursors
+  :bind
+  (( "s-n" . mc/edit-lines)
+   ( "M-s-s" . mc/mark-next-like-this)))
 
 (use-package buffer-move)
 
@@ -74,6 +142,7 @@
 		haskell-mode-hook
 		stylus-mode-hook) 'subword-mode)
 
+;; Copied from https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org
 (defun my/smarter-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 
@@ -210,11 +279,87 @@ point reaches the beginning or end of the buffer, stop there."
 	  (set-visited-file-name new-name)
 	  (set-buffer-modified-p nil))))))
 
+;; Taken from https://www.emacswiki.org/emacs/RevertBuffer
+(defun my/revert-all-buffers ()
+		"Refreshes all open buffers from their respective files."
+		(interactive)
+		(dolist (buf (buffer-list))
+			(with-current-buffer buf
+	(when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
+		(revert-buffer t t t) )))
+		(message "Refreshed open files."))
+
+(defun my-insert-file-name (filename &optional args)
+		"Insert name of file FILENAME into buffer after point.
+
+	Prefixed with \\[universal-argument], expand the file name to
+	its fully canocalized path.  See `expand-file-name'.
+
+	Prefixed with \\[negative-argument], use relative path to file
+	name from current directory, `default-directory'.  See
+	`file-relative-name'.
+
+	The default with no prefix is to insert the file name exactly as
+	it appears in the minibuffer prompt."
+		;; Based on insert-file in Emacs -- ashawley 20080926
+		(interactive "*fInsert file name: \nP")
+		(cond ((eq '- args)
+		 (insert (file-relative-name filename)))
+		((not (null args))
+		 (insert (expand-file-name filename)))
+		(t
+		 (insert filename))))
+
+(defun flyspell-check-next-highlighted-word ()
+	"Custom function to spell check next highlighted word"
+	(interactive)
+	(flyspell-goto-next-error)
+	(ispell-word)
+	)
+
+;; Basic math operations on number under point
+(defun increment-number-at-point ()
+			(interactive)
+			(skip-chars-backward "0123456789")
+			(or (looking-at "[0123456789]+")
+		(error "No number at point"))
+			(replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
+
+(defun decrement-number-at-point ()
+			(interactive)
+			(skip-chars-backward "0123456789")
+			(or (looking-at "[0123456789]+")
+		(error "No number at point"))
+			(replace-match (number-to-string (1- (string-to-number (match-string 0))))))
+
+(setq grab-screen-color-mode "html")
+
+(defun grab-screen-color-mode-set (mode)
+	"Set up the insertion format of grab-screen-color"
+	(interactive
+	 (list (completing-read "color insertion mode: " '("html" "rgb"))))
+	(setq grab-screen-color-mode mode)
+	)
+
+(defun grab-screen-color ()
+	"Call grabc to pick a color from the screen in html code to the buffer"
+	(interactive)
+	(let ((grabc-output (shell-command-to-string "grabc")))
+		(if (equal grab-screen-color-mode "html")
+	(insert (substring grabc-output 0 (string-match "\n" grabc-output))))
+		(if (equal grab-screen-color-mode "rgb")
+	(insert
+	 (concat "rgba(" (replace-regexp-in-string "\n" " " (substring grabc-output (string-match "\n" grabc-output)) -1) ", 1)")))))
+
 ;; Originaly used as the register prefix key,
 ;; which is completly substituted by helm inteaction with the kill ring
 ;; It will be used to revert active buffer
 (global-unset-key (kbd "C-x r"))
 (global-set-key (kbd "C-x r") 'revert-buffer)
+
+;; remap C-a to `smarter-move-beginning-of-line'
+(global-set-key [remap move-beginning-of-line]
+		'my/smarter-move-beginning-of-line)
 
 ;; My handy line-interaction functions
 (global-set-key (kbd "s-l C-n") 'my/line-duplicate-below)
@@ -227,6 +372,8 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Move lines up&down
 (global-set-key (kbd "M-s-<down>") 'my/line-move-down)
 (global-set-key (kbd "M-s-<up>") 'my/line-move-up)
+
+(global-set-key (kbd "<C-kp-6>") 'grab-screen-color)
 
 ;; Jump to a new line below or above
 (global-set-key (kbd "<M-return>") 'my-newline-below)
