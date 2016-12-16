@@ -49,7 +49,7 @@
    ;; More easier way to acces Emacs's internal "clipboard"
    ("M-y" . helm-show-kill-ring)
    ;; Use helm with isearch
-   ("s-s" . helm-occur-from-isearch)
+   ("s-s" . helm-occur)
    ;; helm-ls-git
    ("C-<f6>" . helm-browse-project)
    ;; helm-c-source-yasnippet
@@ -57,7 +57,6 @@
    ;; ???
    ("<C-kp-4>" . sm/toggle-showcss)
    ("<C-kp-2>" . helm-colors))
-
   :bind
   (:map helm-map
 	("C-z" . helm-select-action)
@@ -71,12 +70,12 @@
 
 (use-package projectile
   :config
-  (setq projectile-completion-system 'helm)
-  (setq projectile-known-projects-file "~/.emacs.d/projectile-bookmarks.eld")
-  (setq projectile-enable-caching t)
   (use-package helm-projectile
     :config
     (helm-projectile-on))
+  (projectile-global-mode)
+  (setq projectile-known-projects-file "~/.emacs.d/projectile-bookmarks.eld")
+  (setq projectile-enable-caching t)
   (use-package helm-ag)
   :bind
   ("C-c p p" . helm-projectile-switch-project)

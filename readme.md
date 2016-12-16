@@ -27,7 +27,7 @@
 
 ## Issues ##
 
-- [ ] linum mode makes org-mode extremly small
+- [ ] linum mode makes org-mode extremly slow
   - Is it true for other modes? (Possibly the ones with folding)
   - Diable it on larger files
-- [ ] first helm isearch fails
+- [x] first helm isearch fails
