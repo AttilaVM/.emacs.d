@@ -66,8 +66,8 @@
 ;; Browsing
 (when (executable-find "conkeror")
 	(load "~/.emacs.d/confs/conkeror.el"))
-
-(load "~/.emacs.d/confs/w3m.el")
+(when (executable-find "w3m")
+(load "~/.emacs.d/confs/w3m.el"))
 
 
 
