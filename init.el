@@ -75,3 +75,5 @@
 
 (load "~/.emacs.d/confs/yas.el")
 (load "~/.emacs.d/confs/after-save.el")
+
+(load "~/.emacs.d/proxies.el")

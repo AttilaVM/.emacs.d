@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: meta charset
+# key: meta
+# --
+meta(charset='${1:$$(yas-choose-value '("utf-8" "utf-16" "ascii"))}')

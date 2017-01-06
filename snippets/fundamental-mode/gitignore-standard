@@ -1,0 +1,11 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: standard gitignore
+# key: g
+# --
+/node_modules
+/out
+/.tmp
+/bower_components
+**/*~
+**/*#
+**/.tern-port

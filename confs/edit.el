@@ -60,18 +60,26 @@
 ;; Using tabs for indentation can make elpy cranky
 (setq-default indent-tabs-mode-mode nil)
 (setq tab-width 2)
+(add-hook 'find-file-hook (lambda ()
+														(setq tab-width 2)))
+;; tab-stop-list is a fallback when indent-relative does not find a tab stop
+;; see: https://www.emacswiki.org/emacs/TabStopList
+(setq tab-stop-list (number-sequence 2 120 2))
+
+(defvaralias 'c-basic-offset 'tab-width)
+(defvaralias 'cperl-indent-level 'tab-width)
 
 (use-package undo-tree
-  :config
-  (global-undo-tree-mode)
+	:config
+	(global-undo-tree-mode)
 
-  ;; Unbind register interactions
-  (define-key undo-tree-map (kbd "C-x r u") nil)
-  (define-key undo-tree-map (kbd "C-x r U") nil)
-  ;; Undefine C-x r as local prefix key
-  (define-key undo-tree-map (kbd "C-x r") nil)
+	;; Unbind register interactions
+	(define-key undo-tree-map (kbd "C-x r u") nil)
+	(define-key undo-tree-map (kbd "C-x r U") nil)
+	;; Undefine C-x r as local prefix key
+	(define-key undo-tree-map (kbd "C-x r") nil)
 
-  :bind (("C-s-/" . undo-tree-redo)
+	:bind (("C-s-/" . undo-tree-redo)
 	 ("M-s-/" . undo-tree-visualize)
 	 ("s-r u" . undo-tree-save-state-to-register)
 	 ("s-r U" . undo-tree-restore-state-from-register)))
@@ -84,55 +92,55 @@
 
 (use-package smartparens
 
-  :init
-  (smartparens-global-mode)
-  :config
-  ;; sp-clone-sexp works inconsitently: it does not effect the sexp selected by the pointer on its parenthesis
-  ;; when the closing parenthesis is selected, but the outter one
-  (defun my/sp-clone-sexp ()
-    (interactive)
-    "Clone sexp similar to sp-clone-sexp, however can select it by the closing parenthesis"
-    (when (char-equal ?\) (preceding-char))
-      (backward-char)
-      (call-interactively 'sp-clone-sexp)))
-  :bind
-  (("C-M-j" . sp-up-sexp)
-   ("C-M-l" . sp-down-sexp)
-   ("s-p f" . sp-forward-sexp)
-   ("s-p b" . sp-backward-sexp)
-   ("s-p d" . sp-kill-sexp)
-   ("s-p <backspace>" . sp-backward-kill-sexp)
-   ("s-p c" . my/sp-clone-sexp)
-   ("s-p u" . sp-unwrap-sexp)))
+	:init
+	(smartparens-global-mode)
+	:config
+	;; sp-clone-sexp works inconsitently: it does not effect the sexp selected by the pointer on its parenthesis
+	;; when the closing parenthesis is selected, but the outter one
+	(defun my/sp-clone-sexp ()
+		(interactive)
+		"Clone sexp similar to sp-clone-sexp, however can select it by the closing parenthesis"
+		(when (char-equal ?\) (preceding-char))
+			(backward-char)
+			(call-interactively 'sp-clone-sexp)))
+	:bind
+	(("C-M-j" . sp-up-sexp)
+	 ("C-M-l" . sp-down-sexp)
+	 ("s-p f" . sp-forward-sexp)
+	 ("s-p b" . sp-backward-sexp)
+	 ("s-p d" . sp-kill-sexp)
+	 ("s-p <backspace>" . sp-backward-kill-sexp)
+	 ("s-p c" . my/sp-clone-sexp)
+	 ("s-p u" . sp-unwrap-sexp)))
 
 (use-package avy
-  :config
-  (avy-setup-default)
-  ;; Unset kbd from default line jump function
-  (global-unset-key (kbd "M-g g"))
-  :bind
-  ( "C-;" . avy-goto-char)
-  ( "C-'" . avy-goto-char-2)
-  ( "M-g g" . avy-goto-line)
-  ( "M-g w" . avy-goto-word-1))
+	:config
+	(avy-setup-default)
+	;; Unset kbd from default line jump function
+	(global-unset-key (kbd "M-g g"))
+	(global-set-key (kbd "M-g g") 'avy-goto-line)
+	:bind
+	( "C-;" . avy-goto-char)
+	( "C-'" . avy-goto-char-2)
+	( "M-g w" . avy-goto-word-1))
 
 ;; Jump back to previous edits
 (use-package goto-chg
-  :bind
+	:bind
 (("s-;" . goto-last-change)))
 
 (use-package multiple-cursors
-  :bind
-  (( "s-n" . mc/edit-lines)
-   ( "M-s-s" . mc/mark-next-like-this)))
+	:bind
+	(( "s-n" . mc/edit-lines)
+	 ( "M-s-s" . mc/mark-next-like-this)))
 
 (use-package buffer-move)
 
 (use-package hide-region)
 
 (use-package editorconfig
-  :config
-  (editorconfig-mode 1))
+	:config
+	(editorconfig-mode 1))
 
 ;; Enable camelCase word jumps for given languages
 (my/add-hooks '(js-mode-hook
@@ -144,7 +152,7 @@
 
 ;; Copied from https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org
 (defun my/smarter-move-beginning-of-line (arg)
-  "Move point back to indentation of beginning of line.
+	"Move point back to indentation of beginning of line.
 
 Move point to the first non-whitespace character on this line.
 If point is already there, move to the beginning of the line.
@@ -153,131 +161,131 @@ the beginning of the line.
 
 If ARG is not nil or 1, move forward ARG - 1 lines first.  If
 point reaches the beginning or end of the buffer, stop there."
-  (interactive "^p")
-  (setq arg (or arg 1))
+	(interactive "^p")
+	(setq arg (or arg 1))
 
-  ;; Move lines first
-  (when (/= arg 1)
-    (let ((line-move-visual nil))
-      (forward-line (1- arg))))
+	;; Move lines first
+	(when (/= arg 1)
+		(let ((line-move-visual nil))
+			(forward-line (1- arg))))
 
-  (let ((orig-point (point)))
-    (back-to-indentation)
-    (when (= orig-point (point))
-      (move-beginning-of-line 1))))
+	(let ((orig-point (point)))
+		(back-to-indentation)
+		(when (= orig-point (point))
+			(move-beginning-of-line 1))))
 
 (defun my-newline-below()
-  "Jum to the end of the line and inser a linebreak"
-  (interactive)
-  (move-end-of-line nil)
-  (insert "\n")
-  (indent-for-tab-command))
+	"Jum to the end of the line and inser a linebreak"
+	(interactive)
+	(move-end-of-line nil)
+	(insert "\n")
+	(indent-for-tab-command))
 
 (defun my-newline-above()
-  "Insert a new line above the point"
-  (interactive)
-  (move-beginning-of-line nil)
-  (insert "\n")
-  (forward-line -1)
-  (indent-for-tab-command))
+	"Insert a new line above the point"
+	(interactive)
+	(move-beginning-of-line nil)
+	(insert "\n")
+	(forward-line -1)
+	(indent-for-tab-command))
 
 ;; TODO duplicate selected lines
 (defun my/line-duplicate-below ()
-  "Duplicate active line"
-  (interactive)
-  ;; insertion = newline + active line
-  (let ((insertion (concat "\n" (buffer-substring (line-beginning-position) (line-end-position)))))
-    (end-of-line)
-    (insert insertion)
-    ;; Indent (tab) command in certain modes with automatic indention will lead to right identation
-    ;; Doing it at the end of the line will not cause any harm in others modes, expect in the ones
-    ;; where multiple identation levels carry differen meanings (python, yaml etc...)
-    ;; which is still a TODO task;
-    (end-of-line)
-    (indent-for-tab-command)))
+	"Duplicate active line"
+	(interactive)
+	;; insertion = newline + active line
+	(let ((insertion (concat "\n" (buffer-substring (line-beginning-position) (line-end-position)))))
+		(end-of-line)
+		(insert insertion)
+		;; Indent (tab) command in certain modes with automatic indention will lead to right identation
+		;; Doing it at the end of the line will not cause any harm in others modes, expect in the ones
+		;; where multiple identation levels carry differen meanings (python, yaml etc...)
+		;; which is still a TODO task;
+		(end-of-line)
+		(indent-for-tab-command)))
 
 (defun my/line-duplicate-above ()
-  "Duplicate active line above"
-  (interactive)
-  ;; insertion = newline + active line
-  (let ((insertion (concat (buffer-substring (line-beginning-position) (line-end-position)))))
-    (beginning-of-line)
-    (insert "\n")
-    (forward-line -1)
-    (insert insertion)
-    ;; Indent (tab) command in certain modes with automatic indention will lead to right identation
-    ;; Doing it at the end of the line will not cause any harm in others modes, expect in the ones
-    ;; where multiple identation levels carry differen meanings (python, yaml etc...)
-    ;; which is still a TODO task;
-    (end-of-line)
-    (indent-for-tab-command)))
+	"Duplicate active line above"
+	(interactive)
+	;; insertion = newline + active line
+	(let ((insertion (concat (buffer-substring (line-beginning-position) (line-end-position)))))
+		(beginning-of-line)
+		(insert "\n")
+		(forward-line -1)
+		(insert insertion)
+		;; Indent (tab) command in certain modes with automatic indention will lead to right identation
+		;; Doing it at the end of the line will not cause any harm in others modes, expect in the ones
+		;; where multiple identation levels carry differen meanings (python, yaml etc...)
+		;; which is still a TODO task;
+		(end-of-line)
+		(indent-for-tab-command)))
 
 (defun my/line-select ()
-  "Select active line"
-  (interactive)
-  (end-of-line)
-  (set-mark (line-beginning-position)))
+	"Select active line"
+	(interactive)
+	(end-of-line)
+	(set-mark (line-beginning-position)))
 
 (defun my/line-cut ()
-  "Cut active line"
-  (interactive)
-    (kill-region (line-beginning-position) (line-end-position)))
+	"Cut active line"
+	(interactive)
+		(kill-region (line-beginning-position) (line-end-position)))
 
 (defun my/line-copy ()
-  "Copy active line"
-  (interactive)
-    (kill-ring-save (line-beginning-position) (line-end-position)))
+	"Copy active line"
+	(interactive)
+		(kill-ring-save (line-beginning-position) (line-end-position)))
 
 (defun my/line-query-replace ()
-  "Query replace in active line"
-  (interactive)
-  (my/line-select)
-  (call-interactively 'query-replace))
+	"Query replace in active line"
+	(interactive)
+	(my/line-select)
+	(call-interactively 'query-replace))
 
 (defun my/line-query-replace-reqexp ()
-  "Query replace regexp in active line"
-  (interactive)
-  (my/line-select)
-  (call-interactively 'query-replace-regexp))
+	"Query replace regexp in active line"
+	(interactive)
+	(my/line-select)
+	(call-interactively 'query-replace-regexp))
 
 (defun my/line-move (n)
-  "Move the current line up or down by N lines."
-  (interactive "p")
-  (setq col (current-column))
-  (beginning-of-line) (setq start (point))
-  (end-of-line) (forward-char) (setq end (point))
-  (let ((line-text (delete-and-extract-region start end)))
-    (forward-line n)
-    (insert line-text)
-    ;; restore point to original column in moved line
-    (forward-line -1)
-    (forward-char col)))
+	"Move the current line up or down by N lines."
+	(interactive "p")
+	(setq col (current-column))
+	(beginning-of-line) (setq start (point))
+	(end-of-line) (forward-char) (setq end (point))
+	(let ((line-text (delete-and-extract-region start end)))
+		(forward-line n)
+		(insert line-text)
+		;; restore point to original column in moved line
+		(forward-line -1)
+		(forward-char col)))
 
 (defun my/line-move-up (n)
-  "Move the current line up by N lines."
-  (interactive "p")
-  (my/line-move (if (null n) -1 (- n))))
+	"Move the current line up by N lines."
+	(interactive "p")
+	(my/line-move (if (null n) -1 (- n))))
 
 (defun my/line-move-down (n)
-  "Move the current line down by N lines."
-  (interactive "p")
-  (my/line-move (if (null n) 1 n)))
+	"Move the current line down by N lines."
+	(interactive "p")
+	(my/line-move (if (null n) 1 n)))
 
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
-  "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive (list (read-string "New Name: " (buffer-name))))
-  (let ((name (buffer-name))
+	"Renames both current buffer and file it's visiting to NEW-NAME."
+	(interactive (list (read-string "New Name: " (buffer-name))))
+	(let ((name (buffer-name))
 	(filename (buffer-file-name)))
-    (if (not filename)
+		(if (not filename)
 	(message "Buffer '%s' is not visiting a file!" name)
-      (if (get-buffer new-name)
-	  (message "A buffer named '%s' already exists!" new-name)
+			(if (get-buffer new-name)
+		(message "A buffer named '%s' already exists!" new-name)
 	(progn
-	  (rename-file filename new-name 1)
-	  (rename-buffer new-name)
-	  (set-visited-file-name new-name)
-	  (set-buffer-modified-p nil))))))
+		(rename-file filename new-name 1)
+		(rename-buffer new-name)
+		(set-visited-file-name new-name)
+		(set-buffer-modified-p nil))))))
 
 ;; Taken from https://www.emacswiki.org/emacs/RevertBuffer
 (defun my/revert-all-buffers ()

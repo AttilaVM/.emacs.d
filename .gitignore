@@ -2,3 +2,9 @@
 *~
 elpa
 /helm-adaptive-history
+/projectile*
+/proxies.el
+/emms
+/image-dired
+/recentf
+/tramp

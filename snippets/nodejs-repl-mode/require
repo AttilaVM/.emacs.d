@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: import js module
+# key: i
+# --
+const $1 = require('$2');

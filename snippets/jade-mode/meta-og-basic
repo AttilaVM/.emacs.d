@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: meta og website
+# key: meta
+# --
+meta(property="og:title" content="$1")
+meta(property="og:type" content="${2:$$(yas-choose-value my/yas-data-og-types)}")
+meta(property="og:url" content="")
+meta(property="og:image" content="")

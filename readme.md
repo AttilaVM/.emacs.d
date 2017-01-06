@@ -4,6 +4,7 @@
 
 - [x] unit-testing
 - [x] helm everywhere
+- [ ] add toggle-truncate-lines to org-mode-hook
 - [ ] implement js-import
 - [ ] helm-package
 - [ ] helm-dash
@@ -28,6 +29,6 @@
 ## Issues ##
 
 - [ ] linum mode makes org-mode extremly slow
-  - Is it true for other modes? (Possibly the ones with folding)
-  - Diable it on larger files
+	- Is it true for other modes? (Possibly the ones with folding)
+	- Diable it on larger files
 - [x] first helm isearch fails

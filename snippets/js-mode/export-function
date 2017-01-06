@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Export Simple function
+# key: ef
+# --
+export function $1($2) {
+	 `yas/selected-text``(yas/hacks-selected-text-replace)`$0
+}

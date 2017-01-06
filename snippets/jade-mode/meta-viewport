@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: meta viewport
+# key: meta
+# --
+meta(name='viewport', content='initial-scale=1.0, user-scalable=${1:$$(yas-choose-value '("yes" "no"))}, width=device-width')

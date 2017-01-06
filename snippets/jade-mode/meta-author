@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: meta author
+# key: meta
+# --
+meta(name='author', content='$1')
