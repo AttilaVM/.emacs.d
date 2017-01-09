@@ -234,7 +234,15 @@ point reaches the beginning or end of the buffer, stop there."
 (defun my/line-copy ()
 	"Copy active line"
 	(interactive)
-		(kill-ring-save (line-beginning-position) (line-end-position)))
+	(kill-ring-save (line-beginning-position) (line-end-position)))
+
+(defun my/line-dump ()
+	"Copy active line"
+	(interactive)
+	(append-to-buffer "*dump*" (line-beginning-position) (line-end-position))
+	(with-current-buffer "*dump*"
+		(insert "
+")))
 
 (defun my/line-query-replace ()
 	"Query replace in active line"
@@ -377,6 +385,8 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key (kbd "s-l C-w") 'my/line-cut)
 (global-set-key (kbd "s-l M-%") 'my/line-query-replace)
 (global-set-key (kbd "s-l C-M-%") 'my/line-query-replace-reqexp)
+(global-set-key (kbd "s-l d") 'my/line-dump)
+
 ;; Move lines up&down
 (global-set-key (kbd "M-s-<down>") 'my/line-move-down)
 (global-set-key (kbd "M-s-<up>") 'my/line-move-up)
