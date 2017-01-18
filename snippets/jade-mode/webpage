@@ -4,27 +4,27 @@
 # --
 doctype html
 html(lang="${9:$(replace-regexp-in-string "_[a-zA-Z]*" "" yas-text)}" prefix="og: http://ogp.me/ns#")
-  head
-    title $1
-    meta(charset="utf-8")
-    meta(name="viewport", content="initial-scale=1.0, user-scalable=${2:$$(yas-choose-value '("yes" "no"))}, user-scalable=${3:$$(yas-choose-value '("width=device-width" "height=device-height" "width=device-width height=device-height"))}"
-    meta(name="description" content="$4")
-    meta(name="author" content="${5:$$(yas-choose-value my/yas-authors)}")
-    // Open Graph data
-    meta(property="og:title" content="$1")
-    meta(property="og:determiner" "${6:$$(yas-choose-value '("a" "an" "auto"))}")
-    meta(property="og:type" content="website")
-    // The name of the larger website
-    meta(property="og:site_name" content="$7")
-    meta(property="og:description" content="$4")
-    // An image url wich will represent the object in the graph and on the twitter card
-    meta(property="og:image" content="$8")
-    meta(property="og:locale" content="${9:$$(yas-choose-value '("en_US" "hu_HU"))}")
-    // Twitter metas
-    // Card types, use app when there is direct download for a mobile app, player for media.
-    meta(name="twitter:card" content="${10:$$(yas-choose-value '("summary" "summary_large_image" "app" "player"))}")
-    meta(name="twitter:site" content="${11:$$(yas-choose-value '("_piaxe_" "Analogika"))}")
-    meta(name="twitter:creator" content="$11")
+	head
+		title $1
+		meta(charset="utf-8")
+		meta(name="viewport", content="initial-scale=1.0, user-scalable=${2:$$(yas-choose-value '("yes" "no"))}, ${3:$$(yas-choose-value '("width=device-width" "height=device-height" "width=device-width height=device-height"))}")
+		meta(name="description" content="$4")
+		meta(name="author" content="${5:$$(yas-choose-value my/yas-authors)}")
+		// Open Graph data
+		meta(property="og:title" content="$1")
+		meta(property="og:determiner" "${6:$$(yas-choose-value '("a" "an" "auto"))}")
+		meta(property="og:type" content="website")
+		// The name of the larger website
+		meta(property="og:site_name" content="$7")
+		meta(property="og:description" content="$4")
+		// An image url wich will represent the object in the graph and on the twitter card
+		meta(property="og:image" content="$8")
+		meta(property="og:locale" content="${9:$$(yas-choose-value '("en_US" "hu_HU"))}")
+		// Twitter metas
+		// Card types, use app when there is direct download for a mobile app, player for media.
+		meta(name="twitter:card" content="${10:$$(yas-choose-value '("summary" "summary_large_image" "app" "player"))}")
+		meta(name="twitter:site" content="${11:$$(yas-choose-value '("_piaxe_" "Analogika"))}")
+		meta(name="twitter:creator" content="$11")
 
-  body
-    header
+	body
+		header

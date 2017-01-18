@@ -21,6 +21,10 @@
 ;; Save opened session (opened files, window configuration...)
 ;; (desktop-save-mode 1)
 
+;; bidi display reordering makes Emacs significantly slower.
+;; see: http://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow
+(setq bidi-display-reordering nil)
+
 ;; Toggle-in server mode for CLI Emacs clients
 '(server-mode t)
 
@@ -32,42 +36,42 @@
 
 ;; Use zsh for term
 (when (file-executable-p "/bin/zsh")
-  (setq explicit-shell-file-name "bin/zsh"))
+	(setq explicit-shell-file-name "bin/zsh"))
 
 ;; Set startup buffer
 (when (file-exists-p user/home-buffer)
-  (progn
-    (setq initial-buffer-choice user/home-buffer)
-    (global-set-key (kbd "<XF86HomePage>") 'my/change-to-home-buffer)))
+	(progn
+		(setq initial-buffer-choice user/home-buffer)
+		(global-set-key (kbd "<XF86HomePage>") 'my/change-to-home-buffer)))
 
 
 ;; Remove trailing white spaces on save
 (defvar whitespace-cleanup-on-save t)
 (add-hook 'before-save-hook
-	  (lambda ()
-	    (if whitespace-cleanup-on-save (whitespace-cleanup))))
+		(lambda ()
+			(if whitespace-cleanup-on-save (whitespace-cleanup))))
 
 ;; Automaticly make executable script fils
 (add-hook 'after-save-hook
-  'executable-make-buffer-file-executable-if-script-p)
+	'executable-make-buffer-file-executable-if-script-p)
 
 ;; I do not want to put Emacs into the background, when I am not in the terminal
 (when (display-graphic-p)
-  (progn
-    (global-unset-key (kbd "C-z"))
-    (global-unset-key (kbd "C-x C-z"))))
+	(progn
+		(global-unset-key (kbd "C-z"))
+		(global-unset-key (kbd "C-x C-z"))))
 
 ;; Set up emacs as a pager .bashrc or zshrc should be modified!
 (use-package pager)
 
 ;; Set Emacs default browser
 (setq gnus-button-url 'browse-url-generic
-      browse-url-browser-function gnus-button-url
-      browse-url-generic-program (my/get-first-match
-				  '("conkeror" "vivaldi" "google-chrome-stable" "chromium" "firefox")
-				  (function (lambda (command)
-					      (if (executable-find command)
-						  command
+			browse-url-browser-function gnus-button-url
+			browse-url-generic-program (my/get-first-match
+					'("conkeror" "vivaldi" "google-chrome-stable" "chromium" "firefox")
+					(function (lambda (command)
+								(if (executable-find command)
+							command
 						nil)))))
 
 ;; Open disk image files in the hex editor
