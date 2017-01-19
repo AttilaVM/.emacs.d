@@ -65,6 +65,18 @@
 				(search-backward yas/selected-text)
 				(replace-match ""))))))
 
+(defun yas/insert-if-line-match (insertion re)
+	"Insert text if line match regex"
+	(let ((line (buffer-substring (line-beginning-position) (line-end-position))))
+		(when (string-match re line)
+			insertion)))
+
+(defun yas/insert-if-line-not-match (insertion re)
+	"Insert text if line match regex"
+	(let ((line (buffer-substring (line-beginning-position) (line-end-position))))
+		(unless (string-match re line)
+				insertion)))
+
 (defun my/camelize (s)
 	"Convert under_score string S to CamelCase string."
 	(store-substring (mapconcat 'identity (mapcar

@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# Name: Angular Service
+# key: ngs
+# expand-env:
+# contributor: Attila V. Molnar
+# --
+/**
+* $1
+*/
+.factory('$2', [ $3 function $2(${3:$(my/angular-di-generator yas-text)}) {
+$0
+}]);

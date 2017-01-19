@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# Name: yas choose
+# key: yc
+# contributor: Attila V. Molnar
+# --
+\${$1:\$\$(yas-choose-value '($0))}

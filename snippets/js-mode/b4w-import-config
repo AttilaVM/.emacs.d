@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# Name: b4w import engine's global configuration
+# key: b4wi
+# expand-env:
+# contributor: Attila V. Molnar
+# --
+var m_cfg  = b4wRequire("config");

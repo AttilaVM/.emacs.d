@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: drop-shadow filter
+# key: f
+# --
+`(yas/insert-if-line-not-match "filter: " "filter:")`drop-shadow(${1:h-shift} ${2:v-shift} ${3:blur} #$4)

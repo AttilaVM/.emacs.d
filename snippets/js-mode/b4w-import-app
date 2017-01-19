@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# Name: b4w import Application add-on. Provides generic routines for the engine's initialization, UI and I/O.
+# key: b4wi
+# expand-env:
+# contributor: Attila V. Molnar
+# --
+var m_app  = b4wRequire("app");

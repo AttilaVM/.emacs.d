@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sepia filter
+# key: f
+# --
+`(yas/insert-if-line-not-match "filter: " "filter:")`sepia($1)

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# Name: head
+# key: head
+# --
+# -*- mode: ${1:$$(yas-choose-value '("snippet" "snippet; require-final-newline: nil" "snippet; require-final-newline: t"))} -*-
+# Name: $2
+# key: $3
+# expand-env: ${4:$$(yas-choose-value '(" " "(yas-indent-line 'fixed)"))}
+# contributor: `user-full-name`
+# --
+$0

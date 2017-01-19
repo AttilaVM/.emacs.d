@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: keyframes
+# key: @keyframes
+# --
+@keyframes $1
+	0%
+		$2
+
+	100%
+		$3
