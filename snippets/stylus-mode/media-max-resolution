@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: max-resolution of media
+# key: m
+# --
+`(yas/insert-if-line-not-match "@media " "@media")`(max-resolution: $1dpi)

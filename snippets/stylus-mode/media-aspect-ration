@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: aspect-ratio of media
+# key: m
+# --
+`(yas/insert-if-line-not-match "@media " "@media")`(min-aspect-ratio: $1/$2)

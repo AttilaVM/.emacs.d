@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: scanning process of television
+# key: m
+# --
+`(yas/insert-if-line-not-match "@media: " "@media:")`(scan: ${1:$$(yas-choose-value '("interlace" "progressive"))})

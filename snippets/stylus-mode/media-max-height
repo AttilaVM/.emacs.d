@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: max-height of media
+# key: m
+# --
+`(yas/insert-if-line-not-match "@media " "@media")`(max-height: $1)

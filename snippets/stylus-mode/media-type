@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: type of media
+# key: m
+# --
+`(yas/insert-if-line-not-match "@media " "@media")`${1:$$(yas-choose-value '("all" "screen" "handheld" "tv" "projection" "aural" "speech" "braille" "print" "embossed" "grid"))}

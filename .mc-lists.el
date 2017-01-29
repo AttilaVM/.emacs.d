@@ -4,6 +4,7 @@
 (setq mc/cmds-to-run-for-all
       '(
 	forward-sexp
+	helm-show-kill-ring
 	indent-for-tab-command
 	indent-new-comment-line
 	js2-line-break

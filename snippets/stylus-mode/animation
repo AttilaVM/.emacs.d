@@ -4,7 +4,7 @@
 # --
 animation-name: $1
 animation-duration: $2ms
-animation-timing-function: ${3:$$(yas-choose-value '("ease-in-out" "ease-in" "ease-out" "step-start" "step-end" "steps" "cubic-bezier" "initial" "inherit"))}
+animation-timing-function: ${3:$$(yas-choose-value '("ease-in-out" "ease-in" "ease-out" "linear" "step-start" "step-end" "steps" "cubic-bezier" "initial" "inherit"))}
 animation-delay: $4s
 animation-iteration-count: $5
 animation-direction: ${6:$$(yas-choose-value '("normal" "reverse" "alternate" "alternate-reverse" "initial" "inherit" ))}

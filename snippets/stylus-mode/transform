@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: 3D transform style
+# key: t
+# --
+transform-style: ${1:$$(yas-choose-value '("flat" "preserve-3d"))}

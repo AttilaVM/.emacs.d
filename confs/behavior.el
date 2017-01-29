@@ -74,6 +74,10 @@
 							command
 						nil)))))
 
+;; Do not reuse info buffer, but open a new one
+(use-package info-buffer
+	:bind (("C-h i" . info-buffer)))
+
 ;; Open disk image files in the hex editor
 (add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
 ;;; behavior.el ends here

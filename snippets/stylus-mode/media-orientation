@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: orientation of media
+# key: m
+# --
+`(yas/insert-if-line-not-match "@media " "@media")`(orientation: ${1:$$(yas-choose-value '("landscape" "portrait"))})

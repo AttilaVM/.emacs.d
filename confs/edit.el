@@ -148,6 +148,7 @@
 		java-mode-hook
 		c-mode-hook
 		haskell-mode-hook
+		jade-mode-hook
 		stylus-mode-hook) 'subword-mode)
 
 ;; Copied from https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org
