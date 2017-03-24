@@ -52,6 +52,7 @@
 (load "~/.emacs.d/confs/haskell.el")
 (load "~/.emacs.d/confs/web.el")
 (load "~/.emacs.d/confs/yaml.el")
+(load "~/.emacs.d/confs/maxima.el")
 (load "~/.emacs.d/confs/data_analysis.el")
 (load "~/.emacs.d/confs/ibuffer.el")
 
@@ -77,3 +78,16 @@
 (load "~/.emacs.d/confs/after-save.el")
 
 (load "~/.emacs.d/proxies.el")
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ ;; '(imaxima-bg-color "dark gray")
+ '(persp-keymap-prefix "p"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

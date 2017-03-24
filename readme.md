@@ -1,7 +1,6 @@
 # .emacs.d #
 
 ## Milestones: ##
-
 - [x] unit-testing
 - [x] helm everywhere
 - [ ] add toggle-truncate-lines to org-mode-hook
@@ -18,9 +17,12 @@
 - [ ] paredit-mode
 - [ ] Effective Blender-mode usage
 - [ ] npm-mode
+- [ ] helm-sql
+
 
 ## Discussion ##
 
+- Do I need perspectives?
 - Use atomic-chrome package to edit text inside chrome with Emacs
 - multitran for in-Emacs translation
 - hledger-mode for accounting (Do I have time for this?)

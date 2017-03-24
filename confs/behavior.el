@@ -78,6 +78,19 @@
 (use-package info-buffer
 	:bind (("C-h i" . info-buffer)))
 
+(use-package highlight-context-line
+	:config
+	(highlight-context-line-mode))
+
+(use-package persp-mode
+	:config
+	(setq wg-morph-on nil) ;; switch off animation
+			(setq persp-autokill-buffer-on-remove 'kill-weak)
+			(add-hook 'after-init-hook #'(lambda () (persp-mode 1))))
+
 ;; Open disk image files in the hex editor
 (add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
+
+;; Always use bash for tramp ssh sessions
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 ;;; behavior.el ends here

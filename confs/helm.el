@@ -54,6 +54,8 @@
 	 ("C-<f6>" . helm-browse-project)
 	 ;; helm-c-source-yasnippet
 	 ("C-c y" . helm-yas-complete)
+	 ;; helm top
+	 ("C-x c C-t" . helm-tramp )
 	 ;; ???
 	 ("<C-kp-4>" . sm/toggle-showcss)
 	 ("<C-kp-2>" . helm-colors))
@@ -125,7 +127,12 @@
 	:bind
 	(("s-i u" . helm-unicode)))
 
-
+(use-package helm-tramp
+	:config
+	(setq tramp-default-method "ssh")
+	(defalias 'exit-tramp 'tramp-cleanup-all-buffers)
+	:bind
+	(("C-x c t" . helm-tramp )))
 
 
 ;;; helm.el ends here
