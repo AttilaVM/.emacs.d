@@ -16,8 +16,8 @@
 ;; (add-to-list 'default-frame-alist '(font . "inconsolata-12" ))
 ;; (set-face-attribute 'default t :font "inconsolata-12" )
 
-(add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline-11" ))
-(set-face-attribute 'default t :font "Inconsolata-dz for Powerline-11")
+;; (add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline-11" ))
+;; (set-face-attribute 'default t :font "Inconsolata-dz for Powerline-11")
 
 
 ;; Set termina font type-break

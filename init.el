@@ -30,7 +30,7 @@
 (load "~/.emacs.d/confs/nav.el")
 (load "~/.emacs.d/confs/edit.el")
 (load "~/.emacs.d/confs/spellcheck.el")
-(load "~/.emacs.d/confs/workgroups.el")
+;; (load "~/.emacs.d/confs/workgroups.el")
 (load "~/.emacs.d/confs/ai.el")
 (load "~/.emacs.d/confs/term.el")
 (load "~/.emacs.d/confs/dired.el")
@@ -83,7 +83,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;; '(imaxima-bg-color "dark gray")
+ '(package-selected-packages
+	 (quote
+		(indium yaml-mode workgroups web-mode w3m use-package undo-tree tide sunrise-x-mirror sunrise-x-loop sunrise-x-checkpoints stylus-mode strace-mode smartparens show-css scss-mode rainbow-delimiters python-django pug-mode persp-mode pager nodejs-repl mentor markdown-mode magit kite-mini json-mode js2-refactor jade-mode info-buffer import-js image+ ibuffer-tramp ibuffer-projectile hindent highlight-symbol highlight-context-line highlight-blocks hide-region helm-unicode helm-tramp helm-rage helm-projectile helm-mt helm-gtags helm-emms helm-dash helm-cscope helm-c-yasnippet helm-ag haskell-mode gulp-task-runner guide-key grunt goto-chg eslint-fix emmet-mode elpy elein editorconfig discover-my-major dired+ conkeror-minor-mode company-web company-tern company-auctex cider choice-program buffer-move bats-mode avy)))
  '(persp-keymap-prefix "p"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

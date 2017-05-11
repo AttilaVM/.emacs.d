@@ -77,6 +77,11 @@
 		(unless (string-match re line)
 				insertion)))
 
+(defun my/yas-remove-desc (s)
+	"Remove description from yas string. It should be written as [ ]#: Description. Mind the preceding space"
+	(message s)
+	(replace-regexp-in-string "[	]*#:.*" "" s))
+
 (defun my/camelize (s)
 	"Convert under_score string S to CamelCase string."
 	(store-substring (mapconcat 'identity (mapcar

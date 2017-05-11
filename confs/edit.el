@@ -113,16 +113,16 @@
 	 ("s-p c" . my/sp-clone-sexp)
 	 ("s-p u" . sp-unwrap-sexp)))
 
+(global-unset-key (kbd "M-g g"))
 (use-package avy
 	:config
 	(avy-setup-default)
 	;; Unset kbd from default line jump function
-	(global-unset-key (kbd "M-g g"))
 	:bind
-	( "C-;" . avy-goto-char)
+	(( "C-;" . avy-goto-char)
 	( "C-'" . avy-goto-char-2)
 	( "M-g g" . avy-goto-line)
-	( "M-g w" . avy-goto-word-1))
+	( "M-g w" . avy-goto-word-1)))
 
 ;; Jump back to previous edits
 (use-package goto-chg

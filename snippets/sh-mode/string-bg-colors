@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: String background color
+# key: sf
+# source: http://misc.flogisoft.com/bash/tip_colors_and_formatting
+# --
+${1:$$(my/yas-remove-desc (yas-choose-value '("\\\e[49m	#: Default Color"
+							"\\\e[40m	#: Black"
+							"\\\e[41m	#: Red"
+							"\\\e[42m	#: Green"
+							"\\\e[43m	#: Yellow"
+							"\\\e[44m	#: Blue"
+							"\\\e[45m	#: Magenta"
+							"\\\e[46m	#: Cyan"
+							"\\\e[47m	#: Light Gray"
+							"\\\e[100m	#: Dark Gray"
+							"\\\e[101m	#: Light Red"
+							"\\\e[102m	#: Light Green"
+							"\\\e[103m	#: Light Yellow"
+							"\\\e[104m	#: Light Blue"
+							"\\\e[105m	#: Light Magenta"
+							"\\\e[106m	#: Light Cyan"
+							"\\\e[107m	#: White"
+)))}

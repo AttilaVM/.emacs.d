@@ -1,6 +1,7 @@
 # .emacs.d #
 
 ## Milestones: ##
+- [ ] indium js IDE
 - [x] unit-testing
 - [x] helm everywhere
 - [ ] add toggle-truncate-lines to org-mode-hook

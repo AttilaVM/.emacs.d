@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: String formating
+# key: sf
+# source: http://misc.flogisoft.com/bash/tip_colors_and_formatting
+# --
+${1:$$(my/yas-remove-desc (yas-choose-value '("\\\e[0m	#: Reset all"
+							"\\\e[1m	#: Bold"
+							"\\\e[21m	#: Reset Bold"
+							"\\\e[2m	#: Dim"
+							"\\\e[22m	#: Reset Dim"
+							"\\\e[3m	#: Italic"
+							"\\\e[33m	#: Reset Italic"
+							"\\\e[4m	#: Underlined"
+							"\\\e[24m	#: Reset Underlined"
+							"\\\e[5m	#: Blink"
+							"\\\e[25m	#: Reset Blink"
+							"\\\e[7m	#: Reverse"
+							"\\\e[27m	#: Reset Reverse"
+							"\\\e[8m	#: Hidden"
+							"\\\e[28m	#: Reset Hidden"
+
+
+)))}
