@@ -1,0 +1,6 @@
+# name: deftest
+# key: deftest
+# --
+(deftest $1
+	(testing "$2"
+	(is (= $3))))

@@ -1,0 +1,4 @@
+# name: js/canvas.getContext
+# key: cm
+# --
+.getContext $1 ${2:$$(yas-choose-value '("\\"2d\\"" "\\"webgl\\"" "\\"webgl2\\"" "\\"bitmaprenderer\\""))}

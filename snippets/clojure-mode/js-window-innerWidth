@@ -1,0 +1,4 @@
+# name: js/window.innerWidth # Width without browser gui elements
+# key: wp
+# --
+.-innerWidth js/window

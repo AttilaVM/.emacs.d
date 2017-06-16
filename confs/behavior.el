@@ -44,7 +44,6 @@
 		(setq initial-buffer-choice user/home-buffer)
 		(global-set-key (kbd "<XF86HomePage>") 'my/change-to-home-buffer)))
 
-
 ;; Remove trailing white spaces on save
 (defvar whitespace-cleanup-on-save t)
 (add-hook 'before-save-hook
@@ -82,6 +81,8 @@
 	:config
 	(highlight-context-line-mode))
 
+(use-package winum)
+
 (use-package persp-mode
 	:config
 	(setq wg-morph-on nil) ;; switch off animation
@@ -94,3 +95,6 @@
 ;; Always use bash for tramp ssh sessions
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 ;;; behavior.el ends here
+
+(global-set-key (kbd "s-g b k") 'kill-matching-buffers)
+(global-set-key (kbd "s-g b n") 'rename-file-and-buffer)

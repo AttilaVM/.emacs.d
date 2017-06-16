@@ -1,0 +1,24 @@
+# name: global-dom-elem-props
+# key: elemprops
+# --
+.-${1:$$(my/yas-remove-desc (yas-choose-value '("id"
+																								"attributes"
+																								"tagName"
+																								"innerHTML"
+																								"outerHTML"
+																								"classList #: Read-only DOMTokenList of applied classes"
+																								"clientWidth"
+																								"clientHeight"
+																								"clientLeft"
+																								"clientTop"
+																								"scrollWidth"
+																								"scrollHeight"
+																								"scrollLeft"
+																								"scrollTop"
+																								"hidden"
+																								"draggable"
+																								"contentEditable"
+
+
+
+)))}

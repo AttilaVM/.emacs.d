@@ -8,6 +8,8 @@
 	indent-for-tab-command
 	indent-new-comment-line
 	js2-line-break
+	kill-region
+	my/smarter-move-beginning-of-line
 	))
 
 (setq mc/cmds-to-run-once

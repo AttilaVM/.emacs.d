@@ -65,3 +65,5 @@
 
 	;; (load "/home/attila/.emacs.d/elpa/indium-20170429.1206/indium-chrome.el")
 	;; (load "/home/attila/.emacs.d/elpa/indium-20170429.1206/indium-nodejs.el")
+
+(use-package npm-mode)

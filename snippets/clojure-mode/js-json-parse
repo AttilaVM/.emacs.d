@@ -1,0 +1,4 @@
+# name: JSON.parse
+# key: json.parse
+# --
+(.parse js/JSON $1)

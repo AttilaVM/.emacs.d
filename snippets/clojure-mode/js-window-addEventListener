@@ -1,0 +1,4 @@
+# name: js/window.addEventListener
+# key: wm
+# --
+.addEventListener js/window ${1:$$(yas-choose-value '("\\"resize\\"" "\\"mousedown\\"" "\\"popstate\\""))} $2

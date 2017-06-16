@@ -1,0 +1,4 @@
+# name: js/document.getElmentById
+# key: dm
+# --
+.getElementById js/document $1

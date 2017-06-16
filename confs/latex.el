@@ -1,6 +1,8 @@
 (unless (package-installed-p 'auctex)
 	(package-install 'auctex))
 
+(use-package px)
+
 
 (use-package tex
 	;; Ensure is needed because package manage calls AUCTEX as auctex why Emacs refers to it as tex...

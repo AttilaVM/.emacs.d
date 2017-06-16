@@ -1,0 +1,4 @@
+# name: js/window.innerHeight # Height without browser gui elements
+# key: wp
+# --
+.-innerHeight js/window

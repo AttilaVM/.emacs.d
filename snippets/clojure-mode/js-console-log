@@ -1,0 +1,4 @@
+# name: js/console.log
+# key: clog
+# --
+${1:$$(yas-choose-value ".log" ".error" ".info" ".warn" ".table" ".time" ".timeEnd" ".group" ".groupEnd")} js/console $2

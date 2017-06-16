@@ -50,3 +50,36 @@ The return value is the new value of LIST-VAR."
 (global-set-key (kbd "<C-kp-add>") 'increment-number-at-point)
 (global-set-key (kbd "<C-kp-subtract>") 'decrement-number-at-point)
 (global-set-key (kbd "<C-kp-1>") 'my-insert-file-name)
+
+(defun my/read-file (file-path)
+	"Return file-path's file content."
+	(with-temp-buffer
+		(insert-file-contents file-path)
+		(buffer-string)))
+
+(defun my/get-os ()
+	(cond
+	 ((string-equal system-type "gnu/linux")
+		;; Remove parentheses
+		(replace-regexp-in-string "[\"\n]" ""
+															;; Remove DISTRIB_ID= prefix
+															(replace-regexp-in-string "^.*=" "" (my/read-file "/etc/lsb-release"))))))
+
+(defun my/commint-clear ()
+	"Clear comint buffer"
+	(interactive)
+	(let ((comint-buffer-maximum-size 0))
+		(comint-truncate-buffer)))
+
+(defun my/new-buffer (buff-name)
+	"Renames both current buffer and file it's visiting to NEW-NAME."
+	(interactive (list (read-string "Buffer name: ")))
+	(let ((-buf (generate-new-buffer buff-name)))
+		(switch-to-buffer -buf)
+		(funcall initial-major-mode)
+		(setq buffer-offer-save t)))
+
+(defun my/boolean-to-string (bool)
+	(if bool
+	"True"
+	"False"))

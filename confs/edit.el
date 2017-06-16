@@ -144,12 +144,13 @@
 
 ;; Enable camelCase word jumps for given languages
 (my/add-hooks '(js-mode-hook
-		python-mode-hook
-		java-mode-hook
-		c-mode-hook
-		haskell-mode-hook
-		jade-mode-hook
-		stylus-mode-hook) 'subword-mode)
+								clojure-mode-hook
+								python-mode-hook
+								java-mode-hook
+								c-mode-hook
+								haskell-mode-hook
+								jade-mode-hook
+								stylus-mode-hook) 'subword-mode)
 
 ;; Copied from https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org
 (defun my/smarter-move-beginning-of-line (arg)
@@ -368,6 +369,20 @@ point reaches the beginning or end of the buffer, stop there."
 	(insert
 	 (concat "rgba(" (replace-regexp-in-string "\n" " " (substring grabc-output (string-match "\n" grabc-output)) -1) ", 1)")))))
 
+(defun my/avy-zap-to-char-2 ()
+	"Jump to the currently visible CHAR1 followed by CHAR2.
+The window scope is determined by `avy-all-windows' (ARG negates it)."
+	(interactive)
+	(call-interactively 'set-mark-command)
+	(call-interactively 'avy-goto-char-2)
+	(call-interactively 'kill-region))
+
+(defun my/selecet-sentence ()
+	(interactive)
+	(call-interactively 'backward-sentence)
+	(call-interactively 'set-mark-command)
+	(call-interactively 'forward-sentence))
+
 ;; Originaly used as the register prefix key,
 ;; which is completly substituted by helm inteaction with the kill ring
 ;; It will be used to revert active buffer
@@ -397,4 +412,9 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Jump to a new line below or above
 (global-set-key (kbd "<M-return>") 'my-newline-below)
 (global-set-key (kbd "<M-s-return>") 'my-newline-above)
+
+(global-set-key (kbd "C-x H") 'my/selecet-sentence)
+
+
+(global-set-key (kbd "s-k") 'my/avy-zap-to-char-2)
 ;;; edit.el ends here
