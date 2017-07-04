@@ -67,6 +67,7 @@
 
 (use-package helm-c-yasnippet
 	:config
+	(require `helm-c-yasnippet)
 	(setq helm-yas-space-match-any-greedy t))
 
 
