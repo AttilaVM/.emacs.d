@@ -89,6 +89,8 @@
 			(setq persp-autokill-buffer-on-remove 'kill-weak)
 			(add-hook 'after-init-hook #'(lambda () (persp-mode 1))))
 
+(use-package command-log-mode)
+
 ;; Open disk image files in the hex editor
 (add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
 

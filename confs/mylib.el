@@ -61,9 +61,33 @@ The return value is the new value of LIST-VAR."
 	(cond
 	 ((string-equal system-type "gnu/linux")
 		;; Remove parentheses
-		(replace-regexp-in-string "[\"\n]" ""
+		(if (file-readable-p "/etc/lsb-release")
+				(replace-regexp-in-string "[\"\n]" ""
 															;; Remove DISTRIB_ID= prefix
-															(replace-regexp-in-string "^.*=" "" (my/read-file "/etc/lsb-release"))))))
+																	(replace-regexp-in-string "^.*=" "" (my/read-file "/etc/lsb-release")))
+			"unknown-linux"))))
+
+(defun my/keys (alist)
+	(mapcar 'car alist))
+
+(defun my/get-by-string-key (query-key alist)
+	(let ((value nil)
+				(alist-length (length alist))
+				(counter 0))
+		(while (and (not value) (< counter alist-length))
+			(let ((key (car
+									(nth counter alist))))
+
+				(when (and (stringp key) (string-equal key query-key))
+						(setq value (cdr (nth counter alist))))
+
+			(setq counter (my/inc counter)))) value ))
+
+(defun my/inc (num)
+	(+ num 1))
+
+(defun my/dec (num)
+	(- num 1))
 
 (defun my/commint-clear ()
 	"Clear comint buffer"
@@ -78,6 +102,11 @@ The return value is the new value of LIST-VAR."
 		(switch-to-buffer -buf)
 		(funcall initial-major-mode)
 		(setq buffer-offer-save t)))
+
+(defun my/enclosure-p (char)
+	(mapcar
+	 (lambda (enclosure-char)
+		 (char-equal char enclosure-char)) '(?a ?\")))
 
 (defun my/boolean-to-string (bool)
 	(if bool

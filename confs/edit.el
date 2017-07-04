@@ -103,8 +103,20 @@
 		(when (char-equal ?\) (preceding-char))
 			(backward-char)
 			(call-interactively 'sp-clone-sexp)))
+
+	;; TODO use mylib.el L104
+	;; (defun my/kill-surrounded-content ()
+	;;	(interactive)
+	;;	(cond
+	;;	 (char-equal ?\" ) )
+	;;	(call-interactively 'set-mark-command)
+	;;	(call-interactively 'forward-sexp)
+	;;	(call-interactively 'backward-delete-char-untabify))
 	:bind
-	(("C-M-j" . sp-up-sexp)
+	(("s-k (" . sp-splice-sexp)
+	 ("s-k c" . my/kill-surrounded-content)
+
+	 ("C-M-j" . sp-up-sexp)
 	 ("C-M-l" . sp-down-sexp)
 	 ("s-p f" . sp-forward-sexp)
 	 ("s-p b" . sp-backward-sexp)
@@ -151,6 +163,10 @@
 								haskell-mode-hook
 								jade-mode-hook
 								stylus-mode-hook) 'subword-mode)
+
+(defun my/insert-hun-long-i ()
+	(interactive)
+	(insert "í"))
 
 ;; Copied from https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org
 (defun my/smarter-move-beginning-of-line (arg)
@@ -374,6 +390,14 @@ point reaches the beginning or end of the buffer, stop there."
 The window scope is determined by `avy-all-windows' (ARG negates it)."
 	(interactive)
 	(call-interactively 'set-mark-command)
+	(call-interactively 'avy-goto-char-1)
+	(call-interactively 'kill-region))
+
+(defun my/avy-zap-to-char-2 ()
+	"Jump to the currently visible CHAR1 followed by CHAR2.
+The window scope is determined by `avy-all-windows' (ARG negates it)."
+	(interactive)
+	(call-interactively 'set-mark-command)
 	(call-interactively 'avy-goto-char-2)
 	(call-interactively 'kill-region))
 
@@ -382,6 +406,10 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
 	(call-interactively 'backward-sentence)
 	(call-interactively 'set-mark-command)
 	(call-interactively 'forward-sentence))
+
+;; (defun my/do-ag-on-filtered-files ()
+;;	(interactive)
+;;	(let ((targets (read-file-name "Search in: ")))))
 
 ;; Originaly used as the register prefix key,
 ;; which is completly substituted by helm inteaction with the kill ring
@@ -415,6 +443,8 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
 
 (global-set-key (kbd "C-x H") 'my/selecet-sentence)
 
+(global-set-key (kbd "s-k \;") 'my/avy-zap-to-char-1)
+(global-set-key (kbd "s-k \'") 'my/avy-zap-to-char-2)
 
-(global-set-key (kbd "s-k") 'my/avy-zap-to-char-2)
+(global-set-key (kbd "M-s-i") 'my/insert-hun-long-i)
 ;;; edit.el ends here

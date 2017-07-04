@@ -14,12 +14,13 @@
 												"\n';"
 												;; rsync command
 												"rsync" "--verbose" "--progress" "--stats"
+												"--exclude='*.git'"
 												"--compress" "--times" "--delete" "--rsh=/usr/bin/ssh"
 												(lambda ()
 													(if  pretend
 															"--dry-run" "-itemize-changes"
 															""))
-												"-e" (lambda () (concat "\"ssh -p" " 22\""))
+												"-e" (lambda () (concat "\"ssh -p" target-port "\""))
 												"--recursive"
 												;; src dst
 												src target-dest)
