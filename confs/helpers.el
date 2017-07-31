@@ -8,28 +8,28 @@
 ;;; Code:
 
 (defun menu-bar-toggle ()
-  (interactive)
-  (if menu-bar-mode (menu-bar-mode -1) (menu-bar-mode t)))
+	(interactive)
+	(if menu-bar-mode (menu-bar-mode -1) (menu-bar-mode t)))
 
 (defun my/copy-lines-matching-re (re)
-  "find all lines matching the regexp RE in the current buffer
+	"find all lines matching the regexp RE in the current buffer
 putting the matching lines in a buffer named *matching*"
-  (interactive "sRegexp to match: ")
-  (let ((result-buffer (get-buffer-create "*matching*"))
+	(interactive "sRegexp to match: ")
+	(let ((result-buffer (get-buffer-create "*matching*"))
 	(original-buffer (buffer-name)))
-    (with-current-buffer result-buffer
-      (erase-buffer))
-    (save-match-data
-      (save-excursion
+		(with-current-buffer result-buffer
+			(erase-buffer))
+		(save-match-data
+			(save-excursion
 	(goto-char (point-min))
 	(while (re-search-forward re nil t)
-	  (princ (buffer-substring-no-properties (line-beginning-position)
+		(princ (buffer-substring-no-properties (line-beginning-position)
 						 (line-beginning-position 2))
 		 result-buffer))))
-    (pop-to-buffer result-buffer)
-    (kill-region (point-min) (point-max))
-    (kill-buffer)
-    (pop-to-buffer original-buffer)))
+		(pop-to-buffer result-buffer)
+		(kill-region (point-min) (point-max))
+		(kill-buffer)
+		(pop-to-buffer original-buffer)))
 
 ;; Spell checking in comments for different modes
 (dolist (hook '(lisp-mode-hook
@@ -46,7 +46,7 @@ putting the matching lines in a buffer named *matching*"
 		perl-mode-hook
 		javascript-mode-hook
 		LaTeX-mode-hook))
-  (add-hook hook 'flyspell-prog-mode))
+	(add-hook hook 'flyspell-prog-mode))
 
-(global-set-key (kbd "s-w") 'my/copy-lines-matching-re)
+(global-set-key (kbd "<insert> l m") 'my/copy-lines-matching-re)
 ;;; helpers.el ends here

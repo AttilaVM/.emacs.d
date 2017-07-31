@@ -83,7 +83,26 @@
 			(message "Not in an html mode"))))
 
 ;; Markdown mode-line
-(use-package markdown-mode)
+(use-package markdown-mode
+	:bind
+	(:map markdown-mode-map
+				("<insert> j t 1" . markdown-insert-header-atx-1)
+				("<insert> j t 2" . markdown-insert-header-atx-2)
+				("<insert> j t 3" . markdown-insert-header-atx-3)
+				("<insert> j t 4" . markdown-insert-header-atx-4)
+				("<insert> j t 5" . markdown-insert-header-atx-5)
+				("<insert> j t 6" . markdown-insert-header-atx-6)
+				("<insert> j t !" . markdown-insert-header-setext-1)
+				("<insert> j t @" . markdown-insert-header-setext-1)
+				("<insert> j a l" . markdown-insert-inline-link-dwim)
+				("<insert> j a L" . markdown-insert-reference-link-dwim)
+				("<insert> j a f" . markdown-insert-footnote)
+				("<insert> j j c" . markdown-insert-code)
+				("<insert> j j b" . markdown-insert-blackquote)
+				("<insert> j j p" . markdown-insert-gfm-code-block)
+				("<insert> j j i" . markdown-insert-italic)
+				("<insert> j j k" . markdown-insert-kbd)
+				))
 (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))

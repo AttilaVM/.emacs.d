@@ -16,6 +16,7 @@
 	:config
 	(elpy-use-ipython)
 	(setq elpy-rpc-backend "jedi")
+	(setq python-indent-offset 4)
 
 	;; clear Ipython console. use it only in ipython buffer
 	(defun my/clear-console ()

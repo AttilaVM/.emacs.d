@@ -8,7 +8,7 @@
 ;;; Code:
 
 ;; Why the hell is this key even present on a modern keyboard?
-(global-unset-key (kbd "<insert>"))
+
 (global-unset-key (kbd "C-x o"))
 
 ;; overide paired expressin jump
@@ -104,6 +104,22 @@
 			(backward-char)
 			(call-interactively 'sp-clone-sexp)))
 
+(defun my/avy-select-2 ()
+	""
+	(interactive)
+	(call-interactively 'avy-goto-char-2)
+	(call-interactively 'set-mark-command)
+	(call-interactively 'avy-goto-char-2)
+	)
+
+(defun my/avy-select-1 ()
+	""
+	(interactive)
+	(call-interactively 'avy-goto-char)
+	(call-interactively 'set-mark-command)
+	(call-interactively 'avy-goto-char)
+	)
+
 	;; TODO use mylib.el L104
 	;; (defun my/kill-surrounded-content ()
 	;;	(interactive)
@@ -131,9 +147,9 @@
 	(avy-setup-default)
 	;; Unset kbd from default line jump function
 	:bind
-	(( "C-;" . avy-goto-char)
-	( "C-'" . avy-goto-char-2)
-	( "M-g g" . avy-goto-line)
+	(( "<insert> ;" . avy-goto-char)
+	( "<insert>  '" . avy-goto-char-2)
+	( "<insert> l l" . avy-goto-line)
 	( "M-g w" . avy-goto-word-1)))
 
 ;; Jump back to previous edits
@@ -385,12 +401,12 @@ point reaches the beginning or end of the buffer, stop there."
 	(insert
 	 (concat "rgba(" (replace-regexp-in-string "\n" " " (substring grabc-output (string-match "\n" grabc-output)) -1) ", 1)")))))
 
-(defun my/avy-zap-to-char-2 ()
+(defun my/avy-zap-to-char-1 ()
 	"Jump to the currently visible CHAR1 followed by CHAR2.
 The window scope is determined by `avy-all-windows' (ARG negates it)."
 	(interactive)
 	(call-interactively 'set-mark-command)
-	(call-interactively 'avy-goto-char-1)
+	(call-interactively 'avy-goto-char)
 	(call-interactively 'kill-region))
 
 (defun my/avy-zap-to-char-2 ()
@@ -415,21 +431,22 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
 ;; which is completly substituted by helm inteaction with the kill ring
 ;; It will be used to revert active buffer
 (global-unset-key (kbd "C-x r"))
-(global-set-key (kbd "C-x r") 'revert-buffer)
+(global-set-key (kbd "<insert> x r") 'revert-buffer)
 
 ;; remap C-a to `smarter-move-beginning-of-line'
 (global-set-key [remap move-beginning-of-line]
 		'my/smarter-move-beginning-of-line)
 
 ;; My handy line-interaction functions
-(global-set-key (kbd "s-l C-n") 'my/line-duplicate-below)
-(global-set-key (kbd "s-l C-p") 'my/line-duplicate-above)
-(global-set-key (kbd "s-l C-SPC") 'my/line-select)
-(global-set-key (kbd "s-l M-w") 'my/line-copy)
-(global-set-key (kbd "s-l C-w") 'my/line-cut)
-(global-set-key (kbd "s-l M-%") 'my/line-query-replace)
-(global-set-key (kbd "s-l C-M-%") 'my/line-query-replace-reqexp)
+(global-set-key (kbd "<insert> l n") 'my/line-duplicate-below)
+(global-set-key (kbd "<insert> l p") 'my/line-duplicate-above)
+(global-set-key (kbd "<insert> l SPC") 'my/line-select)
+(global-set-key (kbd "<insert> l w") 'my/line-copy)
+(global-set-key (kbd "<insert> l k") 'my/line-cut)
+(global-set-key (kbd "<insert> l r t") 'my/line-query-replace)
+(global-set-key (kbd "<insert> l r r") 'my/line-query-replace-reqexp)
 (global-set-key (kbd "s-l d") 'my/line-dump)
+
 
 ;; Move lines up&down
 (global-set-key (kbd "M-s-<down>") 'my/line-move-down)
@@ -438,13 +455,16 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
 (global-set-key (kbd "<C-kp-6>") 'grab-screen-color)
 
 ;; Jump to a new line below or above
-(global-set-key (kbd "<M-return>") 'my-newline-below)
-(global-set-key (kbd "<M-s-return>") 'my-newline-above)
+(global-set-key (kbd "<insert> <return> n") 'my-newline-below)
+(global-set-key (kbd "<insert> <return> p") 'my-newline-above)
 
 (global-set-key (kbd "C-x H") 'my/selecet-sentence)
 
-(global-set-key (kbd "s-k \;") 'my/avy-zap-to-char-1)
-(global-set-key (kbd "s-k \'") 'my/avy-zap-to-char-2)
+(global-set-key (kbd "<insert> k \;") 'my/avy-zap-to-char-1)
+(global-set-key (kbd "<insert> k \'") 'my/avy-zap-to-char-2)
 
 (global-set-key (kbd "M-s-i") 'my/insert-hun-long-i)
+
+(global-set-key (kbd "<insert> SPC ;") 'my/avy-select-1)
+(global-set-key (kbd "<insert> SPC '") 'my/avy-select-2)
 ;;; edit.el ends here

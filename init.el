@@ -51,6 +51,7 @@
 ;; Project management and higher capabilities
 (load "~/.emacs.d/confs/helm.el")
 (load "~/.emacs.d/confs/sunrise-commander.el")
+(load "~/.emacs.d/confs/realgud.el") ; debugger
 
 ;; Language specific
 (load "~/.emacs.d/confs/elisp.el")
@@ -106,7 +107,7 @@
 	 "(do (require 'weasel.repl.websocket) (cemerick.piggieback/cljs-repl (weasel.repl.websocket/repl-env :ip \"127.0.0.1\" :port 9001)))")
  '(package-selected-packages
 	 (quote
-		(helm-nixos-options nix-mode command-log-mode dired-async-mode dired-async emacs-async s s\.el fish-mode nginx-mode winum npm-mode neotree neo-tree eshell-autojump esehell-autojump bash-completion px helm-cider rainbow-mode indium yaml-mode workgroups web-mode w3m use-package undo-tree tide sunrise-x-mirror sunrise-x-loop sunrise-x-checkpoints stylus-mode strace-mode smartparens show-css scss-mode rainbow-delimiters python-django pug-mode persp-mode pager nodejs-repl mentor markdown-mode magit kite-mini json-mode js2-refactor jade-mode info-buffer import-js image+ ibuffer-tramp ibuffer-projectile hindent highlight-symbol highlight-context-line highlight-blocks hide-region helm-unicode helm-tramp helm-rage helm-projectile helm-mt helm-gtags helm-emms helm-dash helm-cscope helm-c-yasnippet helm-ag haskell-mode gulp-task-runner guide-key grunt goto-chg eslint-fix emmet-mode elpy elein editorconfig discover-my-major dired+ conkeror-minor-mode company-web company-tern company-auctex cider choice-program buffer-move bats-mode avy)))
+		(pretty-mode realgud relgud howdoi helm-nixos-options nix-mode command-log-mode dired-async-mode dired-async emacs-async s s\.el fish-mode nginx-mode winum npm-mode neotree neo-tree eshell-autojump esehell-autojump bash-completion px helm-cider rainbow-mode indium yaml-mode workgroups web-mode w3m use-package undo-tree tide sunrise-x-mirror sunrise-x-loop sunrise-x-checkpoints stylus-mode strace-mode smartparens show-css scss-mode rainbow-delimiters python-django pug-mode persp-mode pager nodejs-repl mentor markdown-mode magit kite-mini json-mode js2-refactor jade-mode info-buffer import-js image+ ibuffer-tramp ibuffer-projectile hindent highlight-symbol highlight-context-line highlight-blocks hide-region helm-unicode helm-tramp helm-rage helm-projectile helm-mt helm-gtags helm-emms helm-dash helm-cscope helm-c-yasnippet helm-ag haskell-mode gulp-task-runner guide-key grunt goto-chg eslint-fix emmet-mode elpy elein editorconfig discover-my-major dired+ conkeror-minor-mode company-web company-tern company-auctex cider choice-program buffer-move bats-mode avy)))
  '(persp-keymap-prefix "p"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

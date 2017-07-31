@@ -7,6 +7,8 @@
 ;; Version: 0.3
 ;;; Code:
 
+(global-unset-key (kbd "<insert>"))
+
 ;; Set variable binding limit
 (setq max-specpdl-size 10000)
 ;; Set recursion limit
@@ -36,7 +38,7 @@
 
 ;; Use zsh for term
 (when (file-executable-p "/bin/zsh")
-	(setq explicit-shell-file-name "bin/zsh"))
+	(setq explicit-shell-file-name "/bin/zsh"))
 
 ;; Set startup buffer
 (when (file-exists-p user/home-buffer)
@@ -98,5 +100,21 @@
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 ;;; behavior.el ends here
 
-(global-set-key (kbd "s-g b k") 'kill-matching-buffers)
-(global-set-key (kbd "s-g b n") 'rename-file-and-buffer)
+(global-set-key (kbd "<insert> b K") 'kill-matching-buffers)
+(global-set-key (kbd "<insert> b r") 'rename-file-and-buffer)
+(global-unset-key (kbd "M-%"))
+(global-set-key (kbd "<insert> r t") 'query-replace)
+(global-unset-key (kbd "C-M-%"))
+(global-set-key (kbd "<insert> r r") 'query-replace-regexp)
+(global-unset-key (kbd "C-x k"))
+(global-set-key (kbd "<insert> b k") 'kill-buffer)
+(global-unset-key (kbd "C-x s"))
+(global-set-key (kbd "<insert> x a") 'save-some-buffers)
+(global-unset-key (kbd "C-x C-f"))
+(global-set-key (kbd "<insert> x x") 'helm-find-files)
+(global-unset-key (kbd "C-y"))
+(global-set-key (kbd "<insert> i i") 'yank)
+(global-unset-key (kbd "C-c C-c"))
+(global-set-key (kbd "<insert> <escape>") 'save-buffers-kill-terminal)
+(global-unset-key (kbd "C-x C-s"))
+(global-set-key (kbd "<insert> x x") 'save-buffer)

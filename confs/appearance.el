@@ -12,6 +12,8 @@
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 
+
+
 ;; Set global font type
 ;; (add-to-list 'default-frame-alist '(font . "inconsolata-12" ))
 ;; (set-face-attribute 'default t :font "inconsolata-12" )
@@ -19,9 +21,132 @@
 ;; (add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline-11" ))
 ;; (set-face-attribute 'default t :font "Inconsolata-dz for Powerline-11")
 
-(set-default-font "Inconsolata-12")
+;;(set-default-font "Inconsolata-14")
 
-;; Set termina font type-break
+(set-language-environment "UTF-8")
+(set-default-coding-systems 'utf-8)
+
+;; (set-default-font "DejaVu Sans Mono-13")
+
+(when (window-system)
+		(set-default-font "Fira Code"))
+
+;; (use-package pretty-mode)
+;; (require 'pretty-mode)
+;; (global-pretty-mode t)
+
+;; Emacs built in prettify
+(global-prettify-symbols-mode 1)
+(add-hook
+ 'python-mode-hook
+ (lambda ()
+	 (mapc (lambda (pair) (push pair prettify-symbols-alist))
+				 '(;; Syntax
+					 ("def" .      #x03d5) ; ϕ
+					 ("not" .      #xffe2) ; ￢
+					 ("in" .       #x2208) ; ∈
+					 ("not in" .   #x2209) ; ∉
+					 ("return" .   #x2b05) ; ⬅
+					 ("yield" .    #x21da) ; ⇚
+					 ("for" .      #x2200) ; ∀
+					 ("while" .    #x27f3) ; ⟳
+					 ("==" .       #x2263) ; ≣
+					 ("!=" .       #x2260) ; ≠
+					 ("<=" .       #x2264) ; ≤
+					 (">=" .       #x2265) ; ≥
+					 ;; functional
+					 ("map" .      #x279b) ; ➛
+					 ("compose" .  #x2295) ; ⊕
+					 ;; Base Types
+					 ("bool" .     #x1d539) ; 𝔹
+					 ("int" .      #x2124)
+					 ("float" .    #x211d)
+					 ("str" .      #x1d54a)
+					 ("True" .     #x1d54b)
+					 ("False" .    #x1d53d)
+					 ("None" .     #x29b0) ; ⦰
+					 ;; Mypy
+					 ("Dict" .     #x1d507)
+					 ("List" .     #x2112)
+					 ("Tuple" .    #x2a02)
+					 ("Set" .      #x2126) ;
+					 ("Iterable" . #x1d50a)
+					 ("Any" .      #x2754)
+					 ("Union" .    #x22c3)
+					 ("lambda" .   #x03bb) ; λ
+					 ;; constants
+					 ("math.pi" .  #x03c0) ; π
+					 ("pi" .       #x03c0) ; π
+					 ;; operations
+					 ("sum" .      #x2211) ; ∑
+					 ;; Cartesian product
+					 ("cproduct" . #x2715) ; ✕
+					 ("itertools.product" . #x2715)
+					 ))))
+
+(add-hook
+ 'clojure-mode-hook
+ (lambda ()
+	 (mapc (lambda (pair) (push pair prettify-symbols-alist))
+				 '(;; Syntax
+					 ("def" . #x1d54d) ; 𝕍
+					 ("defn" .      #x03d5) ; ϕ
+					 ("fn" .   #x03bb) ; λ
+					 ("loop" .    #x27f3) ; ⟳
+					 ("recur" .  #x21bb) ; ↻
+					 ("defrecord" . #x03b4) ; δ
+
+					 ("not" .      #xffe2) ; ￢
+					 ("conatins?" .       #x2208) ; ∈
+					 ("not=" .       #x2260) ; ≠
+					 ("<=" .       #x2264) ; ≤
+					 (">=" .       #x2265) ; ≥
+					 ;; functional
+					 ("map" .      #x279b) ; ➛
+					 ("comp" .  #x2295) ; ⊕
+					 ;; logic
+					 ("or" . #x22c1) ; ⋁
+					 ("and" . #x22c0 ) ;  ⋀
+					 ("some" .  #x2203) ; ∃
+					 ("every?" .      #x2200) ; ∀
+					 ;; meta
+					 ("->" . #x2799) ; ➙
+					 ("->>" . #x279c) ; ➜
+					 ("as->" . #x27a4) ; ➤
+					 ;; algebric
+					 ("Math/floor" . "⌞x⌟")
+					 ("Math/ceil" . "⌜ x ⌝")
+					 ("Math/sqrt" . "√")
+					 ("Math/abs" . "|x|")
+
+					 ("clojure.set/union" .    #x22c3) ; ⋃
+					 ("set/union" .    #x22c3) ; ⋃
+
+					 ("clojure.set/intersection" .    #x22c2) ; ⋂
+					 ("set/intersection" .    #x22c2) ; ⋂
+
+					 ("clojure.set/subset" .    #x2282) ; ⊂
+					 ("set/subset" .    #x2282) ; ⊂
+
+					 ("clojure.set/superset" .    #x2283) ; ⊃
+					 ("set/superset" .    #x2283) ; ⊃
+
+					 ;; Base Types
+					 ("^Long" .      #x2124)
+					 ("^double" .    #x211d)
+					 ("^String" .      #x1d54a)
+					 ("true" .     #x1d54b)
+					 ("false" .    #x1d53d)
+					 ("nil" .     #x29b0) ; ⦰
+
+
+					 ;; constants
+					 ("Math/PI" .  #x03c0) ; π
+					 ("PI" .       #x03c0) ; π
+					 ;; operations
+					 ))))
+
+;; Set terminal font type-break
 
 
 ;; Enable line numbers globally

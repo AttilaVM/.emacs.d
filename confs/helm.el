@@ -39,26 +39,34 @@
 	(define-key helm-map (kbd "C-h") nil)
 	:bind
 	(
-	 ("C-x C-f" . helm-find-files)
+	 ("<insert> x f" . helm-find-files)
+	 ("<insert> b b" . switch-to-buffer)
 	 ;; Use helm for command prompt
 	 ("M-x" . helm-M-x)
+	 ("<insert> <insert>" . helm-M-x)
 	 ;; Use helm-buffers-list instead of default helm buffer lister
 	 ("s-x b" . helm-buffers-list)
 	 ;; get the list of the bookmarks (C-x r m for saving bookmarks)
 	 ("C-c p j" . helm-bookmarks)
 	 ;; More easier way to acces Emacs's internal "clipboard"
-	 ("M-y" . helm-show-kill-ring)
+	 ("<insert> i h" . helm-show-kill-ring) ;; as clipboard history
 	 ;; Use helm with isearch
-	 ("s-s" . helm-occur)
+	 ("<insert> s s" . helm-occur)
 	 ;; helm-ls-git
 	 ("C-<f6>" . helm-browse-project)
+	 ;; helm imenu
+	 ("<insert> s i" . helm-imenu)
 	 ;; helm-c-source-yasnippet
-	 ("C-c y" . helm-yas-complete)
+	 ("<insert> i y" . helm-yas-complete)
 	 ;; helm top
 	 ("C-x c C-t" . helm-tramp )
+	 ;; helm locate
+	 ("<insert> s l" . helm-locate)
+	 ;; helm woman
+	 ("<insert> m w" . helm-man-woman)
 	 ;; ???
 	 ("<C-kp-4>" . sm/toggle-showcss)
-	 ("<C-kp-2>" . helm-colors))
+	 ("<insert> i c" . helm-colors))
 	:bind
 	(:map helm-map
 	("C-z" . helm-select-action)
@@ -81,19 +89,19 @@
 	(setq projectile-enable-caching t)
 	(use-package helm-ag)
 	:bind
-	("C-c p p" . helm-projectile-switch-project)
-	("C-c p +" . projectile-add-known-project)
-	("C-c p f" . helm-projectile-find-file)
-	("C-c p b" . helm-projectile-switch-to-buffer)
+	("<insert> p p" . helm-projectile-switch-project)
+	("<insert> p +" . projectile-add-known-project)
+	("<insert> p f" . helm-projectile-find-file)
+	("<insert> p b" . helm-projectile-switch-to-buffer)
 	;; Extreamly fast mehotd search in all recent project files.
-	("C-c p a" . helm-projectile-ag)
-	("C-s-s" . helm-projectile-ag)
-	("C-x M-s" . projectile-save-project-buffers)
+	("<insert> p a" . helm-projectile-ag)
+	("<insert> s p" . helm-projectile-ag)
+	("<insert> x p" . projectile-save-project-buffers)
 	;; Very slow, when many project is present.
-	("C-c p g" . helm-projectile-find-file-in-known-projects)
+	("<insert> p g" . helm-projectile-find-file-in-known-projects)
 	;; Project level replace, what can go wrong?
-	("C-c p r n" . projectile-replace)
-	("C-c p r r" . projectile-replace-regexp))
+	("<insert> p r n" . projectile-replace)
+	("<insert> p r r" . projectile-replace-regexp))
 
 (use-package helm-gtags
 	:config
@@ -121,12 +129,12 @@
 ;; Use helm to inser ASCII arts
 (use-package helm-rage
 	:bind
-	(("s-i m" . helm-rage)))
+	(("<insert> i r" . helm-rage)))
 
 ;; use helm to inser unicode characters
 (use-package helm-unicode
 	:bind
-	(("s-i u" . helm-unicode)))
+	(("<insert> i u" . helm-unicode)))
 
 (use-package helm-tramp
 	:config
