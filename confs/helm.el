@@ -52,6 +52,8 @@
 	 ("<insert> i h" . helm-show-kill-ring) ;; as clipboard history
 	 ;; Use helm with isearch
 	 ("<insert> s s" . helm-occur)
+	 ;; Show kill-ring
+	 ("<insert> i h" . helm-show-kill-ring)
 	 ;; helm-ls-git
 	 ("C-<f6>" . helm-browse-project)
 	 ;; helm imenu
@@ -63,7 +65,7 @@
 	 ;; helm locate
 	 ("<insert> s l" . helm-locate)
 	 ;; helm woman
-	 ("<insert> m w" . helm-man-woman)
+	 ("<insert> 1 w" . helm-man-woman)
 	 ;; ???
 	 ("<C-kp-4>" . sm/toggle-showcss)
 	 ("<insert> i c" . helm-colors))

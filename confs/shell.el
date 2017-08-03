@@ -5,6 +5,11 @@
 (setq eshell-where-to-jump 'begin)
 (setq eshell-review-quick-commands nil)
 (setq eshell-smart-space-goes-to-end t)
+(global-set-key (kbd "<insert> 2 e") 'eshell)
+
+(require 'term)
+(global-set-key (kbd "<insert> 2 t") 'term)
+
 
 (add-hook 'eshell-mode-hook #'(lambda ()
 																(eshell/alias "h" "helm-eshell-history")

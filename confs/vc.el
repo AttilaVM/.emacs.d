@@ -16,6 +16,8 @@
 	:bind
 	(("<insert> v v" . magit-status)
 	 ("<insert> v l" . magit-log-buffer-file)
+	 ("<insert> v i" . magit-init)
+	 ("<insert> v c" . magit-clone)
 	 ("<insert> v f" . magit-find-file))
 	:bind
 	(:map magit-log-mode-map

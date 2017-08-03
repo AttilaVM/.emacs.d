@@ -27,7 +27,7 @@
 	:bind
 	(:map TeX-mode-map
 	;; Compile Latex into PDF without asking too many questions
-	("C-c C-c" . my-run-latex)
+	("<insert> j j" . my-run-latex)
 	("s-c s-c" . TeX-command-master)))
 
 ;; compile to PDF automaticly

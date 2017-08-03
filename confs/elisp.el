@@ -5,7 +5,7 @@
 			(call-interactively 'eval-region)
 		(call-interactively 'eval-buffer)))
 
-(define-key emacs-lisp-mode-map (kbd "s-e r") 'my/eval-region-or-buffer)
+;; (define-key emacs-lisp-mode-map (kbd "s-e r") 'my/eval-region-or-buffer)
 (define-key lisp-mode-map (kbd "s-e r") 'my/eval-region-or-buffer)
 
 (define-key emacs-lisp-mode-map (kbd "s-d p") 'edebug-defun)

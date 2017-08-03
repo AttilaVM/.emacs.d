@@ -40,8 +40,8 @@
 (global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
 
 ;; Calc
-(global-set-key (kbd "<f2>") 'quick-calc)
-(global-set-key (kbd "C-<f2>") 'calc)
+(global-set-key (kbd "<insert> 2 c") 'quick-calc)
+(global-set-key (kbd "<insert> 2 C>") 'calc)
 
 ;; window navigation
 (global-unset-key (kbd "M-o"))
@@ -80,7 +80,7 @@
 	(define-key undo-tree-map (kbd "C-x r") nil)
 
 	:bind (("C-s-/" . undo-tree-redo)
-	 ("M-s-/" . undo-tree-visualize)
+	 ("<insert> / /" . undo-tree-visualize)
 	 ("s-r u" . undo-tree-save-state-to-register)
 	 ("s-r U" . undo-tree-restore-state-from-register)))
 
@@ -129,14 +129,15 @@
 	;;	(call-interactively 'forward-sexp)
 	;;	(call-interactively 'backward-delete-char-untabify))
 	:bind
-	(("s-k (" . sp-splice-sexp)
+	(("<insert> k )" . sp-splice-sexp)
+	 ("<insert> k u" . sp-unwrap-sexp)
 	 ("s-k c" . my/kill-surrounded-content)
 
 	 ("C-M-j" . sp-up-sexp)
 	 ("C-M-l" . sp-down-sexp)
 	 ("s-p f" . sp-forward-sexp)
 	 ("s-p b" . sp-backward-sexp)
-	 ("s-p d" . sp-kill-sexp)
+	 ("<insert> k (" . sp-kill-sexp)
 	 ("s-p <backspace>" . sp-backward-kill-sexp)
 	 ("s-p c" . my/sp-clone-sexp)
 	 ("s-p u" . sp-unwrap-sexp)))
@@ -155,7 +156,8 @@
 ;; Jump back to previous edits
 (use-package goto-chg
 	:bind
-(("s-;" . goto-last-change)))
+	(("s-q" . goto-last-change)
+	 ("s-e" . goto-last-change-reverse)))
 
 (use-package multiple-cursors
 	:bind
@@ -339,7 +341,7 @@ point reaches the beginning or end of the buffer, stop there."
 		(revert-buffer t t t) )))
 		(message "Refreshed open files."))
 
-(defun my-insert-file-name (filename &optional args)
+(defun my-insert-file-name-relative (filename &optional args)
 		"Insert name of file FILENAME into buffer after point.
 
 	Prefixed with \\[universal-argument], expand the file name to
@@ -353,12 +355,27 @@ point reaches the beginning or end of the buffer, stop there."
 	it appears in the minibuffer prompt."
 		;; Based on insert-file in Emacs -- ashawley 20080926
 		(interactive "*fInsert file name: \nP")
-		(cond ((eq '- args)
-		 (insert (file-relative-name filename)))
-		((not (null args))
+		(insert (file-relative-name filename))
+		)
+
+
+
+(defun my-insert-file-name-absolute (filename &optional args)
+		"Insert name of file FILENAME into buffer after point.
+
+	Prefixed with \\[universal-argument], expand the file name to
+	its fully canocalized path.  See `expand-file-name'.
+
+	Prefixed with \\[negative-argument], use relative path to file
+	name from current directory, `default-directory'.  See
+	`file-relative-name'.
+
+	The default with no prefix is to insert the file name exactly as
+	it appears in the minibuffer prompt."
+		;; Based on insert-file in Emacs -- ashawley 20080926
+		(interactive "*fInsert file name: \nP")
 		 (insert (expand-file-name filename)))
-		(t
-		 (insert filename))))
+
 
 (defun flyspell-check-next-highlighted-word ()
 	"Custom function to spell check next highlighted word"

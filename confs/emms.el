@@ -86,6 +86,7 @@
 	:bind
 	(
 	 ;; Navigation
+	 ("<insert> 4 4" . emms-play-playlist)
 	 ("<f6>" . emms-seek-backward)
 	 ("<M-f6>" . my/emms-seek-beg)
 	 ("<f7>" . emms-seek-forward)

@@ -93,12 +93,45 @@
 
 (use-package command-log-mode)
 
+(use-package lispy)
+
+;; do I need it?
+(use-package parinfer
+	:ensure t
+	:bind
+	(("C-," . parinfer-toggle-mode))
+	:init
+	(progn
+		(setq parinfer-extensions
+					'(defaults       ; should be included.
+						pretty-parens  ; different paren styles for different modes.
+						;; lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+						smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+						smart-yank))   ; Yank behavior depend on mode.
+		;; (add-hook 'clojure-mode-hook #'parinfer-mode)
+		;; (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+		;; (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+		;; (add-hook 'scheme-mode-hook #'parinfer-mode)
+		;; (add-hook 'lisp-mode-hook #'parinfer-mode)
+		))
+
+
+
 ;; Open disk image files in the hex editor
 (add-to-list 'auto-mode-alist '("\\.img\\'" . hexl-mode))
 
 ;; Always use bash for tramp ssh sessions
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 ;;; behavior.el ends here
+
+;; edit
+
+(global-set-key (kbd "<insert> k l l") 'kill-whole-line)
+(global-set-key (kbd "<insert> k l k") 'kill-line)
+
+;; navigate
+(global-set-key (kbd "<insert> n w") 'beginning-of-buffer)
+(global-set-key (kbd "<insert> n s") 'end-of-buffer)
 
 (global-set-key (kbd "<insert> b K") 'kill-matching-buffers)
 (global-set-key (kbd "<insert> b r") 'rename-file-and-buffer)
@@ -112,9 +145,38 @@
 (global-set-key (kbd "<insert> x a") 'save-some-buffers)
 (global-unset-key (kbd "C-x C-f"))
 (global-set-key (kbd "<insert> x x") 'helm-find-files)
-(global-unset-key (kbd "C-y"))
 (global-set-key (kbd "<insert> i i") 'yank)
 (global-unset-key (kbd "C-c C-c"))
 (global-set-key (kbd "<insert> <escape>") 'save-buffers-kill-terminal)
 (global-unset-key (kbd "C-x C-s"))
 (global-set-key (kbd "<insert> x x") 'save-buffer)
+(global-set-key (kbd "<insert> SPC SPC") 'set-mark-command)
+
+;; Selection
+(global-unset-key (kbd "C-x h"))
+(global-set-key (kbd "<insert> SPC h") 'mark-whole-buffer)
+
+;; Window and frame mamagement
+(global-unset-key (kbd "C-x 2"))
+(global-set-key (kbd "<insert> 3 v") 'split-window-below)
+(global-unset-key (kbd "C-x 3"))
+(global-set-key (kbd "<insert> 3 h") 'split-window-horizontally)
+(global-unset-key (kbd "C-x 1"))
+(global-set-key (kbd "<insert> 3 e") 'delete-other-windows) ;; expand active window
+(global-unset-key (kbd "C-x 0"))
+(global-set-key (kbd "<insert> 3 k") 'delete-window) ;; expand active window
+
+;; Emacs lisp
+(define-key emacs-lisp-mode-map (kbd "<insert> e e") 'eval-last-sexp)
+(define-key emacs-lisp-mode-map (kbd "<insert> e b") 'eval-buffer)
+(define-key emacs-lisp-mode-map (kbd "<insert> e r") 'eval-region)
+(define-key emacs-lisp-mode-map (kbd "<insert> e t") 'eval-defun)
+(define-key emacs-lisp-mode-map (kbd "<insert> j e e") 'eval-last-sexp)
+(define-key emacs-lisp-mode-map (kbd "<insert> j e b") 'eval-buffer)
+(define-key emacs-lisp-mode-map (kbd "<insert> j e r") 'eval-region)
+(define-key emacs-lisp-mode-map (kbd "<insert> j e t") 'eval-defun) ;; Eval top level sexpr
+
+(global-set-key (kbd "<insert> i p r") 'my-insert-file-name-relative)
+(global-set-key (kbd "<insert> i p a") 'my-insert-file-name-absolute)
+
+(global-set-key (kbd "<insert> 1 p") 'package-list-packages)

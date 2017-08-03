@@ -49,7 +49,6 @@ The return value is the new value of LIST-VAR."
 
 (global-set-key (kbd "<C-kp-add>") 'increment-number-at-point)
 (global-set-key (kbd "<C-kp-subtract>") 'decrement-number-at-point)
-(global-set-key (kbd "<C-kp-1>") 'my-insert-file-name)
 
 (defun my/read-file (file-path)
 	"Return file-path's file content."
