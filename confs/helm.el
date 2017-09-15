@@ -66,6 +66,9 @@
 	 ("<insert> s l" . helm-locate)
 	 ;; helm woman
 	 ("<insert> 1 w" . helm-man-woman)
+	 ("<insert> 1 i e" . helm-info-elisp)
+	 ("<insert> 1 i m" . helm-info-magit)
+	 ("<insert> 1 i z" . helm-info-zsh)
 	 ;; ???
 	 ("<C-kp-4>" . sm/toggle-showcss)
 	 ("<insert> i c" . helm-colors))

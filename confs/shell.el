@@ -99,10 +99,24 @@
 
 (defun sh-send-line-or-region-and-step ()
 	(interactive)
+	;; Clear *shell* buffer
+	(when-let ((shell-buffer (get-buffer "*shell*")))
+		(with-current-buffer shell-buffer
+			(my/commint-clear)))
 	(sh-send-line-or-region t))
+
 (defun sh-switch-to-process-buffer ()
 	(interactive)
 	(pop-to-buffer (process-buffer (get-process "shell")) t))
+
+(defun sh-send-buffer-and-step ()
+	(interactive)
+	(mark-whole-buffer)
+	(sh-send-line-or-region-and-step))
+
+(require 'sh-script)
+(define-key sh-mode-map (kbd "<insert> e e") 'sh-send-line-or-region-and-step)
+(define-key sh-mode-map (kbd "<insert> e b") 'sh-send-buffer-and-step)
 
 ;; customized eshell prompt
 

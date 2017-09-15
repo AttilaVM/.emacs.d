@@ -140,7 +140,11 @@
 	 ("<insert> k (" . sp-kill-sexp)
 	 ("s-p <backspace>" . sp-backward-kill-sexp)
 	 ("s-p c" . my/sp-clone-sexp)
-	 ("s-p u" . sp-unwrap-sexp)))
+	 ("s-p u" . sp-unwrap-sexp)
+	 ;; select
+	 ("<insert> SPC (" . sp-select-previous-thing)
+	 ("<insert> SPC )" . sp-select-next-thing)
+	 ))
 
 (global-unset-key (kbd "M-g g"))
 (use-package avy

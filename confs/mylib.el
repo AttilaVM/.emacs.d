@@ -111,3 +111,7 @@ The return value is the new value of LIST-VAR."
 	(if bool
 	"True"
 	"False"))
+
+(defun my/print-major-mode ()
+	(interactive)
+	(message "%s" major-mode))

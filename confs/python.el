@@ -10,7 +10,7 @@
 ;; Elpy works on the top of python mode
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 
-(setq python-indent 2)
+(setq python-indent 4)
 
 (use-package elpy
 	:config
@@ -18,20 +18,35 @@
 	(setq elpy-rpc-backend "jedi")
 	(setq python-indent-offset 4)
 
-	;; clear Ipython console. use it only in ipython buffer
-	(defun my/clear-console ()
+	;; clear Ipython console
+	(defun my/python-clear-console ()
 		(interactive)
-		(let ((comint-buffer-maximum-size 0))
-			(comint-truncate-buffer)))
+		(if (member major-mode '(inferior-python-mode))
+		 (my/commint-clear)
+		 (when-let ((python-shell-buffer (get-buffer "*Python*")))
+			 (with-current-buffer python-shell-buffer
+				 (my/commint-clear)))))
 
+	;; For some weird reson use-package can not set this
+	(define-key inferior-python-mode-map (kbd "<insert> e c") 'my/python-clear-console)
 	:bind
 	;; ELPY: Restart python console before evaluate buffer or region to avoid various uncanny conflicts
 	;; like not reloding modules even when they are changed
 	(:map python-mode-map
-	("s-c s-c" . my-restart-python-console)
-	("M-." . elpy-goto-definition-or-rgrep)
-	("s-c f" . elpy-autopep8-fix-code)
-	("s-l" . my/clear-console)))
+				("<insert> j c" . run-python)
+				("<insert> e b" . python-shell-send-buffer)
+				("<insert> e r" . python-shell-send-region)
+				("<insert> e f" . python-shell-send-defun)
+				("<insert> e c" . my/print-major-mode)
+				("s-c s-c" . my-restart-python-console)
+				("M-." . elpy-goto-definition-or-rgrep)
+				("s-c f" . elpy-autopep8-fix-code))
+
+	;; (:map inferior-python-mode-map
+	;;			("<insert> e c" . my/print-major-mode))
+)
+
+
 
 ;; Make defintition jumping more robust
 ;; see https://github.com/jorgenschaefer/elpy/wiki/Customizations

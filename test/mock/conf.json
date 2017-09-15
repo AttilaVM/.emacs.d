@@ -1,0 +1,7 @@
+{
+		"src": "/home/attila/.emacs.d/test/mock/project-mock",
+		"testingTargetDest": "192.168.1.11:/tmp/deploy-target1",
+		"testingTargetPort": "22",
+		"productionTargetDest": "192.168.1.11:/tmp/deploy-target2",
+		"productionTarget-port": "22"
+}
