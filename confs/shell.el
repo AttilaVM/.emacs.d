@@ -1,5 +1,8 @@
 ;; eshell
 
+(global-set-key (kbd "<insert> 5 a") 'async-shell-command)
+(global-set-key (kbd "<insert> 5 c") 'shell-command)
+
 (require 'eshell)
 (require 'em-smart)
 (setq eshell-where-to-jump 'begin)

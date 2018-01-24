@@ -41,7 +41,8 @@
 
 ;; Calc
 (global-set-key (kbd "<insert> 2 c") 'quick-calc)
-(global-set-key (kbd "<insert> 2 C>") 'calc)
+(global-set-key (kbd "<insert> 2 C") 'calc)
+(global-set-key (kbd "<insert> 2 r") 're-builder)
 
 ;; window navigation
 (global-unset-key (kbd "M-o"))
@@ -84,11 +85,24 @@
 	 ("s-r u" . undo-tree-save-state-to-register)
 	 ("s-r U" . undo-tree-restore-state-from-register)))
 
+(require 'dabbrev)
+;; Make dabbrev case sensitive
+(setq dabbrev-case-fold-search 'case-fold-search)
+(setq company-dabbrev-ignore-case nil)
+
 ;; Use Company mode instead of auto-complete mode
 (use-package company
 	:config
-	(add-hook 'after-init-hook 'global-company-mode))
+	(add-hook 'after-init-hook 'global-company-mode)
+	;; dabbrev should not downcase it completions
+	(setq company-dabbrev-downcase nil)
+	;; dabbrev by default only looks for
+	(setq company-dabbrev-char-regexp "[a-zA-Z0-9.]")
+	)
 
+(use-package vlf
+	:config
+	(require 'vlf-setup))
 
 (use-package smartparens
 
@@ -144,6 +158,7 @@
 	 ;; select
 	 ("<insert> SPC (" . sp-select-previous-thing)
 	 ("<insert> SPC )" . sp-select-next-thing)
+	 ("<insert> SPC r" . rectangle-mark-mode)
 	 ))
 
 (global-unset-key (kbd "M-g g"))
@@ -164,9 +179,11 @@
 	 ("s-e" . goto-last-change-reverse)))
 
 (use-package multiple-cursors
+	:config
+	(global-unset-key (kbs "M-m"))
 	:bind
 	(( "s-n" . mc/edit-lines)
-	 ( "M-s-s" . mc/mark-next-like-this)))
+	 ( "M-m" . mc/mark-next-like-this)))
 
 (use-package buffer-move)
 
@@ -184,6 +201,7 @@
 								c-mode-hook
 								haskell-mode-hook
 								jade-mode-hook
+								elm-mode-hook
 								stylus-mode-hook) 'subword-mode)
 
 (defun my/insert-hun-long-i ()
@@ -453,6 +471,7 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
 ;; It will be used to revert active buffer
 (global-unset-key (kbd "C-x r"))
 (global-set-key (kbd "<insert> x r") 'revert-buffer)
+(global-set-key (kbd "<insert> x w") 'write-file)
 
 ;; remap C-a to `smarter-move-beginning-of-line'
 (global-set-key [remap move-beginning-of-line]

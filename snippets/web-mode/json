@@ -1,0 +1,5 @@
+#contributor : Molnar Attila <ate.molnar2@gmail.com>
+#name : json
+#key : json
+# --
+<script type="application/json" src="$1.json"></script>

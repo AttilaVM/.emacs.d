@@ -69,7 +69,7 @@
 (setq gnus-button-url 'browse-url-generic
 			browse-url-browser-function gnus-button-url
 			browse-url-generic-program (my/get-first-match
-					'("conkeror" "vivaldi" "google-chrome-stable" "chromium" "firefox")
+					'("chromium" "conkeror" "vivaldi" "google-chrome-stable" "firefox")
 					(function (lambda (command)
 								(if (executable-find command)
 							command
@@ -85,11 +85,11 @@
 
 (use-package winum)
 
-(use-package persp-mode
-	:config
-	(setq wg-morph-on nil) ;; switch off animation
-			(setq persp-autokill-buffer-on-remove 'kill-weak)
-			(add-hook 'after-init-hook #'(lambda () (persp-mode 1))))
+;; (use-package persp-mode
+;;	:config
+;;	(setq wg-morph-on nil) ;; switch off animation
+;;			(setq persp-autokill-buffer-on-remove 'kill-weak)
+;;			(add-hook 'after-init-hook #'(lambda () (persp-mode 1))))
 
 (use-package command-log-mode)
 

@@ -12,8 +12,30 @@
 
 (setq python-indent 4)
 
+;; The following system packages should be installed.
+;; # Either of these
+;; pip install rope
+;; pip install jedi
+;; # flake8 for code checks
+;; pip install flake8
+;; # importmagic for automatic imports
+;; pip install importmagic
+;; # and autopep8 for automatic PEP8 formatting
+;; pip install autopep8
+;; # and yapf for code formatting
+;; pip install yapf
+
+;; use elpy-config to customize elpy
+
 (use-package elpy
 	:config
+	(add-hook 'python-mode-hook
+						(lambda ()
+							(elpy-mode)
+							(setq indent-tabs-mode t)
+							(setq tab-width 4)
+							(setq python-indent 4)
+							(setq python-indent-offset 4)))
 	(elpy-use-ipython)
 	(setq elpy-rpc-backend "jedi")
 	(setq python-indent-offset 4)

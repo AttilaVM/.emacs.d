@@ -23,6 +23,12 @@
 
 (use-package web-mode
 	:config
+	(add-hook 'web-mode-hook
+						(lambda ()
+							(setq-local company-backends
+													(append '((company-css
+																		 :separate
+																		 company-web-html))))))
 	;; turn on pair tag highlight for html
 	(web-mode-toggle-current-element-highlight)
 	(add-hook 'web-mode-hook (lambda ()
@@ -60,8 +66,12 @@
 
 (use-package jade-mode
 	:config
-	;; (add-to-list 'company-dabbrev-code-modes 'jade-mode)
-	)
+	(add-hook 'jade-mode-hook
+						(lambda ()
+							(setq-local company-backends
+													(append '((company-web-jade
+																		 :separate
+																		 company-dabbrev)))))))
 
 
 (use-package show-css
@@ -97,7 +107,8 @@
 				("<insert> j a l" . markdown-insert-inline-link-dwim)
 				("<insert> j a L" . markdown-insert-reference-link-dwim)
 				("<insert> j a f" . markdown-insert-footnote)
-				("<insert> j j c" . markdown-insert-code)
+				("<insert> j c c" . markdown-insert-code)
+				("<insert> j c b" . markdown-insert-gfm-code-block)
 				("<insert> j j b" . markdown-insert-blackquote)
 				("<insert> j j p" . markdown-insert-gfm-code-block)
 				("<insert> j j i" . markdown-insert-italic)
@@ -106,4 +117,11 @@
 (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+
+(use-package simple-httpd
+	:bind
+	("<insert> 2 h" . httpd-serve-directory))
+
+(use-package skewer-mode)
+
 ;;; web.el ends here

@@ -9,9 +9,13 @@
 	indent-new-comment-line
 	js2-line-break
 	kill-region
+	my/line-duplicate-below
 	my/smarter-move-beginning-of-line
+	tern-ac-dot-complete
 	))
 
 (setq mc/cmds-to-run-once
       '(
+	helm-M-x
+	iedit-switch-to-mc-mode
 	))

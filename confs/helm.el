@@ -40,6 +40,7 @@
 	:bind
 	(
 	 ("<insert> x f" . helm-find-files)
+	 ("<insert> x d" . dired)
 	 ("<insert> b b" . switch-to-buffer)
 	 ;; Use helm for command prompt
 	 ("M-x" . helm-M-x)
@@ -52,6 +53,8 @@
 	 ("<insert> i h" . helm-show-kill-ring) ;; as clipboard history
 	 ;; Use helm with isearch
 	 ("<insert> s s" . helm-occur)
+	 ;; resume to previous search
+	 ("<insert> s r" . helm-resume)
 	 ;; Show kill-ring
 	 ("<insert> i h" . helm-show-kill-ring)
 	 ;; helm-ls-git
@@ -74,9 +77,18 @@
 	 ("<insert> i c" . helm-colors))
 	:bind
 	(:map helm-map
-	("C-z" . helm-select-action)
-	("C-r" . helm-ff-run-find-file-as-root)))
+	("<insert> j j" . helm-select-action)
+	("<insert> r" . helm-ff-run-find-file-as-root)
+	("<insert> d d" . dired-find-file)
+	("<insert> d o" . dired-find-file)
+	))
 
+(use-package helm-company
+	:config
+	(eval-after-load 'company
+	'(progn
+		 (define-key company-mode-map (kbd "<insert> TAB") 'helm-company)
+		 (define-key company-active-map (kbd "<insert> TAB") 'helm-company))))
 
 (use-package helm-c-yasnippet
 	:config
@@ -90,6 +102,13 @@
 		:config
 		(helm-projectile-on))
 	(projectile-global-mode)
+	(setq projectile-globally-ignored-directories
+				(append '(
+				"out"
+				"target"
+				"venv"
+				"node_modules"
+				) ))
 	(setq projectile-known-projects-file "~/.emacs.d/projectile-bookmarks.eld")
 	(setq projectile-enable-caching t)
 	(use-package helm-ag)
@@ -98,6 +117,7 @@
 	("<insert> p +" . projectile-add-known-project)
 	("<insert> p f" . helm-projectile-find-file)
 	("<insert> p b" . helm-projectile-switch-to-buffer)
+	("<insert> p i" . projectile-invalidate-cache)
 	;; Extreamly fast mehotd search in all recent project files.
 	("<insert> p a" . helm-projectile-ag)
 	("<insert> s p" . helm-projectile-ag)
@@ -105,7 +125,7 @@
 	;; Very slow, when many project is present.
 	("<insert> p g" . helm-projectile-find-file-in-known-projects)
 	;; Project level replace, what can go wrong?
-	("<insert> p r n" . projectile-replace)
+	("<insert> p r t" . projectile-replace)
 	("<insert> p r r" . projectile-replace-regexp))
 
 (use-package helm-gtags

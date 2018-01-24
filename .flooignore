@@ -1,0 +1,14 @@
+#*
+*.o
+*.pyc
+*.pyo
+*.elc
+*~
+extern/
+heroku.yml
+node_modules/
+tmp
+vendor/
+elpa/
+auto-save-list
+helm-adaptive-history

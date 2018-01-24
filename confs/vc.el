@@ -18,7 +18,10 @@
 	 ("<insert> v l" . magit-log-buffer-file)
 	 ("<insert> v i" . magit-init)
 	 ("<insert> v c" . magit-clone)
-	 ("<insert> v f" . magit-find-file))
+	 ("<insert> v f" . magit-find-file)
+	 ("<insert> v b" . magit-branch-popup)
+	 ("<insert> v p" . magit-push-popup)
+	 )
 	:bind
 	(:map magit-log-mode-map
 	 ("s-<f3>" . magit-display-noselect-toggle)))
@@ -64,5 +67,77 @@
 
 (advice-add 'magit-status :after 'add-magit-faces)
 (advice-add 'magit-refresh-buffer :after 'add-magit-faces)
+
+;; Show comit message for the current line
+(use-package git-messenger
+	:bind
+	("<insert> v m" . git-messenger:popup-message))
+
+;; Awesome go through git hunks with Helm
+(use-package helm-hunks
+	:bind
+	(("<insert> v h h" . 'helm-hunks)
+	 ("<insert> v h s" . 'helm-hunks-staged)
+	 ))
+
+;; See the diff of the git index and the head line by line
+;; Jump between hunks
+(use-package git-gutter
+	:config
+
+	(defun my/git-gutter:batch-revert-hunk (beg end)
+		(interactive
+		 (if (use-region-p)
+		 (list (region-beginning) (region-end))
+		 (list (point) (point-max))))
+		(loop t
+			(call-interactively 'git-gutter:next-hunk)
+			(when (> (point) end)
+				(return))
+			(call-interactively 'git-gutter:revert-hunk)))
+
+	:bind
+	(("<insert> v r" . git-gutter:revert-hunk)
+	 ("<insert> v a a" . global-git-gutter-mode)
+	 ("<insert> v a p" . git-gutter:popup-hunk)
+	 ("<insert> v a s" . git-gutter:statistic)
+	 ("<insert> v h p" . git-gutter:previous-hunk)
+	 ("<insert> v h n" . git-gutter:next-hunk)
+	 ("s-[" . git-gutter:previous-hunk)
+	 ("s-]" . git-gutter:next-hunk)
+	 )
+	)
+
+(use-package helm-git-grep)
+
+;; Go through the history of a file
+;; p previous commit
+;; n next commit
+;; g nth commit
+;; q quit
+(use-package git-timemachine
+	:bind
+	("<insert> v t" . git-timemachine))
+
+;; Show added, deleted and modified files
+;; compared to another branch
+(use-package git-lens
+	:bind
+	("<insert> v a f" . git-lens))
+
+;; Syntax hightlighing for git configiration files
+(use-package gitconfig-mode
+	:config
+	(-concat auto-mode-alist
+					 '(("\\.gitmodules\\'" . gitconfig-mode)
+						 ("\\.gitignore\\'" . gitconfig-mode)))
+	)
+
+;; List, pull modify push gists to GitHub
+(use-package gist
+	:bind
+	("<insert> = g g" . gist-list))
+
+(use-package github-search)
 
 ;;; vc.el ends here

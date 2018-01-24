@@ -46,4 +46,5 @@
 	(key-chord-define-global  "of" 'helm-find-files)
 	(key-chord-define-global  "od" 'helm-projectile-switch-project)
 	(key-chord-define-global  "og" 'helm-tramp)
-	)
+
+	(key-chord-mode t))

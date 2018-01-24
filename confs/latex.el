@@ -53,7 +53,9 @@
 	:config
 	(company-auctex-init))
 
+(use-package latex-math-preview)
 
+(use-package zotxt)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;        LaTeX         ;;;;;;;;;;;;;;;;;
