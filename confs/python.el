@@ -36,6 +36,7 @@
 							(setq tab-width 4)
 							(setq python-indent 4)
 							(setq python-indent-offset 4)))
+	(setq elpy-rpc-python-command "ipython3")
 	(elpy-use-ipython)
 	(setq elpy-rpc-backend "jedi")
 	(setq python-indent-offset 4)

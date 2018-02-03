@@ -47,15 +47,6 @@
 	(eval-after-load 'js2-mode
 		'(add-hook 'js2-mode-hook (lambda () (add-hook 'after-save-hook 'eslint-fix nil t))))))
 
-(use-package jsfmt
-	:config
-	(when (executable-find "jsfmt")
-		(add-hook
-		 'before-save-hook
-		 (lambda ()
-			 (when (string-equal major-mode "js2-mode")
-				 (jsfmt-before-save))))))
-
 ;; Configure refactoring
 (use-package js2-refactor
 	:config

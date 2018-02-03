@@ -1,0 +1,58 @@
+#+TITLE: MY ever imporoving Emacs configuration
+#+AUTHOR: Attila Molnár
+#+STARTUP: SHOWALL
+
+* Unorthodox keybindings
+** Rationale
+
+I got the point of vim folks that overusing the modifier keys is inconvenient, however switching between insert and command to execute only one command... yes even for navigation (see [[https://github.com/abo-abo/avy][avy-mode]])
+So what if I hit CapsLock and type a easily memorizable key-sequence without holding down the CapsLock or any of the modifier keys?
+I tried it and worked pretty well.
+Well I had to remap CapsLock to an otherwise expendable key: insert. (Seriously what is the real world use-case of that key, making ASCII art...)
+however I will separate keybindings from the code to make it more configurable.
+
+For this you should have an Xmodmap similar to this:
+
+#+begin_src
+clear lock
+clear control
+keycode 66 = Insert
+keycode 118 = Caps_Lock
+add control = Control_L Control_R
+#+end_src
+
+** Mnemonics
+
+b for buffers
+p for projects
+i for insertion
+l for line
+m for manuals and docs
+v for version control (magit)
+s for search
+x for I/O
+ESC for exit
+
+* Milestones
+
+- [ ] code completion with indium js IDE
+- [ ] [[https://github.com/kuangdash/org-iv][Live preview]]
+- [ ] Use [[https://github.com/raxod502/straight.el][straight.el]] (nix like purely fucntional package manager) it is highly possible that it should be co-used with [[https://github.com/jwiegley/use-package][use-package]]
+- [ ] Modernize my emacs code with [[https://github.com/rejeep/f.el][f]] (file-path and I/O handling) [[https://github.com/magnars/s.el][s]] (string handling) [[https://elpa.gnu.org/packages/let-alist.html][let-alist]] (alist library) [[https://github.com/magnars/dash.el][dash]] (Clojureish list library)
+- [X] Unit testing
+	- [X] write some unit tests
+	- [ ] Cover all pure functions
+- [x] helm everywhere
+- [ ] implement js-import
+- [ ] helm-dash
+- [ ] helm-cider
+- [ ] helm-pydoc
+- [ ] helm-clojuredocs
+- [ ] helm-commandlinefu maybe use [[https://github.com/ncrocfer/clf][clf]] instead.
+- [ ] org mode .docx export
+- [ ] paredit-mode
+- [ ] Effective Blender-mode usage
+- [ ] npm-mode
+* Research
+** atomic-chrome
+It turned out that atomic-package only works on textareas, and most online text editors do not use them.

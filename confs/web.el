@@ -28,7 +28,9 @@
 							(setq-local company-backends
 													(append '((company-css
 																		 :separate
-																		 company-web-html))))))
+																		 company-web-html
+																		 :separate
+																		 company-dabbrev))))))
 	;; turn on pair tag highlight for html
 	(web-mode-toggle-current-element-highlight)
 	(add-hook 'web-mode-hook (lambda ()
@@ -56,7 +58,13 @@
 
 (use-package stylus-mode
 	:config
-	(add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode)))
+	(add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode))
+	(add-hook 'stylus-mode-hook
+						(lambda ()
+							(setq-local company-backends
+													(append '((company-css
+																		 :separate
+																		 company-dabbrev)))))))
 
 
 (use-package scss-mode
@@ -117,6 +125,8 @@
 (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+
+(use-package markdown-preview-eww)
 
 (use-package simple-httpd
 	:bind

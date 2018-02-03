@@ -37,7 +37,8 @@
 (global-set-key (kbd "<C-f11> m") 'menu-bar-toggle)
 
 ;; Check misspelled word forward
-(global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
+(global-set-key (kbd "s-'") 'flyspell-check-previous-highlighted-word)
+(global-set-key (kbd "s-\\") 'flyspell-check-next-highlighted-word)
 
 ;; Calc
 (global-set-key (kbd "<insert> 2 c") 'quick-calc)
