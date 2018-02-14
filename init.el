@@ -1,5 +1,3 @@
-(toggle-debug-on-error)
-
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 
 			 ;; ("marmalade" . "https://marmalade-repo.org/packages")
@@ -18,11 +16,12 @@
 ;; Make use package automaticly install missing packages
 (setq use-package-always-ensure t)
 
-;; User specific information
-(load "~/.emacs.d/user.el")
-
 ;; Low level deps for elisp programing
 (load "~/.emacs.d/confs/libs.el")
+(load "~/.emacs.d/confs/environment.el")
+
+;; User specific information
+(load "~/.emacs.d/user.el")
 
 ;; functions to make Emacs configuration easier
 (load "~/.emacs.d/confs/mylib.el")
@@ -49,6 +48,7 @@
 (load "~/.emacs.d/confs/term.el")
 (load "~/.emacs.d/confs/dired.el")
 (load "~/.emacs.d/confs/vc.el")
+(load "~/.emacs.d/confs/docker.el")
 (load "~/.emacs.d/confs/guide.el")
 (load "~/.emacs.d/confs/network.el")
 
@@ -57,11 +57,14 @@
 (load "~/.emacs.d/confs/sunrise-commander.el")
 (load "~/.emacs.d/confs/realgud.el") ; debugger
 
+;; Research
+(load "~/.emacs.d/confs/latex.el")
+(load "~/.emacs.d/confs/org.el")
+
 ;; Language specific
 (load "~/.emacs.d/confs/elisp.el")
 (load "~/.emacs.d/confs/js.el")
 (load "~/.emacs.d/confs/elm.el")
-(load "~/.emacs.d/confs/latex.el")
 (load "~/.emacs.d/confs/python.el")
 (load "~/.emacs.d/confs/julia.el")
 (load "~/.emacs.d/confs/typescript.el")
@@ -80,6 +83,8 @@
 (load "~/.emacs.d/confs/data_analysis.el")
 (load "~/.emacs.d/confs/ibuffer.el")
 (load "~/.emacs.d/confs/admin.el") ;; Editing config files and other admin stuffs
+;; Data specific
+(load "~/.emacs.d/confs/csv.el")
 
 ;; Devops
 (load "~/.emacs.d/devops/core.el")

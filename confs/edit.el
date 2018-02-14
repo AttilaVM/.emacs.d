@@ -188,8 +188,6 @@
 
 (use-package buffer-move)
 
-(use-package hide-region)
-
 (use-package editorconfig
 	:config
 	(editorconfig-mode 1))
@@ -203,6 +201,7 @@
 								haskell-mode-hook
 								jade-mode-hook
 								elm-mode-hook
+								julia-mode-hook
 								stylus-mode-hook) 'subword-mode)
 
 (defun my/insert-hun-long-i ()

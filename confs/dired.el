@@ -70,14 +70,6 @@
 	(:map dired-mode-map
 				("<insert> j s" . hydra-dired-quick-sort/body)))
 
-(use-package dired-details
-	:config
-	(setq dired-details-hidden-string "")
-	;; (add-hook 'dired-mode-hook (lambda ()
-	;;														(dired-details-hide)))
-	:bind (:map dired-mode-map
-							("v" . dired-hide-details-mode)))
-
 (use-package dired-hide-dotfiles
 	:config
 
@@ -235,13 +227,6 @@
 					 ("Disk Images" "disk-images")
 					 )
 					))
-
-(use-package dired+
-	:config
-	(unbind-key "C-o" dired-mode-map)
-	:bind
-	(:map dired-mode-map)
-	)
 
 ;; TODO Should I use it, anyway? bad performance and svg scaling.
 (use-package image+)

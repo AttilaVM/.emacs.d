@@ -1,5 +1,5 @@
 #+TITLE: MY ever imporoving Emacs configuration
-#+AUTHOR: Attila Molnár
+#+AUTHOR: Attila V. Molnár
 #+STARTUP: SHOWALL
 
 * Unorthodox keybindings
