@@ -54,8 +54,10 @@
 
 ;; Project management and higher capabilities
 (load "~/.emacs.d/confs/helm.el")
+(load "~/.emacs.d/confs/gnus.el")
 (load "~/.emacs.d/confs/sunrise-commander.el")
 (load "~/.emacs.d/confs/realgud.el") ; debugger
+(load "~/.emacs.d/confs/docview.el")
 
 ;; Research
 (load "~/.emacs.d/confs/latex.el")

@@ -62,8 +62,12 @@
 		(global-unset-key (kbd "C-z"))
 		(global-unset-key (kbd "C-x C-z"))))
 
-;; Set up emacs as a pager .bashrc or zshrc should be modified!
-(use-package pager)
+(require 'man)
+(add-hook
+ 'Man-mode-hook
+ (lambda ()
+	 (linum-mode nil)
+	 (visual-line-mode)))
 
 ;; Set Emacs default browser
 (setq gnus-button-url 'browse-url-generic
@@ -74,6 +78,8 @@
 								(if (executable-find command)
 							command
 						nil)))))
+
+(use-package adaptive-wrap)
 
 ;; Do not reuse info buffer, but open a new one
 (use-package info-buffer
@@ -145,7 +151,7 @@
 (global-set-key (kbd "<insert> x a") 'save-some-buffers)
 (global-unset-key (kbd "C-x C-f"))
 (global-set-key (kbd "<insert> x x") 'helm-find-files)
-(global-set-key (kbd "<insert> i i") 'yank)
+(global-set-key (kbd "<insert> w") 'yank)
 (global-unset-key (kbd "C-c C-c"))
 (global-set-key (kbd "<insert> <escape>") 'save-buffers-kill-terminal)
 (global-unset-key (kbd "C-x C-s"))

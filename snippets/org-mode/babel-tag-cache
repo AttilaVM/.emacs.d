@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Babel tag cache
+# key: bt
+# expand-env: ((yas-indent-line nil))
+# --
+:cache ${1:$$(yas-choose-value '(
+							"yes"
+							"no"
+
+))}

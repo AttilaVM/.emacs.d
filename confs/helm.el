@@ -15,6 +15,7 @@
 	(global-unset-key (kbd "C-x c"))
 	(global-set-key (kbd "C-c h") 'helm-command-prefix)
 	(require 'helm-config)
+	(require 'helm-sys)
 	(setq enable-recursive-minibuffers t)
 	;; make helm adapt to my choices
 	(helm-adaptive-mode)
@@ -31,7 +32,6 @@
 	 ;; Use the recent file, when finding files
 	 helm-ff-file-name-history-use-recentf t)
 	(helm-mode 1)
-
 
 	;; Use helm for file finding
 	(global-unset-key (kbd "C-x C-f"))
@@ -62,13 +62,14 @@
 	 ;; helm imenu
 	 ("<insert> s i" . helm-imenu)
 	 ;; helm-c-source-yasnippet
-	 ("<insert> i y" . helm-yas-complete)
+	 ("<insert> i i" . helm-yas-complete)
 	 ;; helm top
+	 ("<insert> 2 t o" . helm-top)
 	 ("C-x c C-t" . helm-tramp )
 	 ;; helm locate
 	 ("<insert> s l" . helm-locate)
 	 ;; helm woman
-	 ("<insert> 1 w" . helm-man-woman)
+	 ("<insert> h w" . helm-man-woman)
 	 ("<insert> 1 i e" . helm-info-elisp)
 	 ("<insert> 1 i m" . helm-info-magit)
 	 ("<insert> 1 i z" . helm-info-zsh)
@@ -81,6 +82,12 @@
 	("<insert> r" . helm-ff-run-find-file-as-root)
 	("<insert> d d" . dired-find-file)
 	("<insert> d o" . dired-find-file)
+	)
+	(:map helm-top-map
+				("<insert> j c" . helm-top-run-sort-by-cpu)
+				("<insert> j m" . helm-top-run-sort-by-mem)
+				("<insert> j k" . 'helm-top-run-sort-by-com)
+				("<insert> j u" . 'helm-top-run-sort-by-user)
 	))
 
 (use-package helm-company

@@ -1,7 +1,11 @@
 # -*- mode: snippet -*-
 # name: code
-# key: code_
+# key: c
+# expand-env: ((yas-indent-line nil))
 # --
-#+begin_${1:lang} ${2:options}
-$0
-#+end_$1
+#+begin_src ${1:$$(yas-choose-value '(
+						"sh"
+						"python"
+						"nix"))} $2 $0
+
+#+end_src

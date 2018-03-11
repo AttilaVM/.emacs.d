@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: Babel tag dir
+# key: bt
+# expand-env: ((yas-indent-line nil))
+# source: http://misc.flogisoft.com/bash/tip_colors_and_formatting
+# --
+:dir ${1:$$(my/yas-remove-desc (yas-choose-value '("/su:	#: Place results in a foldable drawer"
+							"/sudo: #: Bold"
+
+
+
+
+)))}

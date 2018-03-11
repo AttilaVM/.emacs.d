@@ -11,7 +11,7 @@
 (global-set-key (kbd "<insert> 2 e") 'eshell)
 
 (require 'term)
-(global-set-key (kbd "<insert> 2 t") 'term)
+(global-set-key (kbd "<insert> 2 t e") 'term)
 
 
 (add-hook 'eshell-mode-hook #'(lambda ()

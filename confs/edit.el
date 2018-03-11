@@ -47,7 +47,7 @@
 
 ;; window navigation
 (global-unset-key (kbd "M-o"))
-(global-set-key (kbd "s-o") 'rotate-windows)
+(global-set-key (kbd "M-o") 'rotate-windows)
 (global-set-key (kbd "C-o") 'other-window)
 (global-set-key (kbd "M-O") 'other-frame)
 
@@ -86,8 +86,14 @@
 	 ("s-r u" . undo-tree-save-state-to-register)
 	 ("s-r U" . undo-tree-restore-state-from-register)))
 
+(use-package expand-region
+	:bind
+	("M-j" . er/expand-region)
+	("M-l" . er/contract-region)
+	)
+
 (require 'dabbrev)
-;; Make dabbrev case sensitive
+;; make dabbrev case sensitive
 (setq dabbrev-case-fold-search 'case-fold-search)
 (setq company-dabbrev-ignore-case nil)
 

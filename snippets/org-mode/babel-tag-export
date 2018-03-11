@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Babel tag exports
+# key: bt
+# expand-env: ((yas-indent-line nil))
+# --
+:exports ${1:$$(yas-choose-value '(
+							"code"
+							"results"
+							"both"
+							"none"
+))}

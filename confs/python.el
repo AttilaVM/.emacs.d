@@ -12,6 +12,15 @@
 
 (setq python-indent 4)
 
+;; (setq python-shell-interpreter "remote-python")
+
+(setq python-shell-interpreter "ipython3"
+			python-shell-interpreter-args "-i --simple-prompt")
+
+(setq python-shell-interpreter "remote-python"
+			python-shell-interpreter-args "-i --simple-prompt")
+(setq python-shell-completion-native-enable nil)
+
 ;; The following system packages should be installed.
 ;; # Either of these
 ;; pip install rope
@@ -37,7 +46,6 @@
 							(setq python-indent 4)
 							(setq python-indent-offset 4)))
 	(setq elpy-rpc-python-command "ipython3")
-	(elpy-use-ipython)
 	(setq elpy-rpc-backend "jedi")
 	(setq python-indent-offset 4)
 

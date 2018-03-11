@@ -28,7 +28,9 @@
 	(define-key yas-minor-mode-map (kbd "C-l") 'my/yas-previous-field-or-backward-sexp)
 	(define-key yas-minor-mode-map (kbd "<tab>") nil)
 	(define-key yas-minor-mode-map (kbd "TAB") nil)
-	(define-key yas-minor-mode-map (kbd "<backtab>") 'yas/expand))
+	(define-key yas-minor-mode-map (kbd "<backtab>") 'yas/expand):bind
+	(:map snippet-mode-map
+				("<insert> j t" . 'yas-tryout-snippet)))
 
 (defun yas/hacks-replace-previous-char (target replacement)
 	"Replace the first oocurence of target-chat with replacement-char while searching backward"

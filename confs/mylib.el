@@ -115,3 +115,16 @@ The return value is the new value of LIST-VAR."
 (defun my/print-major-mode ()
 	(interactive)
 	(message "%s" major-mode))
+
+(defun my/find-command-exec-path (cmd)
+	(interactive (list (read-string "command: ")))
+	(let ((exec-path (->> (concat "whereis " cmd)
+											 (shell-command-to-string)
+											 (replace-regexp-in-string "^.* " "")
+											 (replace-regexp-in-string "
+" ""))))
+		(if (called-interactively-p)
+				(message exec-path)
+			exec-path)))
+
+(my/find-command-exec-path "git")
