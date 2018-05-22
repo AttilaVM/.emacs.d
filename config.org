@@ -1,0 +1,1090 @@
+#+TITLE: Attila Molnar's Emacs config
+#+OPTIONS: toc:4 h:4
+#+STARTUP overview 
+
+* Introduction
+** Rationale
+I plan to rewrite my Emacs configuration using literate programing. Thankfully there are brilliant examples out there, like [[http://pages.sachachua.com/.emacs.d/Sacha.html#babel-init][Sacha Chua's Emacs Configuration]], which has a nice explanation 
+** Other examples
+** Guide lines
+* User info
+
+| variable           | value                 |
+|--------------------+-----------------------|
+| user-full-name     | Attila Molnar         |
+| user-email-address | ate.molnar2@gmail.com |
+
+#+begin_src emacs-lisp :tangle yes  
+  (defvar user-backup-dir "~/.emacs.d/backup/")
+#+end_src
+
+#+RESULTS:
+: user-backup-dir
+
+* Hotkeys
+** Elisp
+#+NAME: elisp-mode-hotkeys
+| Keybinding | function | Description |
+|------------+----------+-------------|
+|            |          |             |
+|            |          |             |
+|            |          |             |
+|            |          |             |
+
+** Org mode
+
+#+NAME: org-mode-hotkeys
+| Keybinding   | function                                |
+|--------------+-----------------------------------------|
+| <insert> t c | org-table-create-or-convert-from-region |
+| <insert> t k | org-table-delete-column                 |
+|              |                                         |
+|--------------+-----------------------------------------|
+|              |                                         |
+
+* Configuration
+:PROPERTIES:
+:CUSTOM_ID: babel-init
+:END:      
+	<<babel-init>>
+
+** preconfig
+*** Elisp
+**** Require common lisp
+
+#+begin_src emacs-lisp :tangle yes  
+    (require 'cl)
+#+end_src
+
+**** binding and recursion limits
+Set the maximum numbers of variable bindings, recursive call limit, garbage collector threshold and set CWD to "~/.emacs.d".
+
+#+begin_src emacs-lisp :tangle yes 
+  (setq max-specpdl-size 10000)
+  (setq max-lisp-eval-depth 10000)
+#+end_src
+
+**** Garbage collection byte threshold
+		 
+Emacs has a blocking garbage collector, and its collection threshold is very low by default (8KB), so much of time is spent by the GC. On a modern machine this can be mitigated by increasing the gc threshold limit to 20MB, as recommended by the [[https://github.com/lewang/flx][flx package documentation]]
+
+#+begin_src emacs-lisp :tangle yes  
+  (setq gc-cons-threshold 20000000)
+#+end_src
+
+**** Default directory
+
+#+begin_src emacs-lisp :tangle yes  
+  (setq default-directory "~/.emacs.d")
+#+end_src
+
+**** Print trace on error
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (toggle-debug-on-error)
+
+#+end_src
+
+*** Localization
+
+Ensure global UTF-8 usage
+
+#+begin_src emacs-lisp :tangle yes  
+
+(set-language-environment "UTF-8")
+ (set-default-coding-systems 'utf-8)  
+
+#+end_src
+
+#+RESULTS:
+: (utf-8-unix . utf-8-unix)
+
+*** Prefer newest .elc files
+
+If a file suffix is not exaclty specified do not stop on the first hit, but search for the newest on
+
+#+begin_src emacs-lisp :tangle yes  
+(setq load-prefer-newer t)
+#+end_src
+
+*** optimalizations
+**** Dsable bidi reordering
+bidi display reordering makes Emacs significantly slower, especially when [[http://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow][displaying long lines]].
+
+#+begin_src emacs-lisp :tangle yes  
+  (setq bidi-display-reordering nil)
+#+end_src
+
+**** Disable auto vertical scrolling
+Disable auto vertical scroll adjustion for tall lines
+
+#+begin_src emacs-lisp :tangle yes  
+  (setq auto-window-vscroll nil)
+#+end_src
+
+*** undefine keys
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (global-unset-key (kbd "<insert>"))
+  (global-unset-key (kbd "<left>"))
+  (global-unset-key (kbd "<right>"))
+  (global-unset-key (kbd "<up>"))
+  (global-unset-key (kbd "<down>"))
+  (global-unset-key (kbd "C-w"))
+  (global-unset-key (kbd "C-n"))
+  (global-unset-key (kbd "C-p"))
+  (global-unset-key (kbd "M-l"))
+  (global-unset-key (kbd "M-j"))
+  (global-unset-key (kbd "C-j"))
+  (global-unset-key (kbd "C-l"))
+  (global-unset-key (kbd "C-k"))
+  (global-unset-key (kbd "H-m"))
+  (global-unset-key (kbd "M-m"))
+  (global-unset-key (kbd "C-x c"))
+
+#+end_src
+
+** Bootstrap straight.el and use-package
+
+#+begin_src emacs-lisp :tangle yes 
+  (let ((bootstrap-file
+         (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
+        (bootstrap-version 3))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+#+end_src
+
+#+RESULTS:
+: t
+
+** libraries
+*** Third-party libraries
+
+loop: convinient loop library
+async: modern async library
+dash: modern clojure like list library
+diminish: hide or abbreviate minor modes in the mode line
+deffered: provide the same functionality as JS promises.
+el-mock: mocking library
+m-buffer: buffer manipulation library
+ov: overlay library
+future: use future objects for subprocesses
+request: convinient HTTP request library
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package dash          :defer  :straight t)
+  (use-package s             :defer  :straight t)
+  (use-package f             :defer  :straight t)
+  (use-package loop          :defer  :straight t)
+  (use-package async         :defer  :straight t)
+  (use-package deferred      :defer  :straight t)
+  (use-package diminish      :demand :straight t) 
+  (use-package el-mock       :defer  :straight t)
+  (use-package ghub          :defer  :straight t)
+  (use-package ghub+         :defer  :straight t)
+  (use-package m-buffer      :defer  :straight t)
+  (use-package ov            :defer  :straight t)
+  (use-package pfuture       :defer  :straight t)
+  (use-package request       :defer  :straight t)
+#+end_src
+
+#+RESULTS:
+
+** Helper functions
+**** Elisp
+*** Add function to multiple hooks
+
+#+begin_src emacs-lisp :tangle yes
+ 
+  (defun attila/add-hooks (hooks mode)
+    "Add one mode to multiple hooks"
+    (dolist (hook hooks)
+      (add-hook hook mode)))
+
+#+end_src
+
+#+RESULTS:
+: attila/add-hooks
+
+*** Get first value from list which evaluates true by predicate
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (defun attila/get-first-true (list filter)
+    "Get first value from list which evaluates true by predicate"
+    (when list
+      (if (funcall filter (car list))
+          (car list)
+        (attila/get-first-true (cdr list) filter))))
+
+#+end_src
+
+**** UX
+
+#+begin_src emacs-lisp :tangle yes  
+  (defun attila-smart-move-beginning-of-line (arg)
+    "Move point back to indentation of beginning of line.
+
+  Move point to the first non-whitespace character on this line.
+  If point is already there, move to the beginning of the line.
+  Effectively toggle between the first non-whitespace character and
+  the beginning of the line.
+
+  If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+  point reaches the beginning or end of the buffer, stop there."
+    (interactive "^p")
+    (setq arg (or arg 1))
+
+    ;; Move lines first
+    (when (/= arg 1)
+      (let ((line-move-visual nil))
+        (forward-line (1- arg))))
+
+    (let ((orig-point (point)))
+      (back-to-indentation)
+      (when (= orig-point (point))
+        (move-beginning-of-line 1))))
+#+end_src
+
+** Appearance
+*** Layout
+
+#+begin_src emacs-lisp :tangle yes
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+#+end_src
+
+*** Theme and font
+#+begin_src emacs-lisp :tangle yes
+  (use-package monokai-theme
+    :demand t
+    :straight t)
+
+(when (window-system)
+		(set-default-font "Fira Code"))
+#+end_src
+
+#+RESULTS:
+		
+*** Parenthesis
+
+Highlight parentheses at point and its pair. Use rainbow colors for the different nesting levels of parenthesis.
+
+#+begin_src emacs-lisp :tangle yes 
+(show-paren-mode 1)
+
+(use-package rainbow-delimiters
+  :straight t
+	:config
+	;; Enable it in all programing modes
+	(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+	;; Set colors to travel through the VIS spectrum from red to blue
+	'(rainbow-delimiters-depth-1-face ((t (:foreground "light slate blue"))))
+	'(rainbow-delimiters-depth-2-face ((t (:foreground "cyan"))))
+	'(rainbow-delimiters-depth-3-face ((t (:foreground "lime green"))))
+	'(rainbow-delimiters-depth-4-face ((t (:foreground "yellow green"))))
+	'(rainbow-delimiters-depth-5-face ((t (:foreground "yellow"))))
+	'(rainbow-delimiters-depth-6-face ((t (:foreground "goldenrod"))))
+	'(rainbow-delimiters-depth-7-face ((t (:foreground "dark orange"))))
+	'(rainbow-delimiters-depth-8-face ((t (:foreground "orange red"))))
+	'(rainbow-delimiters-depth-9-face ((t (:foreground "red2")))))
+#+end_src
+
+*** Colorize strings, which represent colors
+
+#+begin_src emacs-lisp :tangle yes  
+  (use-package rainbow-mode
+    :demand t
+    :straight t
+    :config
+    (attila/add-hooks
+     '(stylus-mode-hook
+       less-css-mode-hook
+       css-mode-hook)
+     (lambda () (rainbow-mode))))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** Colorize compilation buffer
+
+#+begin_src emacs-lisp :tangle yes 
+(require 'ansi-color)
+
+(defun colorize-compilation-buffer ()
+	(toggle-read-only)
+	(ansi-color-apply-on-region compilation-filter-start (point))
+	(toggle-read-only))
+
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+#+end_src
+
+*** Highlight point on window scroll
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package beacon
+    :straight t
+    :demand t
+    :config
+    (beacon-mode 1)
+    (setq beacon-blink-duration 0.05)
+    (setq beacon-color "#a6e22e")
+    (setq beacon-blink-when-window-scrolls nil))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+*** Highlight  page intersection on scrolling
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package highlight-context-line
+    :straight t
+    :config
+    (highlight-context-line-mode))
+
+#+end_src
+
+*** Visual line wrapping 
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (attila/add-hooks
+   '(Man-mode-hook
+     org-mode-hook
+     markdown-mode-hook)
+   (lambda ()
+     (visual-line-mode)))  
+
+#+end_src
+
+#+RESULTS:
+
+*** Indentation adaptive visal line wraping
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package adaptive-wrap
+    :straight t
+		:diminish adaptive-wrap-mode
+    :defer t
+    :init
+    (attila/add-hooks
+     '(prog-mode-hook
+       text-mode-hook)
+     'my-adaptive-wrap-autoload)
+    :commands
+    my-adaptive-wrap-autoload
+    :config
+    (defun my-adaptive-wrap-autoload ()
+      (adaptive-wrap-prefix-mode t)))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+** Behavior
+*** Helm
+**** Helm core
+#+begin_src emacs-lisp :tangle yes  
+
+	(use-package helm
+		:straight t
+		:diminish helm-mode
+		:config
+		(require 'helm-config)
+		(require 'helm-sys)
+		(setq enable-recursive-minibuffers t)
+		;; make helm adapt to my choices
+		(helm-adaptive-mode)
+		;; Make helm use the active window for interaction
+		(setq
+		 ;; Open helm buffer in current winsow
+		 helm-split-window-in-side-p           t
+		 ;; cylcle throught helm results
+		 helm-move-to-line-cycle-in-source     t
+		 ;; search for library in `require' and `declare-function' sexp.
+		 helm-ff-search-library-in-sexp        t
+																					; scroll 8 lines other window using M-<next>/M-<prior>
+		 helm-scroll-amount                    8
+		 ;; simultanusly displayed candiate limit
+		 helm-candidate-number-limit 100
+		 ;; delay to update candidate list 
+		 helm-input-idle-delay 0.1
+		 ;; Use the recent file, when finding files
+		 helm-ff-file-name-history-use-recentf t)
+		(helm-mode 1)
+
+		;; Use helm for file finding
+		(global-unset-key (kbd "C-x C-f"))
+		;; make sure C-h is no longer a prefix key inside a helm buffer
+		(define-key helm-map (kbd "C-h") nil)
+		:bind
+		(
+		 ("<insert> x f" . helm-find-files)
+		 ("<insert> x d" . dired)
+		 ("<insert> b b" . switch-to-buffer)
+		 ;; Use helm for command prompt
+		 ("M-x" . helm-M-x)
+		 ("<insert> <insert>" . helm-M-x)
+		 ;; Use helm-buffers-list instead of default helm buffer lister
+		 ("s-x b" . helm-buffers-list)
+		 ;; get the list of the bookmarks (C-x r m for saving bookmarks)
+		 ("C-c p j" . helm-bookmarks)
+		 ;; More easier way to acces Emacs's internal "clipboard"
+		 ("<insert> i h" . helm-show-kill-ring) ;; as clipboard history
+		 ;; Use helm with isearch
+		 ("<insert> s s" . helm-occur)
+		 ;; resume to previous search
+		 ("<insert> s r" . helm-resume)
+		 ;; Show kill-ring
+		 ("<insert> i h" . helm-show-kill-ring)
+		 ;; helm-ls-git
+		 ("C-<f6>" . helm-browse-project)
+		 ;; helm imenu
+		 ("<insert> s i" . helm-imenu)
+		 ;; helm-c-source-yasnippet
+		 ("<insert> i i" . helm-yas-complete)
+		 ;; helm top
+		 ("<insert> 2 t o" . helm-top)
+		 ("C-x c C-t" . helm-tramp )
+		 ;; helm locate
+		 ("<insert> s l" . helm-locate)
+		 ;; show killring
+		 ("<insert> q")
+		 ;; helm help
+		 ("<insert> h w" . helm-man-woman)
+		 ("<insert> h i e" . helm-info-elisp)
+		 ("<insert> h i m" . helm-info-magit)
+		 ("<insert> h i z" . helm-info-zsh)
+		 ("<insert> h e a" . helm-apropos)
+		 ;; ??? 
+		 ("<C-kp-4>" . sm/toggle-showcss)
+		 ("<insert> i c" . helm-colors))
+		:bind
+		(:map helm-map
+					("<insert> j j" . helm-select-action)
+					("<insert> r" . helm-ff-run-find-file-as-root)
+					("<insert> d d" . dired-find-file)
+					("<insert> d o" . dired-find-file) 
+					("H-k" . helm-next-line) 
+					("H-i" . 'helm-previous-line)
+					)
+		(:map helm-top-map
+					("<insert> j c" . helm-top-run-sort-by-cpu)
+					("<insert> j m" . helm-top-run-sort-by-mem)
+					("<insert> j k" . 'helm-top-run-sort-by-com)
+					("<insert> j u" . 'helm-top-run-sort-by-user)
+					))
+
+#+end_src
+
+#+RESULTS:
+: helm-top-run-sort-by-user
+
+**** Helm projectile
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package projectile
+    :straight t
+    :diminish projectile-mode "pro"
+    :config
+    (use-package helm-projectile
+      :straight t
+      :config
+      (helm-projectile-on))
+    (projectile-global-mode)
+    (setq projectile-globally-ignored-directories
+          (append '(
+                    "out"
+                    "target"
+                    "venv"
+                    "node_modules"
+                    ) ))
+    (setq projectile-known-projects-file "~/.emacs.d/projectile-bookmarks.eld")
+    (setq projectile-enable-caching t)
+    (use-package helm-ag :straight t)
+    :bind
+    ("<insert> p p" . helm-projectile-switch-project)
+    ("<insert> p +" . projectile-add-known-project)
+    ("<insert> p -" . projectile-remove-known-project)
+    ("<insert> p f" . helm-projectile-find-file)
+    ("<insert> p b" . helm-projectile-switch-to-buffer)
+    ("<insert> p i" . projectile-invalidate-cache)
+    ;; Extreamly fast mehotd search in all recent project files.
+    ("<insert> p a" . helm-projectile-ag)
+    ("<insert> s p" . helm-projectile-ag)
+    ("<insert> x p" . projectile-save-project-buffers)
+    ;; Very slow, when many project is present.
+    ("<insert> p g" . helm-projectile-find-file-in-known-projects)
+    ;; Project level replace, what can go wrong?
+    ("<insert> p r t" . projectile-replace)
+    ("<insert> p r r" . projectile-replace-regexp))
+
+#+end_src
+
+#+RESULTS:
+: projectile-replace-regexp
+
+*** GUI interaction
+
+Do not put Emacs into the background on graphical display mode.
+
+#+begin_src emacs-lisp :tangle yes
+
+  (when (display-graphic-p)
+    (progn
+      (global-unset-key (kbd "C-z"))
+      (global-unset-key (kbd "C-x C-z"))))  
+
+#+end_src
+
+*** Navigation
+**** Switch&rotate windows, switch frames
+#+begin_src emacs-lisp :tangle yes  
+
+  (defun rotate-windows (arg)
+    "Rotate your windows; use the prefix argument to rotate the other direction"
+    (interactive "P")
+    (if (not (> (count-windows) 1))
+        (message "You can't rotate a single window!")
+      (let* ((rotate-times (prefix-numeric-value arg))
+             (direction (if (or (< rotate-times 0) (equal arg '(4)))
+                            'reverse 'identity)))
+        (dotimes (_ (abs rotate-times))
+          (dotimes (i (- (count-windows) 1))
+            (let* ((w1 (elt (funcall direction (window-list)) i))
+                   (w2 (elt (funcall direction (window-list)) (+ i 1)))
+                   (b1 (window-buffer w1))
+                   (b2 (window-buffer w2))
+                   (s1 (window-start w1))
+                   (s2 (window-start w2))
+                   (p1 (window-point w1))
+                   (p2 (window-point w2)))
+              (set-window-buffer-start-and-point w1 b2 s2 p2)
+              (set-window-buffer-start-and-point w2 b1 s1 p1)))))))
+
+  (global-set-key (kbd "M-o") 'rotate-windows)
+  (global-set-key (kbd "H-o") 'other-window)
+  (global-set-key (kbd "C-o") 'other-frame)
+
+#+end_src
+
+**** Move chars and lines
+		 
+#+begin_src emacs-lisp :tangle yes  
+  (global-set-key (kbd "H-j") 'backward-char)
+  (global-set-key (kbd "H-l") 'forward-char)
+  (global-set-key (kbd "H-k") 'next-line)
+  (global-set-key (kbd "H-i") 'previous-line)
+#+end_src
+
+**** Scroll up/down move subwords
+
+#+begin_src emacs-lisp :tangle  yes
+
+  (global-set-key (kbd "M-i") 'scroll-down-command)
+  (global-set-key (kbd "M-k") 'scroll-up-command)
+  (global-set-key (kbd "M-l") 'forward-word)
+  (global-set-key (kbd "M-j") 'backward-word)
+
+#+end_src
+
+**** subword jumps
+
+#+begin_src emacs-lisp :tangle yes  
+  (attila/add-hooks
+   '(js-mode-hook
+     clojure-mode-hook
+     python-mode-hook
+     java-mode-hook
+     c-mode-hook
+     haskell-mode-hook
+     jade-mode-hook
+     elm-mode-hook
+     julia-mode-hook
+     stylus-mode-hook)
+   'subword-mode)
+#+end_src
+
+**** Beginning of line and buffer
+
+#+begin_src emacs-lisp :tangle yes
+	(global-set-key (kbd "H-M-j") 'attila-smart-move-beginning-of-line)
+	(global-set-key (kbd "H-M-l") 'move-end-of-line)
+	(global-set-key (kbd "H-M-i") 'beginning-of-buffer)
+	(global-set-key (kbd "H-M-k") 'end-of-buffer)
+#+end_src
+
+#+RESULTS:
+: end-of-buffer
+
+**** Jump to char char-pair or line
+
+I use key-chords to invoke avy functions
+
+#+begin_src emacs-lisp :tangle yes
+
+  (use-package avy
+    :straight t
+    :config
+    (avy-setup-default))
+
+#+end_src
+
+**** Go back and forth changed regions
+
+#+begin_src emacs-lisp :tangle yes
+
+  (use-package goto-chg
+    :straight t
+    :bind
+    (("C-u" . goto-last-change)
+     ("C-S-u" . goto-last-change-reverse)))
+
+#+end_src
+
+**** Forward/backward sexp
+
+#+begin_src emacs-lisp :tangle yes 
+	(global-set-key (kbd "H-'") 'forward-sexp)
+  (global-set-key (kbd "H-;") 'backward-sexp)
+#+end_src
+
+#+RESULTS:
+: backward-sexp
+
+**** Forward/backward sentence
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(global-set-key (kbd "H-M-;") 'backward-sentence)
+  (global-set-key (kbd "H-M-'") 'forward-sentence)
+
+#+end_src
+
+#+RESULTS:
+: forward-sentence
+
+*** key chords
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package key-chord
+    :straight t
+    :init 
+    (add-hook 'after-init-hook
+              (lambda () (key-chord-mode t)))
+    :config
+    (require 'key-chord)
+    (setq key-chord-two-keys-delay 0.08)
+    (setq key-chord-one-key-delay 0.08)
+    (key-chord-define-global "jf" 'avy-goto-char)
+    (key-chord-define-global "jd" 'avy-goto-char-2)
+    (key-chord-define-global "jg" 'avy-goto-line)
+    (key-chord-define-global "kd" 'kill-word)
+    (key-chord-define-global "kf" 'backward-kill-word))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+*** Selection
+*** Show function synopsis with eldoc
+
+Allow eldoc to show function synopsis in the echo area in multiple line if needed.
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package eldoc
+    :straight t
+    :defer t
+    :diminish eldoc-mode
+    :init
+    (attila/add-hooks
+     '(emacs-lisp-mode-hook)
+     'turn-on-eldoc-mode)
+    :config
+    (setq eldoc-echo-area-use-multiline-p t))
+    
+
+#+end_src
+
+#+RESULTS:
+: t
+
+*** Editor server
+
+Run Emacs as a server and connect to it with =emacsclient= from the CLI.
+
+#+begin_src emacs-lisp :tangle yes
+
+  (require 'server)
+  (unless (server-running-p)
+    (cond
+     ((eq system-type 'windows-nt)
+      (setq server-auth-dir "~\\.emacs.d\\server\\"))
+     ((eq system-type 'gnu/linux)
+      (setq server-auth-dir "~/.emacs.d/server/")))
+    (setq server-name "emacs-server-file")
+    (server-start))
+
+#+end_src
+
+*** Centralized backup and autoclean backup dir
+
+Make emacs to write backup and auto-save files in a [[https://www.emacswiki.org/emacs/BackupDirectory][specific directory]] instead of messing up the project file trees. 
+
+#+begin_src emacs-lisp :tangle yes
+
+  (setq backup-directory-alist
+        `((".*" . ,user-backup-dir)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,user-backup-dir t)))
+
+#+end_src
+
+#+RESULTS:
+| .* | /tmp/ | t |
+
+Delete backup files older then a week
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (let ((week (* 60 60 24 7))
+        (current (float-time (current-time))))
+    (dolist (file (directory-files user-backup-dir t))
+      (when (and (backup-file-name-p file)
+                 (> (- current (float-time (fifth (file-attributes file))))
+                    week))
+        (message "%s" file)
+        (delete-file file))))
+
+#+end_src
+
+#+RESULTS:
+
+*** Make scripts executable after save
+
+#+begin_src emacs-lisp :tangle yes
+
+  (add-hook 'after-save-hook
+          'executable-make-buffer-file-executable-if-script-p)
+
+
+#+end_src
+
+*** Respect  .editorconfig gile
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package editorconfig
+    :straight t
+    :diminish editorconfig-mode
+    :config
+    (editorconfig-mode 1))
+#+end_src
+
+** Editing
+*** Use spaces instead of tabs
+
+Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =indent relative= does not find the next tab stop
+
+#+begin_src emacs-lisp :tangle yes
+
+  (setq-default indent-tabs-mode-mode nil)
+  (setq-default tab-width 2)
+  (setq tab-stop-list (number-sequence tab-width 120 tab-width))
+  (defvaralias 'c-basic-offset 'tab-width)
+  (defvaralias 'cperl-indent-level 'tab-width)
+
+#+end_src
+
+*** Undo tree
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package undo-tree
+    :straight t
+    :diminish undo-tree-mode
+    :config
+    (global-undo-tree-mode)
+    :bind
+    (("H-u" . undo-tree-undo)
+     ("M-u" . undo-tree-redo)
+     ("<insert> u" . undo-tree-visualize)))
+
+#+end_src
+
+*** Multiple cursors
+
+#+begin_src emacs-lisp :tangle yes  
+  (use-package multiple-cursors
+    :bind
+    (( "H-m" . mc/mark-next-like-this)
+     ( "M-m" . mc/mark-previous-like-this)
+     ( "C-M-m" . mc/mark-all-like-this)))
+#+end_src
+
+*** Preserve point position relative to the window.
+
+#+begin_src emacs-lisp :tangle yes
+(setq scroll-preserve-screen-position t)
+#+end_src
+
+*** Ask for "y" or "n" for saving
+
+#+begin_src emacs-lisp :tangle yes  
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+*** Parenthesevs
+**** Kill sexp when point is at ( or )
+
+#+begin_src emacs-lisp :tangle yes 
+
+	(use-package smartparens
+		:straight t 
+		:defer 2
+		:init
+		(defun attila-sp-kill-sexp ()
+			(interactive)
+			(cond ((= (char-after) ?\( )
+						 (call-interactively 'sp-kill-sexp))
+						((= (char-before) ?\) )
+						 (call-interactively 'sp-backward-kill-sexp)))
+			)
+		:config
+		;; Sane defaults for smartparens, like do not double ' for lisp dialects
+		(require 'smartparens-config)
+		(smartparens-global-mode t)
+		:bind
+		(("<insert> k (" . attila-sp-kill-sexp)))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** Autocompletion with company
+#+begin_src emacs-lisp :tangle yes  
+
+	(use-package company
+		:straight t
+		:defer t
+		:diminish company-mode "comp"
+		:init
+		(add-hook 'after-init-hook 'global-company-mode)
+		:config
+		;; dabbrev should not downcase it completions
+		(setq company-dabbrev-downcase nil)
+		;; dabbrev by default only looks for
+		(setq company-dabbrev-char-regexp "[a-zA-Z0-9._]")
+		:bind
+		(:map company-active-map
+					("H-i" . 'company-select-previous)
+					("H-k" . 'company-select-next)))
+
+#+end_src
+
+#+RESULTS:
+: company-select-next
+
+*** Smart insertions
+**** TODO Path insertion
+
+** Tools
+*** Version control
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(use-package magit
+		:straight t
+		:config
+		(defun my/magit-display-noselect-toggle ()
+		"Display magit buffer but do not select window"
+		(interactive)(if (equal magit-display-buffer-noselect nil)
+				 (setq magit-display-buffer-noselect t) (setq magit-display-buffer-noselect nil)))
+		:bind
+		(("<insert> v v" . magit-status)
+		 ("<insert> v l" . magit-log-buffer-file)
+		 ("<insert> v i" . magit-init)
+		 ("<insert> v c" . magit-clone)
+		 ("<insert> v f" . magit-find-file)
+		 ("<insert> v b" . magit-branch-popup)
+		 ("<insert> v p" . magit-push-popup)
+		 )
+		:bind
+		(:map magit-log-mode-map
+					("s-<f3>" . magit-display-noselect-toggle)))
+
+#+end_src
+
+#+RESULTS:
+: magit-display-noselect-toggle
+
+** Information gathering
+*** Default browser
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (setq gnus-button-url 'browse-url-generic
+        browse-url-browser-function gnus-button-url
+        browse-url-generic-program
+        (attila/get-first-true
+         '("chromium" "vivaldi" "google-chrome-stable" "firefox")
+         (function (lambda (command)
+                     (if (executable-find command)
+                         command
+                       nil)))))
+
+#+end_src
+
+*** man
+
+Break lines when displaying man pages.
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package man)
+
+#+end_src
+
+*** info pages
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package info-buffer
+    :defer 4
+    :bind (("<insert> h i" . info-buffer)))
+
+#+end_src
+
+** Programing
+*** Emacs Lisp
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (diminish 'emacs-lisp-mode "elisp")
+
+#+end_src
+
+#+RESULTS:
+
+*** Org mode
+**** Installation workaround
+
+Recent org mode cannot install org-mode directly, because it needs costum build with make. This solution was borrowed from [[https:github.com/raxod502/straight.el#installing-org-with-straightel][here]].
+
+#+begin_src emacs-lisp :tangle yes
+
+  (require 'subr-x)
+  (straight-use-package 'git)
+
+  (defun org-git-version ()
+    "The Git version of org-mode.
+  Inserted by installing org-mode or when a release is made."
+    (require 'git)
+    (let ((git-repo (expand-file-name
+                     "straight/repos/org/" user-emacs-directory)))
+      (string-trim
+       (git-run "describe"
+                "--match=release\*"
+                "--abbrev=6"
+                "HEAD"))))
+
+  (defun org-release ()
+    "The release version of org-mode.
+  Inserted by installing org-mode or when a release is made."
+    (require 'git)
+    (let ((git-repo (expand-file-name
+                     "straight/repos/org/" user-emacs-directory)))
+      (string-trim
+       (string-remove-prefix
+        "release_"
+        (git-run "describe"
+                 "--match=release\*"
+                 "--abbrev=0"
+                 "HEAD")))))
+
+  (provide 'org-version)
+
+  (straight-use-package 'org) ;; or org-plus-contrib if desired  
+
+#+end_src
+
+**** Orgs headline search with org-rifle
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(use-package helm-org-rifle
+		:straight t
+		:demand t
+		:bind
+		(:map org-mode-map
+					("<insert> s m m" . helm-org-rifle-current-buffer)))
+#+end_src
+
+#+RESULTS:
+: helm-org-rifle-current-buffer
+
+**** Org tangle source code
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(global-set-key (kbd "<insert> j e t") 'org-babel-tangle)
+
+#+end_src
+
+#+RESULTS:
+: org-babel-tangle
+
+*** Web
+**** LESS
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (use-package less-css-mode
+      :straight t)
+
+#+end_src
+
+#+RESULTS:
+**** Webkit Color picker
+
+#+begin_src emacs-lisp :tangle yes  
+  (when (>= emacs-major-version 26)
+          (use-package webkit-color-picker
+    :ensure t
+    :bind
+          (("<insert> 2 p" . webkit-color-picker-show))))
+#+end_src
+
+* Tests
+* Planning
+** TODOS
+- [ ] Make my line functions prefixable
+- [ ] Make my rename file or buffer function notice if the buffer is not associated to a file
+** Decide
+*** helm-mini or helm-buffer-list
+*** parinfer mode
+
+Parnifer mode modifies parenthesis according to indentation and vica versa
+*** expand-region
+Expand/shrink selection by semantic regions
