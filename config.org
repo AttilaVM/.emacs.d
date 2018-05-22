@@ -9,10 +9,19 @@ I plan to rewrite my Emacs configuration using literate programing. Thankfully t
 ** Guide lines
 * User info
 
+#+NAME: user-info
 | variable           | value                 |
 |--------------------+-----------------------|
 | user-full-name     | Attila Molnar         |
 | user-email-address | ate.molnar2@gmail.com |
+| user-backup-dir    | ~/.emacs.d/backup/    |
+
+#+begin_src emacs-lisp :tangle yes :var data=user-info
+	(message (car (car data)))
+#+end_src
+
+#+RESULTS:
+: user-full-name
 
 #+begin_src emacs-lisp :tangle yes  
   (defvar user-backup-dir "~/.emacs.d/backup/")
@@ -42,21 +51,15 @@ I plan to rewrite my Emacs configuration using literate programing. Thankfully t
 |--------------+-----------------------------------------|
 |              |                                         |
 
-* Configuration
-:PROPERTIES:
-:CUSTOM_ID: babel-init
-:END:      
-	<<babel-init>>
-
-** preconfig
-*** Elisp
-**** Require common lisp
+* preconfig
+** Elisp
+*** Require common lisp
 
 #+begin_src emacs-lisp :tangle yes  
     (require 'cl)
 #+end_src
 
-**** binding and recursion limits
+*** binding and recursion limits
 Set the maximum numbers of variable bindings, recursive call limit, garbage collector threshold and set CWD to "~/.emacs.d".
 
 #+begin_src emacs-lisp :tangle yes 
@@ -64,7 +67,7 @@ Set the maximum numbers of variable bindings, recursive call limit, garbage coll
   (setq max-lisp-eval-depth 10000)
 #+end_src
 
-**** Garbage collection byte threshold
+*** Garbage collection byte threshold
 		 
 Emacs has a blocking garbage collector, and its collection threshold is very low by default (8KB), so much of time is spent by the GC. On a modern machine this can be mitigated by increasing the gc threshold limit to 20MB, as recommended by the [[https://github.com/lewang/flx][flx package documentation]]
 
@@ -72,13 +75,13 @@ Emacs has a blocking garbage collector, and its collection threshold is very low
   (setq gc-cons-threshold 20000000)
 #+end_src
 
-**** Default directory
+*** Default directory
 
 #+begin_src emacs-lisp :tangle yes  
   (setq default-directory "~/.emacs.d")
 #+end_src
 
-**** Print trace on error
+*** Print trace on error
 
 #+begin_src emacs-lisp :tangle yes  
 
@@ -86,21 +89,24 @@ Emacs has a blocking garbage collector, and its collection threshold is very low
 
 #+end_src
 
-*** Localization
+** Localization
 
-Ensure global UTF-8 usage
+Ensure global UTF-8 usage, enable hyper and super key on windows. 
 
 #+begin_src emacs-lisp :tangle yes  
 
-(set-language-environment "UTF-8")
- (set-default-coding-systems 'utf-8)  
+	(set-language-environment "UTF-8")
+	(set-default-coding-systems 'utf-8)
+	(when (eq system-type "windows-nt")
+		(setq w32-apps-modifier 'hyper)
+		(setq w32-lwindow-modifier 'super)
+		(setq w32-rwindow-modifier 'hyper))
 
 #+end_src
 
 #+RESULTS:
-: (utf-8-unix . utf-8-unix)
 
-*** Prefer newest .elc files
+** Prefer newest .elc files
 
 If a file suffix is not exaclty specified do not stop on the first hit, but search for the newest on
 
@@ -108,43 +114,55 @@ If a file suffix is not exaclty specified do not stop on the first hit, but sear
 (setq load-prefer-newer t)
 #+end_src
 
-*** optimalizations
-**** Dsable bidi reordering
+** optimalizations
+*** Dsable bidi reordering
 bidi display reordering makes Emacs significantly slower, especially when [[http://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow][displaying long lines]].
 
 #+begin_src emacs-lisp :tangle yes  
   (setq bidi-display-reordering nil)
 #+end_src
 
-**** Disable auto vertical scrolling
+*** Disable auto vertical scrolling
 Disable auto vertical scroll adjustion for tall lines
 
 #+begin_src emacs-lisp :tangle yes  
   (setq auto-window-vscroll nil)
 #+end_src
 
-*** undefine keys
+** undefine keys
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (global-unset-key (kbd "<insert>"))
-  (global-unset-key (kbd "<left>"))
-  (global-unset-key (kbd "<right>"))
-  (global-unset-key (kbd "<up>"))
-  (global-unset-key (kbd "<down>"))
-  (global-unset-key (kbd "C-w"))
-  (global-unset-key (kbd "C-n"))
-  (global-unset-key (kbd "C-p"))
-  (global-unset-key (kbd "M-l"))
-  (global-unset-key (kbd "M-j"))
-  (global-unset-key (kbd "C-j"))
-  (global-unset-key (kbd "C-l"))
-  (global-unset-key (kbd "C-k"))
-  (global-unset-key (kbd "H-m"))
-  (global-unset-key (kbd "M-m"))
-  (global-unset-key (kbd "C-x c"))
+	(global-unset-key (kbd "<insert>"))
+	(global-unset-key (kbd "<left>"))
+	(global-unset-key (kbd "<right>"))
+	(global-unset-key (kbd "<up>"))
+	(global-unset-key (kbd "<down>"))
+	(global-unset-key (kbd "C-n"))
+	(global-unset-key (kbd "C-p"))
+	(global-unset-key (kbd "M-l"))
+	(global-unset-key (kbd "M-j"))
+	(global-unset-key (kbd "C-j"))
+	(global-unset-key (kbd "C-l"))
+	(global-unset-key (kbd "C-k"))
+	(global-unset-key (kbd "C-i"))
+	(global-unset-key (kbd "H-m"))
+	(global-unset-key (kbd "M-m"))
+	(global-unset-key (kbd "C-x c"))
+	(global-unset-key (kbd "C-e"))
+	(global-unset-key (kbd "M-e"))
+
+	(global-set-key (kbd "<tab>") 'indent-for-tab-command)
 
 #+end_src
+
+#+RESULTS:
+
+* Configuration
+:PROPERTIES:
+:CUSTOM_ID: babel-init
+:END:      
+	<<babel-init>>
 
 ** Bootstrap straight.el and use-package
 
@@ -201,36 +219,36 @@ request: convinient HTTP request library
 #+RESULTS:
 
 ** Helper functions
-**** Elisp
-*** Add function to multiple hooks
+*** Elisp
+**** Add function to multiple hooks
 
-#+begin_src emacs-lisp :tangle yes
+ #+begin_src emacs-lisp :tangle yes
  
-  (defun attila/add-hooks (hooks mode)
-    "Add one mode to multiple hooks"
-    (dolist (hook hooks)
-      (add-hook hook mode)))
+   (defun attila/add-hooks (hooks mode)
+     "Add one mode to multiple hooks"
+     (dolist (hook hooks)
+       (add-hook hook mode)))
 
-#+end_src
+ #+end_src
 
-#+RESULTS:
-: attila/add-hooks
+ #+RESULTS:
+ : attila/add-hooks
 
-*** Get first value from list which evaluates true by predicate
+**** Get first value from list which evaluates true by predicate
 
-#+begin_src emacs-lisp :tangle yes  
+ #+begin_src emacs-lisp :tangle yes  
 
-  (defun attila/get-first-true (list filter)
-    "Get first value from list which evaluates true by predicate"
-    (when list
-      (if (funcall filter (car list))
-          (car list)
-        (attila/get-first-true (cdr list) filter))))
+   (defun attila/get-first-true (list filter)
+     "Get first value from list which evaluates true by predicate"
+     (when list
+       (if (funcall filter (car list))
+           (car list)
+         (attila/get-first-true (cdr list) filter))))
 
-#+end_src
+ #+end_src
 
-**** UX
-
+*** UX
+**** Smart line beginnig
 #+begin_src emacs-lisp :tangle yes  
   (defun attila-smart-move-beginning-of-line (arg)
     "Move point back to indentation of beginning of line.
@@ -255,6 +273,31 @@ request: convinient HTTP request library
       (when (= orig-point (point))
         (move-beginning-of-line 1))))
 #+end_src
+
+**** Smart rename
+
+Rename buffer or file and buffer if it is already saved.
+
+#+begin_src emacs-lisp :tangle
+
+	(defun attila/smart-rename-buffer-file (new-name)
+		"Renames both current buffer and file (if saved) it's visiting to NEW-NAME."
+		(interactive (list (read-string "New Name: " (buffer-name))))
+		(let ((name (buffer-name))
+					(filename (buffer-file-name)))
+			(if (get-buffer new-name)
+					(message "A buffer named '%s' already exists!" new-name)
+				(progn
+					(when (file-exists-p filename)
+						(rename-file filename new-name 1))
+					(rename-buffer new-name)
+					(set-visited-file-name new-name)
+					(set-buffer-modified-p nil)))))
+
+#+end_src
+
+#+RESULTS:
+: attila/smart-rename-buffer-file
 
 ** Appearance
 *** Layout
@@ -379,20 +422,20 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (use-package adaptive-wrap
-    :straight t
-		:diminish adaptive-wrap-mode
-    :defer t
-    :init
-    (attila/add-hooks
-     '(prog-mode-hook
-       text-mode-hook)
-     'my-adaptive-wrap-autoload)
-    :commands
-    my-adaptive-wrap-autoload
-    :config
-    (defun my-adaptive-wrap-autoload ()
-      (adaptive-wrap-prefix-mode t)))
+	(use-package adaptive-wrap
+		:straight t
+		:diminish adaptive-wrap-prefix-mode
+		:defer t
+		:init
+		(attila/add-hooks
+		 '(prog-mode-hook
+			 text-mode-hook)
+		 'my-adaptive-wrap-autoload)
+		:commands
+		my-adaptive-wrap-autoload
+		:config
+		(defun my-adaptive-wrap-autoload ()
+			(adaptive-wrap-prefix-mode t)))
 
 #+end_src
 
@@ -460,20 +503,25 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 		 ;; helm imenu
 		 ("<insert> s i" . helm-imenu)
 		 ;; helm-c-source-yasnippet
-		 ("<insert> i i" . helm-yas-complete)
+		 ("<insert> e e" . helm-yas-complete)
+		 ("<insert> e f" . helm-yas-visit-snippet-file)
+		 ("<insert> e r" . helm-yas-create-snippet-on-region)
 		 ;; helm top
 		 ("<insert> 2 t o" . helm-top)
 		 ("C-x c C-t" . helm-tramp )
 		 ;; helm locate
 		 ("<insert> s l" . helm-locate)
 		 ;; show killring
-		 ("<insert> q")
+		 ("<insert> q" . helm-show-kill-ring)
 		 ;; helm help
 		 ("<insert> h w" . helm-man-woman)
 		 ("<insert> h i e" . helm-info-elisp)
 		 ("<insert> h i m" . helm-info-magit)
 		 ("<insert> h i z" . helm-info-zsh)
 		 ("<insert> h e a" . helm-apropos)
+		 ("<insert> h e f" . describe-function)
+		 ("<insert> h e k" . describe-key-briefly)
+		 ("<insert> h e m" . describe-mode)
 		 ;; ??? 
 		 ("<C-kp-4>" . sm/toggle-showcss)
 		 ("<insert> i c" . helm-colors))
@@ -543,9 +591,11 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 #+RESULTS:
 : projectile-replace-regexp
 
-*** GUI interaction
+**** helm swoop
 
-Do not put Emacs into the background on graphical display mode.
+
+*** GUI interaction
+**** Prevent backgrounding
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -555,6 +605,25 @@ Do not put Emacs into the background on graphical display mode.
       (global-unset-key (kbd "C-x C-z"))))  
 
 #+end_src
+
+**** buffer operations
+
+#+begin_src emacs-lisp :tangle yes
+
+	(global-set-key (kbd "<insert> b K") 'kill-matching-buffers)
+	(global-set-key (kbd "<insert> b r") 'attila/smart-rename-buffer-file)
+	(global-set-key (kbd "<insert> r t") 'query-replace)
+	(global-set-key (kbd "<insert> b k") 'kill-buffer)
+	(global-set-key (kbd "<insert> x a") 'save-some-buffers)
+	(global-set-key (kbd "<insert> x o") 'find-file-read-only)
+	(global-set-key (kbd "<insert> <escape>") 'save-buffers-kill-terminal)
+	(global-set-key (kbd "<insert> x x") 'save-buffer)
+	(global-set-key (kbd "<insert> SPC SPC") 'set-mark-command)
+
+#+end_src
+
+#+RESULTS:
+: set-mark-command
 
 *** Navigation
 **** Switch&rotate windows, switch frames
@@ -629,8 +698,8 @@ Do not put Emacs into the background on graphical display mode.
 #+begin_src emacs-lisp :tangle yes
 	(global-set-key (kbd "H-M-j") 'attila-smart-move-beginning-of-line)
 	(global-set-key (kbd "H-M-l") 'move-end-of-line)
-	(global-set-key (kbd "H-M-i") 'beginning-of-buffer)
-	(global-set-key (kbd "H-M-k") 'end-of-buffer)
+	(global-set-key (kbd "C-i") 'beginning-of-buffer)
+	(global-set-key (kbd "C-k") 'end-of-buffer)
 #+end_src
 
 #+RESULTS:
@@ -661,15 +730,19 @@ I use key-chords to invoke avy functions
 
 #+end_src
 
-**** Forward/backward sexp
+**** Forward/backward sexp and sentences
 
 #+begin_src emacs-lisp :tangle yes 
+
 	(global-set-key (kbd "H-'") 'forward-sexp)
-  (global-set-key (kbd "H-;") 'backward-sexp)
+	(global-set-key (kbd "H-;") 'backward-sexp)
+	(global-set-key (kbd "M-'") 'forward-sentence)
+	(global-set-key (kbd "M-;") 'backward-sentence)
+
 #+end_src
 
 #+RESULTS:
-: backward-sexp
+: backward-sentence
 
 **** Forward/backward sentence
 
@@ -817,6 +890,27 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 
 #+end_src
 
+*** Perl style regex for replace
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package visual-regexp
+    :straight t
+		:config
+		(use-package visual-regexp-steroids
+			:bind
+			("<insert> r r" . vr/replace)))
+
+	;; switch re builder syntax `string` instead of `read`, since it is more convinient
+	;; source: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
+	(setq reb-re-syntax 'string)
+
+
+#+end_src
+
+#+RESULTS:
+: string
+
 *** Undo tree
 
 #+begin_src emacs-lisp :tangle yes  
@@ -837,6 +931,7 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 
 #+begin_src emacs-lisp :tangle yes  
   (use-package multiple-cursors
+    :straight t
     :bind
     (( "H-m" . mc/mark-next-like-this)
      ( "M-m" . mc/mark-previous-like-this)
@@ -906,9 +1001,75 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 #+RESULTS:
 : company-select-next
 
+*** Yasnippet
+
+**** Data
+
+#+begin_src emacs-lisp :tangle yes  
+	(defvar my/yas-data-og-types '("website"
+																"article"
+																"book"
+																"music.song"
+																"music.album"
+																"music.playlist"
+																"music.radio_station"
+																"video.movie"
+																"video.episode"
+																"video.tv_show"
+																))
+
+	(defvar my/yas-authors '("Analogika Kft."
+													 "Analogika Ltd."
+													 "Hacker Space Pécs"
+													 "Attila V. Molnár"))
+#+end_src
+
+**** Core
+
+#+begin_src emacs-lisp :tangle yes  
+	(use-package yasnippet
+    :straight t
+		:config
+		(yas-global-mode 1)
+		(setq yas-snippet-dirs
+		'("~/.emacs.d/snippets/"))
+
+		;; keybinding for navigating between yas fields are only used inside of a snippet,
+		;; outside they would be useless so I made functions, which navigate inside a snippet
+		;; However outside navigate between symbolic expression
+		(defun my/yas-next-field-or-forward-sexp ()
+			"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
+			(interactive)
+			(condition-case err
+		(yas-next-field)
+				(error
+				 (call-interactively 'attila-smart-move-beginning-of-line))))
+
+		(defun my/yas-previous-field-or-backward-sexp ()
+			"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
+			(interactive)
+			(condition-case err
+		(yas-prev-field)
+				(error
+				 (call-interactively 'move-end-of-line))))
+
+		(define-key yas-minor-mode-map (kbd "C-j") 'my/yas-next-field-or-forward-sexp)
+		(define-key yas-minor-mode-map (kbd "C-l") 'my/yas-previous-field-or-backward-sexp)
+		(define-key yas-minor-mode-map (kbd "<tab>") nil)
+		(define-key yas-minor-mode-map (kbd "TAB") nil)
+		(define-key yas-minor-mode-map (kbd "M-e") 'yas/expand)
+		:bind
+		(:map snippet-mode-map
+					("<insert> j t" . 'yas-tryout-snippet)))
+#+end_src
+
+#+RESULTS:
+: yas-tryout-snippet
+
 *** Smart insertions
 **** TODO Path insertion
 
+*** Line editing
 ** Tools
 *** Version control
 
@@ -962,7 +1123,7 @@ Break lines when displaying man pages.
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (use-package man)
+  (use-package man :straight t)
 
 #+end_src
 
@@ -971,10 +1132,30 @@ Break lines when displaying man pages.
 #+begin_src emacs-lisp :tangle yes  
 
   (use-package info-buffer
+    :straight t
     :defer 4
     :bind (("<insert> h i" . info-buffer)))
 
 #+end_src
+
+*** Hotkey hinting
+
+#+begin_src emacs-lisp :tangle yes  
+
+
+	(use-package guide-key
+		:straight t
+		:diminish guide-key-mode
+		:config
+		(setq guide-key/guide-key-sequence t)
+		(setq guide-key/recursive-key-sequence-flag t)
+		(setq guide-key/idle-delay 0.5)
+		(guide-key-mode 1))
+
+#+end_src
+
+#+RESULTS:
+: t
 
 ** Programing
 *** Emacs Lisp
@@ -1072,11 +1253,16 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
   (when (>= emacs-major-version 26)
           (use-package webkit-color-picker
     :ensure t
+    :straight t
     :bind
           (("<insert> 2 p" . webkit-color-picker-show))))
 #+end_src
 
 * Tests
+* Postconfig
+#+begin_src emacs-lisp :tangle yes  
+	(toggle-debug-on-error)
+#+end_src
 * Planning
 ** TODOS
 - [ ] Make my line functions prefixable
@@ -1088,3 +1274,4 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 Parnifer mode modifies parenthesis according to indentation and vica versa
 *** expand-region
 Expand/shrink selection by semantic regions
+
