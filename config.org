@@ -247,6 +247,29 @@ request: convinient HTTP request library
 
  #+end_src
 
+**** association lists
+***** Merge alists
+
+Borrowed from marshal.el
+
+#+begin_src emacs-lisp :tangle yes 
+
+	(defun attila/alist-merge (alist1 alist2 &optional append)
+		(let ((res alist1))
+			(if alist2
+					(let* ((pair (car alist2))
+								 (x (car pair))
+								 (y (cdr pair)))
+						(marshal--alist-merge
+						 (marshal--alist-add alist1 x y append)
+						 (cdr alist2)))
+				alist1)))
+
+#+end_src
+
+#+RESULTS:
+: attila/alist-merge
+
 *** UX
 **** Smart line beginnig
 #+begin_src emacs-lisp :tangle yes  
@@ -278,7 +301,7 @@ request: convinient HTTP request library
 
 Rename buffer or file and buffer if it is already saved.
 
-#+begin_src emacs-lisp :tangle
+#+begin_src emacs-lisp :tangle yes
 
 	(defun attila/smart-rename-buffer-file (new-name)
 		"Renames both current buffer and file (if saved) it's visiting to NEW-NAME."
@@ -299,6 +322,70 @@ Rename buffer or file and buffer if it is already saved.
 #+RESULTS:
 : attila/smart-rename-buffer-file
 
+**** Cut lines
+
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/line-cut (prefix-arg)
+		"Cut active line"
+		(interactive (list current-prefix-arg))
+		(let ((line-num (if prefix-arg prefix-arg 1))
+					(counter 0))
+			(while (< counter line-num)
+				(setq counter (+ 1 counter))
+				(kill-region (line-beginning-position) (line-end-position))
+				(delete-forward-char 1 nil))))
+
+
+	(global-set-key (kbd "<insert> l d") 'attila/line-cut)
+
+
+	(defun my/test (prefix-arg)
+		(interactive (list current-prefix-arg))
+		(message prefix-arg))
+
+
+	;;;
+	;;;
+	;;
+	;;
+
+#+end_src
+**** Multiply line above/below
+
+#+begin_src emacs-lisp :tangle yes
+
+		(defun attila/line-duplicate-below ()
+			"Duplicate active line"
+			(interactive)
+			;; insertion = newline + active line
+			(let ((insertion (concat "\n" (buffer-substring (line-beginning-position) (line-end-position)))))
+				(end-of-line)
+				(insert insertion)
+				;; Indent (tab) command in certain modes with automatic indention will lead to right identation
+				;; Doing it at the end of the line will not cause any harm in others modes, expect in the ones
+				;; where multiple identation levels carry differen meanings (python, yaml etc...)
+				;; which is still a TODO task;
+				(end-of-line)
+				(indent-for-tab-command)))
+
+		(defun attila/line-duplicate-above ()
+			"Duplicate active line above"
+			(interactive)
+			;; insertion = newline + active line
+			(let ((insertion (concat (buffer-substring (line-beginning-position) (line-end-position)))))
+				(beginning-of-line)
+				(insert "\n")
+				(forward-line -1)
+				(insert insertion)
+				;; Indent (tab) command in certain modes with automatic indention will lead to right identation
+				;; Doing it at the end of the line will not cause any harm in others modes, expect in the ones
+				;; where multiple identation levels carry differen meanings (python, yaml etc...)
+				;; which is still a TODO task;
+				(end-of-line)
+				(indent-for-tab-command)))
+
+#+end_src
 ** Appearance
 *** Layout
 
@@ -403,6 +490,17 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 #+end_src
 
+*** Smooth scrolling
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package sublimity
+		:straight t
+		:config
+		(require 'sublimity-scroll)
+		(sublimity-mode 1))
+
+#+end_src
 *** Visual line wrapping 
 
 #+begin_src emacs-lisp :tangle yes  
@@ -443,6 +541,33 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 : t
 
 ** Behavior
+*** Store costumization in a separate file
+
+Much better than tainting the =init.el= file.
+
+#+begin_src emacs-lisp :tangle yes
+
+	(setq custom-file "~/.emacs.d/custom-options.el")
+
+#+end_src
+
+#+RESULTS:
+: ~/.emacs.d/custom-options.el
+
+*** Universal argument
+
+#+begin_src emacs-lisp :tangle yes
+
+	(define-key global-map (kbd "H-n") 'universal-argument)
+	(define-key universal-argument-map (kbd "C-u") nil)
+	(define-key universal-argument-map (kbd "H-n") 'universal-argument-more)
+	(define-key global-map (kbd "C-u") 'kill-whole-line)
+	(eval-after-load 'evil-maps
+		'(progn
+			 (define-key evil-motion-state-map (kbd "H-n") nil)
+			 (define-key evil-motion-state-map (kbd "C-u") 'evil-scroll-up)))
+
+#+end_src
 *** Helm
 **** Helm core
 #+begin_src emacs-lisp :tangle yes  
@@ -531,9 +656,13 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 					("<insert> r" . helm-ff-run-find-file-as-root)
 					("<insert> d d" . dired-find-file)
 					("<insert> d o" . dired-find-file) 
-					("H-k" . helm-next-line) 
-					("H-i" . 'helm-previous-line)
+					("C-k" . helm-next-line) 
+					("C-i" . helm-previous-line)
+					("C-j" . helm-execute-persistent-action)
 					)
+		(:map helm-find-files-map
+					("C-j" . helm-find-files-up-one-level)
+					("C-l" . helm-execute-persistent-action))
 		(:map helm-top-map
 					("<insert> j c" . helm-top-run-sort-by-cpu)
 					("<insert> j m" . helm-top-run-sort-by-mem)
@@ -593,8 +722,15 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 **** helm swoop
 
-
 *** GUI interaction
+**** Basic control
+
+#+begin_src emacs-lisp :tangle yes
+
+  (global-set-key (kbd "<insert> <escape>") 'save-buffers-kill-terminal)
+  (global-set-key (kbd "<insert> x x") 'save-buffer)
+
+#+end_src
 **** Prevent backgrounding
 
 #+begin_src emacs-lisp :tangle yes
@@ -781,6 +917,15 @@ I use key-chords to invoke avy functions
 : t
 
 *** Selection
+
+Bindings defined with hydra
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package expand-region
+	 :straight t)
+
+#+end_src
 *** Show function synopsis with eldoc
 
 Allow eldoc to show function synopsis in the echo area in multiple line if needed.
@@ -876,6 +1021,90 @@ Delete backup files older then a week
 #+end_src
 
 ** Editing
+*** Hydra
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package hydra
+		:straight t
+		:config
+		;; hint int the echo area
+		(setq hydra-is-helpful t)
+		;; Use dedicated hinting window
+		(setq hydra-lv t)
+		;; Separate hinter and echo area
+		(setq lv-use-separator t)
+		(defhydra hydra-zoom (global-map "<f2>")
+		"zoom"
+		("g" text-scale-increase "in")
+		("l" text-scale-decrease "out"))
+
+		(defun hydra-edit/pre ()
+			(set-cursor-color "#60E896"))
+
+		(defun hydra-edit/post ()
+			(set-cursor-color "#FFFFFF"))
+
+		(defun hydra-seek/pre ()
+			(set-cursor-color "#E52B50"))
+
+		(defun hydra-seek/post ()
+			(set-cursor-color "#FFFFFF"))
+
+		(defhydra hydra-zoom
+			(global-map "<insert> ;"
+									:color pink
+									:pre hydra-edit/pre
+									:post hydra-edit/post)
+			"hydra-edit"
+
+			("q" nil))
+
+		(defun hydra-seek/pre ()
+			(set-cursor-color "#E52B50"))
+
+		(defun hydra-seek/post ()
+			(set-cursor-color "#FFFFFF"))
+
+		(defhydra hydra-zoom
+			(global-map "<insert> SPC"
+									:color pink
+									:pre hydra-seek/pre
+									:post hydra-seek/post)
+			"hydra-seek"
+			("w" kill-ring-save "copy" :color blue)
+			("SPC" set-mark-command "mark")
+			("s s" helm-occur "search")
+			("s m m" helm-rifle-current-buffer)
+			("s p" helm-projectile-ag "p-search")
+			("s l" helm-locate "l-search")
+			("s r" helm-resume "ffind")
+			("x f" helm-find-files "ffind")
+			("f" avy-goto-char "j1")
+			("d" avy-goto-char-2 "j2")
+			("g" avy-goto-line)
+			("p p" helm-projectile-switch-project)
+			("p f" helm-projectile-find-file)
+			;; scroll
+			("i" scroll-down-command)
+			("k" scroll-up-command)
+			;; Select
+			("]" er/expand-region)
+			("[" er/contract-region)
+			("q" nil)
+			;; Editing
+			("l k" attila/line-cut)
+			("l d" end-of-line)
+			("l a" attila-smart-move-beginning-of-line)
+
+			;; git
+			("v v" magit-status)))
+
+#+end_src
+
+#+RESULTS:
+: t
+
 *** Use spaces instead of tabs
 
 Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =indent relative= does not find the next tab stop
@@ -1070,6 +1299,17 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 **** TODO Path insertion
 
 *** Line editing
+**** Duplicate line above/below
+
+#+begin_src emacs-lisp :tangle yes
+
+	(global-set-key (kbd "<insert> l i") 'attila/line-duplicate-above)
+	(global-set-key (kbd "<insert> l k") 'attila/line-duplicate-below)
+#+end_src
+
+#+RESULTS:
+: attila/line-duplicate-below
+
 ** Tools
 *** Version control
 
@@ -1138,35 +1378,67 @@ Break lines when displaying man pages.
 
 #+end_src
 
-*** Hotkey hinting
+*** Hotkey info
+**** Hotkey hinting
 
-#+begin_src emacs-lisp :tangle yes  
+ #+begin_src emacs-lisp :tangle yes  
 
 
-	(use-package guide-key
+	 (use-package guide-key
+		 :straight t
+		 :diminish guide-key-mode
+		 :config
+		 (setq guide-key/guide-key-sequence t)
+		 (setq guide-key/recursive-key-sequence-flag t)
+		 (setq guide-key/idle-delay 0.5)
+		 (guide-key-mode 1))
+
+ #+end_src
+
+ #+RESULTS:
+ : t
+
+**** Hotkey exploration
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package helm-descbinds
 		:straight t
-		:diminish guide-key-mode
-		:config
-		(setq guide-key/guide-key-sequence t)
-		(setq guide-key/recursive-key-sequence-flag t)
-		(setq guide-key/idle-delay 0.5)
-		(guide-key-mode 1))
+		:diminish helm-descbinds-mode)
+
+#+end_src
+** Programing
+*** Elisp
+**** Evaluation
+#+begin_src emacs-lisp :tangle yes  
+
+	(defun attila/lisp-eval-region-or-buffer ()
+		"Eval region if selected, otherwise eval the buffer"
+		(interactive)
+		(if (use-region-p)
+				(call-interactively 'eval-region)
+			(call-interactively 'eval-buffer)))
+
+	(define-key lisp-mode-map (kbd "<insert> j e") 'attila/lisp-eval-region-or-buffer)
+	(define-key emacs-lisp-mode-map (kbd "<insert> j e r") 'attila/lisp-eval-region-or-buffer)
 
 #+end_src
 
 #+RESULTS:
-: t
 
-** Programing
-*** Emacs Lisp
+**** Edebug
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (diminish 'emacs-lisp-mode "elisp")
+	(define-key emacs-lisp-mode-map (kbd "<insert> d f") 'edebug-defun)
+	(define-key lisp-mode-map (kbd "<insert> d f") 'edebug-defun)
+	(define-key lisp-mode-map (kbd "<insert> d i") 'edebug-mode)
+	(define-key emacs-lisp-mode-map (kbd "<insert> d i") 'edebug-mode)
 
 #+end_src
 
 #+RESULTS:
+: edebug-stop
 
 *** Org mode
 **** Installation workaround
@@ -1229,7 +1501,7 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 
 #+begin_src emacs-lisp :tangle yes  
 
-	(global-set-key (kbd "<insert> j e t") 'org-babel-tangle)
+	(define-key org-mode-map (kbd "<insert> j e t") 'org-babel-tangle)
 
 #+end_src
 
@@ -1237,6 +1509,81 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 : org-babel-tangle
 
 *** Web
+**** Web mode for HTML and CSS
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package web-mode
+		:straight t
+		:defer t
+		:init
+		(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+		(add-to-list 'auto-mode-alist '("\\.svg\\'" . xml-mode))
+		(add-to-list 'auto-mode-alist '("\\.liq\\'" . liquidsoap-mode))
+    
+    ;; Becuase of some weird bug concatanation does not work.
+		;; (setq auto-mode-alist (-concat
+		;; 											 '(("\\.phtml\\'" . web-mode)
+		;; 												 ("\\.tpl\\.php\\'" . web-mode)
+		;; 												 ("\\.[agj]sp\\'" . web-mode)
+		;; 												 ("\\.as[cp]x\\'" . web-mode)
+		;; 												 ("\\.erb\\'" . web-mode)
+		;; 												 ("\\.mustache\\'" . web-mode)
+		;; 												 ("\\.djhtml\\'" . web-mode)
+		;; 												 ("\\.html\\'" . web-mode)
+		;; 												 ("\\.css\\'" . web-mode)
+		;; 												 ("\\.svg\\'" . web-mode)
+		;; 												 ("\\.liq\\'" . web-mode))
+		;; 											 'auto-mode-alist))
+		:config
+
+		(add-hook 'web-mode-hook
+							(lambda ()
+								(setq-local company-backends
+														(append '((company-css
+																			 :separate
+																			 company-web-html
+																			 :separate
+																			 company-dabbrev))))))
+		;; turn on pair tag highlight for html
+		(web-mode-toggle-current-element-highlight)
+		(setq web-mode-markup-indent-offset 2)
+		(setq web-mode-code-indent-offset 2)
+		(add-hook 'web-mode-hook (lambda ()
+															 (set (make-local-variable 'company-backends) '(company-web-html))
+															 (company-mode t)
+															 (emmet-mode t)))
+		;;web-mode snippets
+		(setq web-mode-extra-snippets
+					'(("djhtml" . (("toto" . ("<% toto | %>\n\n<% end %>"))))
+						("php" . (("dowhile" . ("<?php do { ?>\n\n<?php } while (|); ?>"))
+											("debug" . ("<?php error_log(__LINE__); ?>")))))))
+#+end_src
+**** Indium JS REPL
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package indium
+		:straight t
+		:defer t
+		:init
+		(add-hook 'js2-mode-hook
+							(lambda ()
+								(setq-local
+								 company-backends
+								 (append '((company-indium-repl
+														:separate
+														company-dabbrev)))))))
+
+#+end_src
 **** LESS
 
 #+begin_src emacs-lisp :tangle yes  
