@@ -4,6 +4,7 @@
 # expand-env: ((yas-indent-line nil))
 # --
 #+begin_src ${1:$$(yas-choose-value '(
+						"emacs-lisp"
 						"sh"
 						"python"
 						"nix"))} $2 $0

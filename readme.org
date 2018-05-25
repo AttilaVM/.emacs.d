@@ -13,14 +13,6 @@ however I will separate keybindings from the code to make it more configurable.
 
 For this you should have an Xmodmap similar to this:
 
-#+begin_src
-clear lock
-clear control
-keycode 66 = Insert
-keycode 118 = Caps_Lock
-add control = Control_L Control_R
-#+end_src
-
 ** Mnemonics
 
 b for buffers
@@ -35,14 +27,6 @@ ESC for exit
 
 * Milestones
 
-- [ ] code completion with indium js IDE
-- [ ] [[https://github.com/kuangdash/org-iv][Live preview]]
-- [ ] Use [[https://github.com/raxod502/straight.el][straight.el]] (nix like purely fucntional package manager) it is highly possible that it should be co-used with [[https://github.com/jwiegley/use-package][use-package]]
-- [ ] Modernize my emacs code with [[https://github.com/rejeep/f.el][f]] (file-path and I/O handling) [[https://github.com/magnars/s.el][s]] (string handling) [[https://elpa.gnu.org/packages/let-alist.html][let-alist]] (alist library) [[https://github.com/magnars/dash.el][dash]] (Clojureish list library)
-- [X] Unit testing
-	- [X] write some unit tests
-	- [ ] Cover all pure functions
-- [x] helm everywhere
 - [ ] implement js-import
 - [ ] helm-dash
 - [ ] helm-cider

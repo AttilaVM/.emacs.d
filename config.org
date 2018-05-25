@@ -4,55 +4,79 @@
 
 * Introduction
 ** Rationale
-I plan to rewrite my Emacs configuration using literate programing. Thankfully there are brilliant examples out there, like [[http://pages.sachachua.com/.emacs.d/Sacha.html#babel-init][Sacha Chua's Emacs Configuration]], which has a nice explanation 
-** Other examples
-** Guide lines
-* User info
+I recently recreate my Linux workfow from the ground, I switched to NixOS with Xmonad, use Ansible for portable user configuration, and more importantly I am rewriting my Emacs config in [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org Mode Bable]], using [[https://en.wikipedia.org/wiki/Literate_programming][literate programing]]. A Org Babel is a meta programing language, no not like Lisp ;) with org mode you can meta program and glue together any kind of programming languages, in suprisingly convinient way. It is something what [[https://jupyter.org/][Jupyter Notebook]] will become in one hundread years if we are luckyL
+.   
+I have a lot of going on so I have no time to explain everithing, yet... Thankfully there are brilliant examples out there, like [[http://pages.sachachua.com/.emacs.d/Sacha.html#babel-init][Sacha Chua's Emacs Configuration]], which has  nice explanations.
+** Goals
+*** Short term
+ - Should be easy to reproduce.
+ - Shoud be easy to reason about.
+ - Ergonomic, yet menmonic hotkeys, traditional common, Emacs and Unix hotkey bindigs are mostly sacraficed.
+ - Should be Fast
+ - Should use Lazy module loading.
+*** Long term
+ - Should be cross platform
+ - Should be Easily adaptable by others.
+*** Very long term
+ - Neural interface ;)
+* Environment
 
-#+NAME: user-info
-| variable           | value                 |
-|--------------------+-----------------------|
-| user-full-name     | Attila Molnar         |
-| user-email-address | ate.molnar2@gmail.com |
-| user-backup-dir    | ~/.emacs.d/backup/    |
+You need a rather unique environment to use this configuration. First you need to change your key map. On X you need to create a =~/.Xmodmap= file:
 
-#+begin_src emacs-lisp :tangle yes :var data=user-info
-	(message (car (car data)))
+#+begin_src   
+
+clear lock
+
+keycode 66 = Hyper_L
+remove mod4 = Hyper_L
+add mod3 = Hyper_L
+
+keycode 78 = Caps_Lock
+keycode 127 = Tab
+keycode 23 = Alt_L
+keycode 36 = Alt_R
+
+keycode 104 = Return
+
 #+end_src
 
-#+RESULTS:
-: user-full-name
+It maps the =hyper= ([[https://en.wikipedia.org/wiki/Space-cadet_keyboard][big thanks to the ancient Space-cadet keyboard]]) modifier key to physical =Caps Lock= , =Left Alt= to =Tab= and =Right Alt= to =Return= (Enter) and =Caps Lock= to =Insert=. Yep this will elliminate your =Tab=, =Reture= and =Insert= keys. However we can devise a way to make a modfier key act as a regular key if pressed and released without pressing another key by using [[https://github.com/alols/xcape][xcape]]. Use your package manager to install it, and put the following line into your =.xinitrc=.:
+
+#+begin_src   
+xcape -t 150 -e "Hyper_L=Insert;Alt_L=Tab;Alt_R=Return" 
+#+end_src
+
+Solved. If you wonder why on earth we put the =Insert= key to such a convinient postion, since it invokes a totaly useless functionality... Well that it is the point, since nobody will miss the text overwriting mode we can bind =Insert= (physicaly =Caps Lock=) as an universal prefix key in our applications, which has support for concataniting hotkey strokes like *Emacs*, *Tmux*, *Xmonad* and with some python hackery *Blender*. To prove my point I will list some of my emacs key bindings.
+
+| virtual binding | functionality                          |
+|-----------------+----------------------------------------|
+| <insert> p p    | List all version controlled projects   |
+| <insert> p f    | List all file in project               |
+| <insert> ; h    | Select whole buffer                    |
+| <insert> ; d    | Selecet a region between two avy jumps |
+  
+* User info
+
+Here is where the configuration actualy begins.
 
 #+begin_src emacs-lisp :tangle yes  
   (defvar user-backup-dir "~/.emacs.d/backup/")
+  (defvar user-auto-save-dir "~/.emacs.d/auto-save/")
 #+end_src
 
 #+RESULTS:
-: user-backup-dir
-
-* Hotkeys
-** Elisp
-#+NAME: elisp-mode-hotkeys
-| Keybinding | function | Description |
-|------------+----------+-------------|
-|            |          |             |
-|            |          |             |
-|            |          |             |
-|            |          |             |
-
-** Org mode
-
-#+NAME: org-mode-hotkeys
-| Keybinding   | function                                |
-|--------------+-----------------------------------------|
-| <insert> t c | org-table-create-or-convert-from-region |
-| <insert> t k | org-table-delete-column                 |
-|              |                                         |
-|--------------+-----------------------------------------|
-|              |                                         |
+: user-auto-save-dir
 
 * preconfig
 ** Elisp
+*** Print trace on error
+
+#+begin_src emacs-lisp :tangle yes  
+
+  (toggle-debug-on-error)
+
+#+end_src
+
 *** Require common lisp
 
 #+begin_src emacs-lisp :tangle yes  
@@ -60,6 +84,7 @@ I plan to rewrite my Emacs configuration using literate programing. Thankfully t
 #+end_src
 
 *** binding and recursion limits
+
 Set the maximum numbers of variable bindings, recursive call limit, garbage collector threshold and set CWD to "~/.emacs.d".
 
 #+begin_src emacs-lisp :tangle yes 
@@ -81,14 +106,6 @@ Emacs has a blocking garbage collector, and its collection threshold is very low
   (setq default-directory "~/.emacs.d")
 #+end_src
 
-*** Print trace on error
-
-#+begin_src emacs-lisp :tangle yes  
-
-  (toggle-debug-on-error)
-
-#+end_src
-
 ** Localization
 
 Ensure global UTF-8 usage, enable hyper and super key on windows. 
@@ -105,14 +122,6 @@ Ensure global UTF-8 usage, enable hyper and super key on windows.
 #+end_src
 
 #+RESULTS:
-
-** Prefer newest .elc files
-
-If a file suffix is not exaclty specified do not stop on the first hit, but search for the newest on
-
-#+begin_src emacs-lisp :tangle yes  
-(setq load-prefer-newer t)
-#+end_src
 
 ** optimalizations
 *** Dsable bidi reordering
@@ -156,34 +165,63 @@ Disable auto vertical scroll adjustion for tall lines
 
 #+end_src
 
-#+RESULTS:
+#+RES
 
 * Configuration
 :PROPERTIES:
 :CUSTOM_ID: babel-init
 :END:      
 	<<babel-init>>
+** Bootstrap
+*** Set repositories
 
-** Bootstrap straight.el and use-package
+#+begin_src emacs-lisp :tangle yes  
 
-#+begin_src emacs-lisp :tangle yes 
-  (let ((bootstrap-file
-         (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
-        (bootstrap-version 3))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-
-(straight-use-package 'use-package)
+	(unless (assoc-default "melpa" package-archives)
+		(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
+	;; (unless (assoc-default "org" package-archives)
+	;;   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t))
 #+end_src
 
 #+RESULTS:
-: t
+: ((gnu . http://elpa.gnu.org/packages/) (melpa . http://melpa.org/packages/))
+
+*** Bootstrap straight.el and use-package
+
+=straight.el= git clone given packages and byte compiles them, while interoperates with =use-package=.
+
+ #+begin_src emacs-lisp :tangle yes 
+		 (let ((bootstrap-file
+						(concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
+					 (bootstrap-version 3))
+			 (unless (file-exists-p bootstrap-file)
+				 (with-current-buffer
+						 (url-retrieve-synchronously
+							"https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+							'silent 'inhibit-cookies)
+					 (goto-char (point-max))
+					 (eval-print-last-sexp)))
+			 (load bootstrap-file nil 'nomessage))
+
+	 (straight-use-package 'use-package)
+
+	 ;; Print loading packages
+	 (setq use-package-verbose t)
+	 (setq use-package-always-ensure t)
+ #+end_src
+
+ #+RESULTS:
+ : t
+
+*** Prefer newly compile .elc files
+
+If a file suffix is not exaclty specified do not stop on the first hit, but search for the newest on. In practice this means that the newly compiled .elc files will be prefered.
+
+#+begin_src emacs-lisp :tangle yes
+
+	(setq load-prefer-newer t)
+
+#+end_src
 
 ** libraries
 *** Third-party libraries
@@ -407,6 +445,15 @@ Rename buffer or file and buffer if it is already saved.
 
 #+RESULTS:
 		
+*** Use visual bell instead audio
+
+#+begin_src emacs-lisp :tangle yes
+
+  (setq ring-bell-function 'ignore)
+	(setq visible-bell nil)
+
+#+end_src
+
 *** Parenthesis
 
 Highlight parentheses at point and its pair. Use rainbow colors for the different nesting levels of parenthesis.
@@ -568,6 +615,22 @@ Much better than tainting the =init.el= file.
 			 (define-key evil-motion-state-map (kbd "C-u") 'evil-scroll-up)))
 
 #+end_src
+*** Window management
+**** Basic wm commands
+
+#+begin_src emacs-lisp :tangle yes
+
+	(global-set-key (kbd "<insert> 3 v") 'split-window-below)
+	(global-set-key (kbd "<insert> 3 h") 'split-window-horizontally)
+	;; expand active window
+	(global-set-key (kbd "<insert> 3 e") 'delete-other-windows) 
+	(global-set-key (kbd "<insert> 3 k") 'delete-window)
+
+#+end_src
+
+#+RESULTS:
+: delete-window
+
 *** Helm
 **** Helm core
 #+begin_src emacs-lisp :tangle yes  
@@ -847,12 +910,31 @@ I use key-chords to invoke avy functions
 
 #+begin_src emacs-lisp :tangle yes
 
-  (use-package avy
-    :straight t
-    :config
-    (avy-setup-default))
+	(use-package avy
+		:straight t
+		:config
+		(avy-setup-default)
+
+		(defun attila/avy-select-char ()
+			(interactive)
+			(call-interactively 'avy-goto-char)
+			(call-interactively 'set-mark-command)
+			(call-interactively 'avy-goto-char))
+	
+		(defun attila/avy-select-char-2 ()
+			(interactive)
+			(call-interactively 'avy-goto-char-2)
+			(call-interactively 'set-mark-command)
+			(call-interactively 'avy-goto-char-2))
+		:bind
+		("<insert> ; d" . attila/avy-select-char-2)
+		("<insert> ; f" . attila/avy-select-char))
+
 
 #+end_src
+
+#+RESULTS:
+: attila/avy-select-char
 
 **** Go back and forth changed regions
 
@@ -865,6 +947,16 @@ I use key-chords to invoke avy functions
      ("C-S-u" . goto-last-change-reverse)))
 
 #+end_src
+
+**** Sentences postfixedith one space by modern people
+
+#+begin_src emacs-lisp :tangle yes
+
+	(setq sentence-end-double-space nil)
+
+#+end_src
+
+#+RESULTS:
 
 **** Forward/backward sexp and sentences
 
@@ -917,7 +1009,18 @@ I use key-chords to invoke avy functions
 : t
 
 *** Selection
+**** Select whole buffer
 
+#+begin_src emacs-lisp :tangle yes  
+
+	(global-set-key (kbd "<insert> ; h") 'mark-whole-buffer)
+
+#+end_src
+
+#+RESULTS:
+: mark-whole-buffer
+
+**** Expand region
 Bindings defined with hydra
 
 #+begin_src emacs-lisp :tangle yes
@@ -926,6 +1029,7 @@ Bindings defined with hydra
 	 :straight t)
 
 #+end_src
+
 *** Show function synopsis with eldoc
 
 Allow eldoc to show function synopsis in the echo area in multiple line if needed.
@@ -972,11 +1076,14 @@ Run Emacs as a server and connect to it with =emacsclient= from the CLI.
 Make emacs to write backup and auto-save files in a [[https://www.emacswiki.org/emacs/BackupDirectory][specific directory]] instead of messing up the project file trees. 
 
 #+begin_src emacs-lisp :tangle yes
+	(setq delete-old-versions -1)
+	(setq version-control t)
+	(setq vc-make-backup-files nil)
 
-  (setq backup-directory-alist
-        `((".*" . ,user-backup-dir)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,user-backup-dir t)))
+	(setq backup-directory-alist
+				`((".*" . ,user-backup-dir)))
+	(setq auto-save-file-name-transforms
+				`((".*" ,user-auto-save-dir t)))
 
 #+end_src
 
@@ -1031,9 +1138,9 @@ Delete backup files older then a week
 		;; hint int the echo area
 		(setq hydra-is-helpful t)
 		;; Use dedicated hinting window
-		(setq hydra-lv t)
+		(setq hydra-lv nil)
 		;; Separate hinter and echo area
-		(setq lv-use-separator t)
+		(setq lv-use-separator nil)
 		(defhydra hydra-zoom (global-map "<f2>")
 		"zoom"
 		("g" text-scale-increase "in")
@@ -1072,7 +1179,7 @@ Delete backup files older then a week
 									:pre hydra-seek/pre
 									:post hydra-seek/post)
 			"hydra-seek"
-			("w" kill-ring-save "copy" :color blue)
+			("w" kill-ring-save "copy")
 			("SPC" set-mark-command "mark")
 			("s s" helm-occur "search")
 			("s m m" helm-rifle-current-buffer)
@@ -1085,6 +1192,11 @@ Delete backup files older then a week
 			("g" avy-goto-line)
 			("p p" helm-projectile-switch-project)
 			("p f" helm-projectile-find-file)
+			("b b" switch-to-buffer)
+			;; Select
+			("; f" attila/avy-select-char)
+			("; d" attila/avy-select-char-2)
+			("; h" mark-whole-buffer)
 			;; scroll
 			("i" scroll-down-command)
 			("k" scroll-up-command)
@@ -1098,12 +1210,24 @@ Delete backup files older then a week
 			("l a" attila-smart-move-beginning-of-line)
 
 			;; git
-			("v v" magit-status)))
+			("v v" magit-status)
+			))
 
 #+end_src
 
 #+RESULTS:
 : t
+
+*** Kill ring
+
+#+begin_src emacs-lisp :tangle yes
+
+	(global-set-key (kbd "<insert> y") 'helm-show-kill-ring)
+
+#+end_src
+
+#+RESULTS:
+: helm-show-kill-ring
 
 *** Use spaces instead of tabs
 
@@ -1187,6 +1311,7 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 	(use-package smartparens
 		:straight t 
 		:defer 2
+		:diminish smartparens-mode "⚖"
 		:init
 		(defun attila-sp-kill-sexp ()
 			(interactive)
@@ -1204,7 +1329,7 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 #+end_src
 
 #+RESULTS:
-: t
+: attila-sp-kill-sexp
 
 *** Autocompletion with company
 #+begin_src emacs-lisp :tangle yes  
@@ -1220,11 +1345,15 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 		(setq company-dabbrev-downcase nil)
 		;; dabbrev by default only looks for
 		(setq company-dabbrev-char-regexp "[a-zA-Z0-9._]")
+		;; Cycle throught competiton candidates
+		(setq company-selection-wrap-around t)
+		;; sort candidate according to their occurrance in the current buffer and back-end importance if available
+		(setq company-transformers '(company-sort-by-occurrence
+																	company-sort-by-backend-importance))
 		:bind
 		(:map company-active-map
 					("H-i" . 'company-select-previous)
 					("H-k" . 'company-select-next)))
-
 #+end_src
 
 #+RESULTS:
@@ -1287,6 +1416,7 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 		(define-key yas-minor-mode-map (kbd "<tab>") nil)
 		(define-key yas-minor-mode-map (kbd "TAB") nil)
 		(define-key yas-minor-mode-map (kbd "M-e") 'yas/expand)
+()
 		:bind
 		(:map snippet-mode-map
 					("<insert> j t" . 'yas-tryout-snippet)))
@@ -1294,6 +1424,31 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 
 #+RESULTS:
 : yas-tryout-snippet
+
+**** Yas Helper functions
+
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/yas-selected-text-replace ()
+		"Replace selected via yasnippet"
+		;; (delete-region (mark) (point))
+		;; Insert selected text
+		(if (char-or-string-p yas/selected-text)
+				(progn
+		(if (< (point) (mark))
+				(progn
+					(search-forward yas/selected-text)
+					(replace-match "")))
+		(if (> (point) (mark))
+				(progn
+					(search-backward yas/selected-text)
+					(replace-match ""))))))
+
+
+#+end_src
+
+#+RESULTS:
+: attila/yas-selected-text-replace
 
 *** Smart insertions
 **** TODO Path insertion
@@ -1311,6 +1466,17 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 : attila/line-duplicate-below
 
 ** Tools
+*** package search
+
+#+begin_src emacs-lisp :tangle yes
+
+	(global-set-key (kbd "<insert> 1 p") 'package-list-packages)
+
+#+end_src
+
+#+RESULTS:
+: package-list-packages
+
 *** Version control
 
 #+begin_src emacs-lisp :tangle yes  
@@ -1332,6 +1498,8 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 		 ("<insert> v p" . magit-push-popup)
 		 )
 		:bind
+		(:map magit-mode-map
+					("<tab>" . magit-section-toggle))
 		(:map magit-log-mode-map
 					("s-<f3>" . magit-display-noselect-toggle)))
 
@@ -1339,6 +1507,41 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 
 #+RESULTS:
 : magit-display-noselect-toggle
+
+*** File management
+**** Toggle dired listing modes
+
+#+begin_src emacs-lisp :tangle yes  
+	(require 'dired)
+
+	(setq dired-listing-switches "-lh")
+	(setq attila/dired-switch-list '("-lh" "-lha" ""))
+	(setq attila/dired-switch-list-counter 0)
+
+	(defun attila/dired-toggle-listing-switches ()
+		(interactive)
+		(setq attila/dired-switch-list-counter
+					(mod
+					 (+ 1 attila/dired-switch-list-counter)
+					 (length attila/dired-switch-list)))
+		(setq dired-listing-switches
+					(nth attila/dired-switch-list-counter
+							 attila/dired-switch-list))
+		(when (eq major-mode 'dired-mode)
+			(let ((dir dired-directory))
+				(kill-buffer (buffer-name))
+				(dired dir))))
+
+	(define-key dired-mode-map (kbd ".") 'attila/dired-toggle-listing-switches)
+#+end_src
+**** Allow rerusive dired delets
+
+#+begin_src emacs-lisp :tangle yes
+  (setq dired-recursive-deletes  +1)
+#+end_src
+
+#+RESULTS:
+: 1
 
 ** Information gathering
 *** Default browser
@@ -1357,6 +1560,16 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 
 #+end_src
 
+*** Web search with searx or google
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package helm-google
+		:straight t
+		:bind
+		(("<insert> h g" . helm-google-searx)))
+
+#+end_src
 *** man
 
 Break lines when displaying man pages.
@@ -1378,6 +1591,21 @@ Break lines when displaying man pages.
 
 #+end_src
 
+*** Offline documentation with dash
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package helm-dash
+		:straight t
+		:config
+		(setq helm-dash-docsets-path "~/data/dash-docsets/")
+		:bind(
+					(("<insert> h d d" . helm-dash)
+					 ("<insert> h d i" . helm-dash-install-docset)
+					 ("<insert> h d u" . helm-dash-update-docset)
+					 ("<insert> h d a" . helm-dash-activate-docset))))
+
+#+end_src
 *** Hotkey info
 **** Hotkey hinting
 
@@ -1528,8 +1756,8 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 		(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
 		(add-to-list 'auto-mode-alist '("\\.svg\\'" . xml-mode))
 		(add-to-list 'auto-mode-alist '("\\.liq\\'" . liquidsoap-mode))
-    
-    ;; Becuase of some weird bug concatanation does not work.
+
+		;; Becuase of some weird bug concatanation does not work.
 		;; (setq auto-mode-alist (-concat
 		;; 											 '(("\\.phtml\\'" . web-mode)
 		;; 												 ("\\.tpl\\.php\\'" . web-mode)
@@ -1553,12 +1781,19 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 																			 company-web-html
 																			 :separate
 																			 company-dabbrev))))))
-		;; turn on pair tag highlight for html
-		(web-mode-toggle-current-element-highlight)
+		;; turn on highlight on current element and column
+		(setq web-mode-enable-current-element-highlight nil)
+		(setq web-mode-enable-current-column-highlight t)
+		;; set indentation
 		(setq web-mode-markup-indent-offset 2)
 		(setq web-mode-code-indent-offset 2)
+		(setq web-mode-css-indent-offset 2)
 		(add-hook 'web-mode-hook (lambda ()
-															 (set (make-local-variable 'company-backends) '(company-web-html))
+															 (set (make-local-variable
+																		 'company-backends)
+																		'(company-web-html
+																			company-css
+																			company-files))
 															 (company-mode t)
 															 (emmet-mode t)))
 		;;web-mode snippets
@@ -1566,6 +1801,50 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 					'(("djhtml" . (("toto" . ("<% toto | %>\n\n<% end %>"))))
 						("php" . (("dowhile" . ("<?php do { ?>\n\n<?php } while (|); ?>"))
 											("debug" . ("<?php error_log(__LINE__); ?>")))))))
+#+end_src
+
+#+RESULTS:
+: t
+
+**** Javascript
+***** js2 mode
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package js2-mode
+		:straight t
+		:defer t
+		:init
+		(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+		:config
+		;; indentation basis
+		(setq js2-basic-offset 2)
+		;; Ignore preprocessor directives for node.js files
+		(setq js2-skip-preprocessor-directives t))
+
+	(concat (vc-root-dir) ".eslintrc.yml")
+#+end_src
+
+#+RESULTS:
+: ~/.emacs.d/.eslintrc.yml
+
+***** JS linting
+
+Lint JS files on save when ".eslintrc.yml" is in the project root.
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package eslint-fix
+		:straight t
+		:config
+		;; automaticly fix styling with eslint on save
+		(eval-after-load 'js2-mode
+			'(add-hook
+				'js2-mode-hook
+				(lambda ()
+					(when (file-readable-p (concat (vc-root-dir) ".eslintrc.yml"))
+						(add-hook 'after-save-hook 'eslint-fix nil t))))))
+
 #+end_src
 **** Indium JS REPL
 
@@ -1575,15 +1854,33 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 		:straight t
 		:defer t
 		:init
+		(add-hook 'js2-mode-hook #'indium-interaction-mode)
 		(add-hook 'js2-mode-hook
 							(lambda ()
 								(setq-local
 								 company-backends
 								 (append '((company-indium-repl
 														:separate
-														company-dabbrev)))))))
+														company-dabbrev))))))
+		:config
+		(defun attila/indium-eval-region-or-buffer ()
+			"Eval region if selected, otherwise eval the buffer"
+			(interactive)
+			(if (use-region-p)
+					(call-interactively 'indium-eval-region)
+				(call-interactively 'indium-eval-buffer)))
+		:bind
+		(:map js2-mode-map
+					("<insert> j c c" . indium-connect-to-chrome)
+					("<insert> j c n" . indium-connect-to-nodejs)
+					("<insert> j e e" . attila/indium-eval-region-or-buffer)
+					("<insert> j r" . indium-reload)))
 
 #+end_src
+
+#+RESULTS:
+: indium-reload
+
 **** LESS
 
 #+begin_src emacs-lisp :tangle yes  
@@ -1605,15 +1902,25 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
           (("<insert> 2 p" . webkit-color-picker-show))))
 #+end_src
 
+**** TODO Org Babel Ansible
+
+#+begin_src emacs-lisp :tangle yes
+
+  
+
+#+end_src
 * Tests
 * Postconfig
 #+begin_src emacs-lisp :tangle yes  
+	(when (file-readable-p custom-file)
+		(load custom-file))
 	(toggle-debug-on-error)
 #+end_src
 * Planning
 ** TODOS
 - [ ] Make my line functions prefixable
-- [ ] Make my rename file or buffer function notice if the buffer is not associated to a file
+- [X] Make my rename file or buffer function notice if the buffer is not associated to a file
+- [ ] Add company and helm nixos optios
 ** Decide
 *** helm-mini or helm-buffer-list
 *** parinfer mode

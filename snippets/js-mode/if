@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 #name : if
 # --
-if (${1:condition}) {
-  `yas-selected-text``(yas/hacks-selected-text-replace)`$0
+if (${}) {
+  `yas-selected-text``(attila/yas-selected-text-replace)`$0
 }
