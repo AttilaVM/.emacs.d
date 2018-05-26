@@ -1,4 +1,4 @@
-#+TITLE: Attila Molnar's Emacs config
+#+TITLE: Attila Molnar's Emacs configuration
 #+OPTIONS: toc:4 h:4
 #+STARTUP overview 
 
@@ -60,23 +60,16 @@ Solved. If you wonder why on earth we put the =Insert= key to such a convinient 
 Here is where the configuration actualy begins.
 
 #+begin_src emacs-lisp :tangle yes  
-  (defvar user-backup-dir "~/.emacs.d/backup/")
-  (defvar user-auto-save-dir "~/.emacs.d/auto-save/")
+	(defvar user-backup-dir "~/.emacs.d/backup/")
+	(defvar user-auto-save-dir "~/.emacs.d/auto-save/")
+	(defvar user-big-buffer-char-limit 100000 "Some feature will be disabled for optimalization if the buffers character number is larger tha this limit")
 #+end_src
 
 #+RESULTS:
-: user-auto-save-dir
+: user-big-buffer-char-limit
 
 * preconfig
 ** Elisp
-*** Print trace on error
-
-#+begin_src emacs-lisp :tangle yes  
-
-  (toggle-debug-on-error)
-
-#+end_src
-
 *** Require common lisp
 
 #+begin_src emacs-lisp :tangle yes  
@@ -258,6 +251,23 @@ request: convinient HTTP request library
 
 ** Helper functions
 *** Elisp
+**** Detect if any Emacs server running
+
+Emacs built-in function =server-running-p= can only speak for its own Emacs instance.
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(defun attila/server-running-p ()
+		"Returs true if an Emacs server is running on the system."
+		(if (file-exists-p "/tmp/emacs1000/emacs-server-file")
+				t
+			nil))
+
+#+end_src
+
+#+RESULTS:
+: attila/server-running-p
+
 **** Add function to multiple hooks
 
  #+begin_src emacs-lisp :tangle yes
@@ -308,6 +318,49 @@ Borrowed from marshal.el
 #+RESULTS:
 : attila/alist-merge
 
+**** Get buffer size in line numbers
+
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/buffer-size-line-in-numbers ()
+		(line-number-at-pos (point-max)))
+
+#+end_src
+
+#+RESULTS:
+: attila/buffer-size-line-in-numbers
+
+**** Line character ratio
+
+Emacs gets really slow when very long lines are present. We will use this value for disable some feature in favor of speed in that scenario.
+
+#+begin_src emacs-lisp :tangle yes 
+
+	(defun attila/buffer-line-char-ratio ()
+		(interactive)
+		(/ (float (attila/buffer-size-line-in-numbers))
+			 (float (point-max))))
+
+#+end_src
+
+#+RESULTS:
+: attila/buffer-line-char-ratio
+
+**** Big buffer predicate
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(defun attila/big-buffer-p ()
+		(if (and (> (attila/buffer-line-char-ratio) 0.1)
+						 (> (point-max) user-big-buffer-char-limit))
+				t
+			nil))
+
+#+end_src
+
+#+RESULTS:
+: attila/big-buffer-p
+
 *** UX
 **** Smart line beginnig
 #+begin_src emacs-lisp :tangle yes  
@@ -334,6 +387,23 @@ Borrowed from marshal.el
       (when (= orig-point (point))
         (move-beginning-of-line 1))))
 #+end_src
+
+**** small step scrollers
+
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/scroll-down-1-line ()
+		(interactive)
+		(scroll-down 1))
+
+	(defun attila/scroll-up-1-line ()
+		(interactive)
+		(scroll-up 1))
+
+#+end_src
+
+#+RESULTS:
+: attila/scroll-up-1-line
 
 **** Smart rename
 
@@ -435,15 +505,24 @@ Rename buffer or file and buffer if it is already saved.
 
 *** Theme and font
 #+begin_src emacs-lisp :tangle yes
-  (use-package monokai-theme
-    :demand t
-    :straight t)
 
-(when (window-system)
-		(set-default-font "Fira Code"))
+		(use-package monokai-theme
+			:demand t
+			:straight t)
+
+	(when (window-system)
+			(set-default-font "Fira Code"))
+
+	;; (use-package unicode-fonts
+	;; 	:straight t
+	;; 	:demand t
+	;; 	:config
+	;; 	(unicode-fonts-setup))
+
 #+end_src
 
 #+RESULTS:
+: t
 		
 *** Use visual bell instead audio
 
@@ -481,15 +560,16 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 *** Colorize strings, which represent colors
 
 #+begin_src emacs-lisp :tangle yes  
-  (use-package rainbow-mode
-    :demand t
-    :straight t
-    :config
-    (attila/add-hooks
-     '(stylus-mode-hook
-       less-css-mode-hook
-       css-mode-hook)
-     (lambda () (rainbow-mode))))
+	(use-package rainbow-mode
+		:demand t
+		:straight t
+		:diminish rainbow-mode "🌈"
+		:config
+		(attila/add-hooks
+		 '(stylus-mode-hook
+			 less-css-mode-hook
+			 css-mode-hook)
+		 (lambda () (rainbow-mode))))
 #+end_src
 
 #+RESULTS:
@@ -512,14 +592,15 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (use-package beacon
-    :straight t
-    :demand t
-    :config
-    (beacon-mode 1)
-    (setq beacon-blink-duration 0.05)
-    (setq beacon-color "#a6e22e")
-    (setq beacon-blink-when-window-scrolls nil))
+	(use-package beacon
+		:straight t
+		:demand t
+		:diminish beacon-mode
+		:config
+		(beacon-mode 1)
+		(setq beacon-blink-duration 0.05)
+		(setq beacon-color "#a6e22e")
+		(setq beacon-blink-when-window-scrolls nil))
 
 #+end_src
 
@@ -552,13 +633,14 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (attila/add-hooks
-   '(Man-mode-hook
-     org-mode-hook
-     markdown-mode-hook)
-   (lambda ()
-     (visual-line-mode)))  
+		(attila/add-hooks
+		 '(Man-mode-hook
+			 org-mode-hook
+			 markdown-mode-hook)
+		 (lambda ()
+			 (visual-line-mode)))  
 
+	(diminish 'visual-line-mode "𝌓")
 #+end_src
 
 #+RESULTS:
@@ -744,7 +826,7 @@ Much better than tainting the =init.el= file.
 
   (use-package projectile
     :straight t
-    :diminish projectile-mode "pro"
+    :diminish projectile-mode
     :config
     (use-package helm-projectile
       :straight t
@@ -988,20 +1070,20 @@ I use key-chords to invoke avy functions
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (use-package key-chord
-    :straight t
-    :init 
-    (add-hook 'after-init-hook
-              (lambda () (key-chord-mode t)))
-    :config
-    (require 'key-chord)
-    (setq key-chord-two-keys-delay 0.08)
-    (setq key-chord-one-key-delay 0.08)
-    (key-chord-define-global "jf" 'avy-goto-char)
-    (key-chord-define-global "jd" 'avy-goto-char-2)
-    (key-chord-define-global "jg" 'avy-goto-line)
-    (key-chord-define-global "kd" 'kill-word)
-    (key-chord-define-global "kf" 'backward-kill-word))
+	(use-package key-chord
+		:straight t
+		:init 
+		(add-hook 'after-init-hook
+							(lambda () (key-chord-mode t)))
+		:config
+		(require 'key-chord)
+		(setq key-chord-two-keys-delay 0.08)
+		(setq key-chord-one-key-delay 0.08)
+		(key-chord-define-global "jf" 'avy-goto-char)
+		(key-chord-define-global "jd" 'avy-goto-char-2)
+		(key-chord-define-global "jg" 'avy-goto-line)
+		(key-chord-define-global "kd" 'kill-word)
+		(key-chord-define-global "kf" 'backward-kill-word))
 
 #+end_src
 
@@ -1055,19 +1137,19 @@ Allow eldoc to show function synopsis in the echo area in multiple line if neede
 
 *** Editor server
 
-Run Emacs as a server and connect to it with =emacsclient= from the CLI.
+Run Emacs as a server and connect to it with =emacsclient= from the CLI. This function however can detetect other Emacs server instances.
 
 #+begin_src emacs-lisp :tangle yes
 
-  (require 'server)
-  (unless (server-running-p)
-    (cond
-     ((eq system-type 'windows-nt)
-      (setq server-auth-dir "~\\.emacs.d\\server\\"))
-     ((eq system-type 'gnu/linux)
-      (setq server-auth-dir "~/.emacs.d/server/")))
-    (setq server-name "emacs-server-file")
-    (server-start))
+	(require 'server)
+	(unless (attila/server-running-p)
+		(cond
+		 ((eq system-type 'windows-nt)
+			(setq server-auth-dir "~\\.emacs.d\\server\\"))
+		 ((eq system-type 'gnu/linux)
+			(setq server-auth-dir "~/.emacs.d/server/")))
+		(setq server-name "emacs-server-file")
+		(server-start))
 
 #+end_src
 
@@ -1131,7 +1213,6 @@ Delete backup files older then a week
 *** Hydra
 
 #+begin_src emacs-lisp :tangle yes
-
 	(use-package hydra
 		:straight t
 		:config
@@ -1141,10 +1222,6 @@ Delete backup files older then a week
 		(setq hydra-lv nil)
 		;; Separate hinter and echo area
 		(setq lv-use-separator nil)
-		(defhydra hydra-zoom (global-map "<f2>")
-		"zoom"
-		("g" text-scale-increase "in")
-		("l" text-scale-decrease "out"))
 
 		(defun hydra-edit/pre ()
 			(set-cursor-color "#60E896"))
@@ -1159,13 +1236,14 @@ Delete backup files older then a week
 			(set-cursor-color "#FFFFFF"))
 
 		(defhydra hydra-zoom
-			(global-map "<insert> ;"
+			(global-map "<f2>"
 									:color pink
-									:pre hydra-edit/pre
-									:post hydra-edit/post)
-			"hydra-edit"
-
-			("q" nil))
+									)
+			"hydra-spell-check"
+			("]" flyspell-check-previous-highlighted-word)
+			("[" flyspell-check-next-highlighted-word)
+			("q" nil)
+			)
 
 		(defun hydra-seek/pre ()
 			(set-cursor-color "#E52B50"))
@@ -1197,9 +1275,11 @@ Delete backup files older then a week
 			("; f" attila/avy-select-char)
 			("; d" attila/avy-select-char-2)
 			("; h" mark-whole-buffer)
-			;; scroll
+			;; navigation
 			("i" scroll-down-command)
 			("k" scroll-up-command)
+			("u" attila/scroll-down-1-line)
+			("o" attila/scroll-up-1-line)
 			;; Select
 			("]" er/expand-region)
 			("[" er/contract-region)
@@ -1210,9 +1290,7 @@ Delete backup files older then a week
 			("l a" attila-smart-move-beginning-of-line)
 
 			;; git
-			("v v" magit-status)
-			))
-
+			("v v" magit-status)))
 #+end_src
 
 #+RESULTS:
@@ -1229,9 +1307,16 @@ Delete backup files older then a week
 #+RESULTS:
 : helm-show-kill-ring
 
+*** Commenting in/out
+
+#+begin_src emacs-lisp :tangle yes
+
+	(global-set-key (kbd "H-\\") 'comment-dwim)
+
+#+end_src
 *** Use spaces instead of tabs
 
-Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =indent relative= does not find the next tab stop
+Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =indent relative= does not find the next tab stop
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1242,6 +1327,9 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
   (defvaralias 'cperl-indent-level 'tab-width)
 
 #+end_src
+
+#+RESULTS:
+: tab-width
 
 *** Perl style regex for replace
 
@@ -1337,7 +1425,7 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 	(use-package company
 		:straight t
 		:defer t
-		:diminish company-mode "comp"
+		:diminish company-mode
 		:init
 		(add-hook 'after-init-hook 'global-company-mode)
 		:config
@@ -1385,41 +1473,42 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 **** Core
 
 #+begin_src emacs-lisp :tangle yes  
-	(use-package yasnippet
-    :straight t
-		:config
-		(yas-global-mode 1)
-		(setq yas-snippet-dirs
-		'("~/.emacs.d/snippets/"))
+		(use-package yasnippet
+			:straight t
+			:diminish yas-minor-mode
+			:config
+			(yas-global-mode 1)
+			(setq yas-snippet-dirs
+			'("~/.emacs.d/snippets/"))
 
-		;; keybinding for navigating between yas fields are only used inside of a snippet,
-		;; outside they would be useless so I made functions, which navigate inside a snippet
-		;; However outside navigate between symbolic expression
-		(defun my/yas-next-field-or-forward-sexp ()
-			"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
-			(interactive)
-			(condition-case err
-		(yas-next-field)
-				(error
-				 (call-interactively 'attila-smart-move-beginning-of-line))))
+			;; keybinding for navigating between yas fields are only used inside of a snippet,
+			;; outside they would be useless so I made functions, which navigate inside a snippet
+			;; However outside navigate between symbolic expression
+			(defun my/yas-next-field-or-forward-sexp ()
+				"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
+				(interactive)
+				(condition-case err
+			(yas-next-field)
+					(error
+					 (call-interactively 'attila-smart-move-beginning-of-line))))
 
-		(defun my/yas-previous-field-or-backward-sexp ()
-			"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
-			(interactive)
-			(condition-case err
-		(yas-prev-field)
-				(error
-				 (call-interactively 'move-end-of-line))))
+			(defun my/yas-previous-field-or-backward-sexp ()
+				"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
+				(interactive)
+				(condition-case err
+			(yas-prev-field)
+					(error
+					 (call-interactively 'move-end-of-line))))
 
-		(define-key yas-minor-mode-map (kbd "C-j") 'my/yas-next-field-or-forward-sexp)
-		(define-key yas-minor-mode-map (kbd "C-l") 'my/yas-previous-field-or-backward-sexp)
-		(define-key yas-minor-mode-map (kbd "<tab>") nil)
-		(define-key yas-minor-mode-map (kbd "TAB") nil)
-		(define-key yas-minor-mode-map (kbd "M-e") 'yas/expand)
-()
-		:bind
-		(:map snippet-mode-map
-					("<insert> j t" . 'yas-tryout-snippet)))
+			(define-key yas-minor-mode-map (kbd "C-j") 'my/yas-next-field-or-forward-sexp)
+			(define-key yas-minor-mode-map (kbd "C-l") 'my/yas-previous-field-or-backward-sexp)
+			(define-key yas-minor-mode-map (kbd "<tab>") nil)
+			(define-key yas-minor-mode-map (kbd "TAB") nil)
+			(define-key yas-minor-mode-map (kbd "M-e") 'yas/expand)
+	()
+			:bind
+			(:map snippet-mode-map
+						("<insert> j t" . 'yas-tryout-snippet)))
 #+end_src
 
 #+RESULTS:
@@ -1464,6 +1553,41 @@ Elpy prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =inden
 
 #+RESULTS:
 : attila/line-duplicate-below
+
+*** Spell checking 
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package flyspell
+		:straight t
+		:diminish flyspell-mode "✎"
+		:init
+		(add-hook
+		 'prog-mode-hook
+		 (lambda ()
+			 (flyspell-prog-mode)))
+		(add-hook
+		 'text-mode-hook
+		 (lambda ()
+			 (flyspell-mode 1)))
+		:config
+		;; 
+		(setq flyspell-issue-message-flag nil)
+		;; Weird but flyspell only has prevous word check function.
+		(defun flyspell-check-next-highlighted-word ()
+		"Custom function to spell check next highlighted word"
+		(interactive)
+		(flyspell-goto-next-error)
+		(ispell-word))
+
+		:bind
+		("H-[" . flyspell-check-previous-highlighted-word)
+		("H-]" . flyspell-check-next-highlighted-word))
+
+#+end_src
+
+#+RESULTS:
+: flyspell-check-next-highlighted-word
 
 ** Tools
 *** package search
@@ -1599,11 +1723,13 @@ Break lines when displaying man pages.
 		:straight t
 		:config
 		(setq helm-dash-docsets-path "~/data/dash-docsets/")
+		(setq  helm-dash-browser-func 'browse-url)
 		:bind(
 					(("<insert> h d d" . helm-dash)
 					 ("<insert> h d i" . helm-dash-install-docset)
 					 ("<insert> h d u" . helm-dash-update-docset)
-					 ("<insert> h d a" . helm-dash-activate-docset))))
+					 ("<insert> h d a" . helm-dash-activate-docset)
+					 ("<insert> h d k" . helm-dash-deactivate-docset))))
 
 #+end_src
 *** Hotkey info
@@ -1885,8 +2011,11 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (use-package less-css-mode
-      :straight t)
+	(use-package less-css-mode
+		:straight t
+		:defer t
+		:mode
+		("\\.less\\'"))
 
 #+end_src
 
@@ -1909,18 +2038,77 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
   
 
 #+end_src
+*** Shell
+
+#+begin_src emacs-lisp :tangle yes
+
+	(add-to-list 'magic-mode-alist '("^#![/binuserahz]\\{7,11\\}" "#!/bin/bash" . shell-script-mode))
+	(add-to-list 'magic-mode-alist '("^#![/binusernv]\\{7,13\\}\\ ?[bashz]\\{2,4\\}" . shell-script-mode))
+
+	(use-package company-shell
+		:straight t
+		:defer t
+		:init
+		(add-hook
+		 'shell-mode-hook
+		 (lambda ()
+			 (setq-local company-backend 'company-shell))))
+
+#+end_src
+
+#+RESULTS:
+| lambda | nil | (setq-local company-backend (quote company-shell)) |
+
+*** Ansible
+**** Syntax highlight
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package ansible
+		:straight t
+		:init
+		(add-hook
+		 'yaml-mode-hook
+		 (lambda ()
+			 (with-current-buffer (current-buffer)
+				 (save-excursion
+					 (goto-char (point-min))
+					 (when (search-forward "tasks:" nil t)
+						 (ansible t)
+						 nil))))))
+
+#+end_src
+**** Code completion
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(use-package company-ansible
+		:straight t
+		:init
+		(add-hook 'ansible-hook
+							(lambda ()
+								(setq-local company-backends
+														(append '((company-ansible)))))))
+
+#+end_src
+
+#+RESULTS:
+
 * Tests
 * Postconfig
 #+begin_src emacs-lisp :tangle yes  
+
 	(when (file-readable-p custom-file)
 		(load custom-file))
-	(toggle-debug-on-error)
+
 #+end_src
 * Planning
 ** TODOS
 - [ ] Make my line functions prefixable
 - [X] Make my rename file or buffer function notice if the buffer is not associated to a file
 - [ ] Add company and helm nixos optios
+- [ ] More hydras
+	- [ ] flyspell
+	- [ ] emms
 ** Decide
 *** helm-mini or helm-buffer-list
 *** parinfer mode
