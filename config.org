@@ -4,14 +4,14 @@
 
 * Introduction
 ** Rationale
-I recently recreate my Linux workfow from the ground, I switched to NixOS with Xmonad, use Ansible for portable user configuration, and more importantly I am rewriting my Emacs config in [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org Mode Bable]], using [[https://en.wikipedia.org/wiki/Literate_programming][literate programing]]. A Org Babel is a meta programing language, no not like Lisp ;) with org mode you can meta program and glue together any kind of programming languages, in suprisingly convinient way. It is something what [[https://jupyter.org/][Jupyter Notebook]] will become in one hundread years if we are luckyL
+I recently recreate my Linux workflow from the ground, I switched to NixOS with Xmonad, use Ansible for portable user configuration, and more importantly I am rewriting my Emacs configuration in [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org Mode Bable]], using [[https://en.wikipedia.org/wiki/Literate_programming][literate programing]]. A Org Babel is a meta programming language, no not like Lisp ;) with org mode you can meta program and glue together any kind of programming languages, in surprisingly convenient way. It is something what [[https://jupyter.org/][Jupyter Notebook]] will become in one hundred years if we are lucky
 .   
-I have a lot of going on so I have no time to explain everithing, yet... Thankfully there are brilliant examples out there, like [[http://pages.sachachua.com/.emacs.d/Sacha.html#babel-init][Sacha Chua's Emacs Configuration]], which has  nice explanations.
+I have a lot of going on so I have no time to explain everything, yet... Thankfully there are brilliant examples out there, like [[http://pages.sachachua.com/.emacs.d/Sacha.html#babel-init][Sacha Chua's Emacs Configuration]], which has  nice explanations.
 ** Goals
 *** Short term
  - Should be easy to reproduce.
- - Shoud be easy to reason about.
- - Ergonomic, yet menmonic hotkeys, traditional common, Emacs and Unix hotkey bindigs are mostly sacraficed.
+ - Should be easy to reason about.
+ - Ergonomic, yet mnemonic hotkeys, traditional common, Emacs and Unix hotkey bindings are mostly sacrificed.
  - Should be Fast
  - Should use Lazy module loading.
 *** Long term
@@ -40,24 +40,24 @@ keycode 104 = Return
 
 #+end_src
 
-It maps the =hyper= ([[https://en.wikipedia.org/wiki/Space-cadet_keyboard][big thanks to the ancient Space-cadet keyboard]]) modifier key to physical =Caps Lock= , =Left Alt= to =Tab= and =Right Alt= to =Return= (Enter) and =Caps Lock= to =Insert=. Yep this will elliminate your =Tab=, =Reture= and =Insert= keys. However we can devise a way to make a modfier key act as a regular key if pressed and released without pressing another key by using [[https://github.com/alols/xcape][xcape]]. Use your package manager to install it, and put the following line into your =.xinitrc=.:
+It maps the =hyper= ([[https://en.wikipedia.org/wiki/Space-cadet_keyboard][big thanks to the ancient Space-cadet keyboard]]) modifier key to physical =Caps Lock= , =Left Alt= to =Tab= and =Right Alt= to =Return= (Enter) and =Caps Lock= to =Insert=. Yep this will eliminate your =Tab=, =Reture= and =Insert= keys. However we can devise a way to make a modifier key act as a regular key if pressed and released without pressing another key by using [[https://github.com/alols/xcape][xcape]]. Use your package manager to install it, and run the following command after your X startup.:
 
 #+begin_src   
 xcape -t 150 -e "Hyper_L=Insert;Alt_L=Tab;Alt_R=Return" 
 #+end_src
 
-Solved. If you wonder why on earth we put the =Insert= key to such a convinient postion, since it invokes a totaly useless functionality... Well that it is the point, since nobody will miss the text overwriting mode we can bind =Insert= (physicaly =Caps Lock=) as an universal prefix key in our applications, which has support for concataniting hotkey strokes like *Emacs*, *Tmux*, *Xmonad* and with some python hackery *Blender*. To prove my point I will list some of my emacs key bindings.
+Solved. If you wonder why on earth we put the =Insert= key to such a convenient position, since it invokes a totally useless functionality... Well that it is the point, since nobody will miss the text overwriting mode we can bind =Insert= (physically =Caps Lock=) as an universal prefix key in our applications, which has support for concatenating hotkey strokes like *Emacs*, *Tmux*, *Xmonad* and with some python hackery *Blender*. To prove my point I will list some of my Emacs key bindings.
 
 | virtual binding | functionality                          |
 |-----------------+----------------------------------------|
 | <insert> p p    | List all version controlled projects   |
 | <insert> p f    | List all file in project               |
 | <insert> ; h    | Select whole buffer                    |
-| <insert> ; d    | Selecet a region between two avy jumps |
+| <insert> ; d    | Select a region between two avy jumps |
   
 * User info
 
-Here is where the configuration actualy begins.
+Here is where the configuration actually begins.
 
 #+begin_src emacs-lisp :tangle yes  
 	(defvar user-backup-dir "~/.emacs.d/backup/")
@@ -68,7 +68,7 @@ Here is where the configuration actualy begins.
 #+RESULTS:
 : user-big-buffer-char-limit
 
-* preconfig
+* pre-configuration
 ** Elisp
 *** Require common lisp
 
@@ -87,7 +87,7 @@ Set the maximum numbers of variable bindings, recursive call limit, garbage coll
 
 *** Garbage collection byte threshold
 		 
-Emacs has a blocking garbage collector, and its collection threshold is very low by default (8KB), so much of time is spent by the GC. On a modern machine this can be mitigated by increasing the gc threshold limit to 20MB, as recommended by the [[https://github.com/lewang/flx][flx package documentation]]
+Emacs has a blocking garbage collector, and its collection threshold is very low by default (8KB), so much of time is spent by the GC. On a modern machine this can be mitigated by increasing the GC threshold limit to 20MB, as recommended by the [[https://github.com/lewang/flx][flx package documentation]]
 
 #+begin_src emacs-lisp :tangle yes  
   (setq gc-cons-threshold 20000000)
@@ -116,8 +116,8 @@ Ensure global UTF-8 usage, enable hyper and super key on windows.
 
 #+RESULTS:
 
-** optimalizations
-*** Dsable bidi reordering
+** optimizations
+*** Disable bidi reordering
 bidi display reordering makes Emacs significantly slower, especially when [[http://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow][displaying long lines]].
 
 #+begin_src emacs-lisp :tangle yes  
@@ -125,7 +125,7 @@ bidi display reordering makes Emacs significantly slower, especially when [[http
 #+end_src
 
 *** Disable auto vertical scrolling
-Disable auto vertical scroll adjustion for tall lines
+Disable auto vertical scroll adjusting for tall lines
 
 #+begin_src emacs-lisp :tangle yes  
   (setq auto-window-vscroll nil)
@@ -181,7 +181,7 @@ Disable auto vertical scroll adjustion for tall lines
 
 *** Bootstrap straight.el and use-package
 
-=straight.el= git clone given packages and byte compiles them, while interoperates with =use-package=.
+=straight.el= git clone given packages and byte compiles them, while inter-operates with =use-package=.
 
  #+begin_src emacs-lisp :tangle yes 
 		 (let ((bootstrap-file
@@ -208,7 +208,7 @@ Disable auto vertical scroll adjustion for tall lines
 
 *** Prefer newly compile .elc files
 
-If a file suffix is not exaclty specified do not stop on the first hit, but search for the newest on. In practice this means that the newly compiled .elc files will be prefered.
+If a file suffix is not exactly specified do not stop on the first hit, but search for the newest on. In practice this means that the newly compiled .elc files will be preferred.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -219,32 +219,32 @@ If a file suffix is not exaclty specified do not stop on the first hit, but sear
 ** libraries
 *** Third-party libraries
 
-loop: convinient loop library
+loop: convenient loop library
 async: modern async library
-dash: modern clojure like list library
+dash: modern Clojure like list library
 diminish: hide or abbreviate minor modes in the mode line
 deffered: provide the same functionality as JS promises.
 el-mock: mocking library
 m-buffer: buffer manipulation library
 ov: overlay library
-future: use future objects for subprocesses
-request: convinient HTTP request library
+future: use future objects for sub-processes
+request: convenient HTTP request library
 
 #+begin_src emacs-lisp :tangle yes
-  (use-package dash          :defer  :straight t)
-  (use-package s             :defer  :straight t)
-  (use-package f             :defer  :straight t)
-  (use-package loop          :defer  :straight t)
-  (use-package async         :defer  :straight t)
-  (use-package deferred      :defer  :straight t)
-  (use-package diminish      :demand :straight t) 
-  (use-package el-mock       :defer  :straight t)
-  (use-package ghub          :defer  :straight t)
-  (use-package ghub+         :defer  :straight t)
-  (use-package m-buffer      :defer  :straight t)
-  (use-package ov            :defer  :straight t)
-  (use-package pfuture       :defer  :straight t)
-  (use-package request       :defer  :straight t)
+	(use-package dash          :defer  :straight t)
+	(use-package s             :defer  :straight t)
+	(use-package f             :defer  :straight t)
+	(use-package loop          :defer  :straight t)
+	(use-package async         :defer  :straight t)
+	(use-package deferred      :defer  :straight t)
+	(use-package diminish      :demand :straight t) 
+	(use-package el-mock       :defer  :straight t)
+	(use-package ghub          :defer  :straight t)
+	(use-package ghub+         :defer  :straight t)
+	(use-package m-buffer      :defer  :straight t)
+	(use-package ov            :defer  :straight t)
+	(use-package pfuture       :defer  :straight t)
+	(use-package request       :defer  :straight t)
 #+end_src
 
 #+RESULTS:
@@ -362,7 +362,7 @@ Emacs gets really slow when very long lines are present. We will use this value 
 : attila/big-buffer-p
 
 *** UX
-**** Smart line beginnig
+**** Smart line beginning
 #+begin_src emacs-lisp :tangle yes  
   (defun attila-smart-move-beginning-of-line (arg)
     "Move point back to indentation of beginning of line.
@@ -388,7 +388,7 @@ Emacs gets really slow when very long lines are present. We will use this value 
         (move-beginning-of-line 1))))
 #+end_src
 
-**** small step scrollers
+**** small step scrolls
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -645,7 +645,7 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 #+RESULTS:
 
-*** Indentation adaptive visal line wraping
+*** Indentation adaptive visual line wrapping
 
 #+begin_src emacs-lisp :tangle yes  
 
@@ -670,7 +670,7 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 : t
 
 ** Behavior
-*** Store costumization in a separate file
+*** Store customization in a separate file
 
 Much better than tainting the =init.el= file.
 
@@ -698,7 +698,7 @@ Much better than tainting the =init.el= file.
 
 #+end_src
 *** Window management
-**** Basic wm commands
+**** Basic window-manager commands
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -946,7 +946,7 @@ Much better than tainting the =init.el= file.
   (global-set-key (kbd "H-i") 'previous-line)
 #+end_src
 
-**** Scroll up/down move subwords
+**** Scroll up/down move sub-words
 
 #+begin_src emacs-lisp :tangle  yes
 
@@ -957,7 +957,7 @@ Much better than tainting the =init.el= file.
 
 #+end_src
 
-**** subword jumps
+**** sub-word jumps
 
 #+begin_src emacs-lisp :tangle yes  
   (attila/add-hooks
@@ -1030,7 +1030,7 @@ I use key-chords to invoke avy functions
 
 #+end_src
 
-**** Sentences postfixedith one space by modern people
+**** Sentences postfixed with one space by modern people
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1137,7 +1137,7 @@ Allow eldoc to show function synopsis in the echo area in multiple line if neede
 
 *** Editor server
 
-Run Emacs as a server and connect to it with =emacsclient= from the CLI. This function however can detetect other Emacs server instances.
+Run Emacs as a server and connect to it with =emacsclient= from the CLI. This function however can detect other Emacs server instances.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1153,9 +1153,9 @@ Run Emacs as a server and connect to it with =emacsclient= from the CLI. This fu
 
 #+end_src
 
-*** Centralized backup and autoclean backup dir
+*** Centralized backup and auto-clean backup dir
 
-Make emacs to write backup and auto-save files in a [[https://www.emacswiki.org/emacs/BackupDirectory][specific directory]] instead of messing up the project file trees. 
+Make Emacs to write backup and auto-save files in a [[https://www.emacswiki.org/emacs/BackupDirectory][specific directory]] instead of messing up the project file trees. 
 
 #+begin_src emacs-lisp :tangle yes
 	(setq delete-old-versions -1)
@@ -1199,7 +1199,7 @@ Delete backup files older then a week
 
 #+end_src
 
-*** Respect  .editorconfig gile
+*** Respect  .editorconfig file
 
 #+begin_src emacs-lisp :tangle yes
   (use-package editorconfig
@@ -1223,10 +1223,10 @@ Delete backup files older then a week
 		;; Separate hinter and echo area
 		(setq lv-use-separator nil)
 
-		(defun hydra-edit/pre ()
+		(defun hydra-spell-check/pre ()
 			(set-cursor-color "#60E896"))
 
-		(defun hydra-edit/post ()
+		(defun hydra-spell-check/post ()
 			(set-cursor-color "#FFFFFF"))
 
 		(defun hydra-seek/pre ()
@@ -1235,15 +1235,20 @@ Delete backup files older then a week
 		(defun hydra-seek/post ()
 			(set-cursor-color "#FFFFFF"))
 
-		(defhydra hydra-zoom
+		(defhydra hydra-sepll-check
 			(global-map "<f2>"
 									:color pink
 									)
 			"hydra-spell-check"
-			("]" flyspell-check-previous-highlighted-word)
-			("[" flyspell-check-next-highlighted-word)
-			("q" nil)
-			)
+			("f" attila/flyspell-check-next-highlighted-word "check next")
+			("x" flyspell-buffer "check buffer")
+			;; navigation
+			("i" scroll-down-command)
+			("k" scroll-up-command)
+			("j" attila/scroll-down-1-line)
+			("l" attila/scroll-up-1-line)
+			("s" helm-occur "search")
+			("q" nil))
 
 		(defun hydra-seek/pre ()
 			(set-cursor-color "#E52B50"))
@@ -1275,20 +1280,12 @@ Delete backup files older then a week
 			("; f" attila/avy-select-char)
 			("; d" attila/avy-select-char-2)
 			("; h" mark-whole-buffer)
-			;; navigation
-			("i" scroll-down-command)
-			("k" scroll-up-command)
-			("u" attila/scroll-down-1-line)
-			("o" attila/scroll-up-1-line)
 			;; Select
 			("]" er/expand-region)
 			("[" er/contract-region)
 			("q" nil)
 			;; Editing
-			("l k" attila/line-cut)
-			("l d" end-of-line)
-			("l a" attila-smart-move-beginning-of-line)
-
+			("l d" attila/line-cut)
 			;; git
 			("v v" magit-status)))
 #+end_src
@@ -1391,7 +1388,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
-*** Parenthesevs
+*** Parentheses
 **** Kill sexp when point is at ( or )
 
 #+begin_src emacs-lisp :tangle yes 
@@ -1419,7 +1416,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : attila-sp-kill-sexp
 
-*** Autocompletion with company
+*** Auto-completion with company
 #+begin_src emacs-lisp :tangle yes  
 
 	(use-package company
@@ -1554,7 +1551,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : attila/line-duplicate-below
 
-*** Spell checking 
+*** COMMENT Spell checking 
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1571,23 +1568,31 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 		 (lambda ()
 			 (flyspell-mode 1)))
 		:config
-		;; 
-		(setq flyspell-issue-message-flag nil)
-		;; Weird but flyspell only has prevous word check function.
-		(defun flyspell-check-next-highlighted-word ()
+		;; do not issue errors if not asked
+		(setq flyspell-issue-message-flag nil))
+	
+	(use-package helm-flyspell
+		:straight t
+		:config
+
+		(defun attila/flyspell-check-word-at-point ()
+			"Check word at point with helm-flyspell"
+			(interactive)
+			(let ((misspelled-word (car (flyspell-get-word))))
+			(helm-flyspell-correct)		
+			(message (concat misspelled-word " --> " (car (flyspell-get-word))))))
+	
+		(defun attila/flyspell-check-next-highlighted-word ()
 		"Custom function to spell check next highlighted word"
 		(interactive)
 		(flyspell-goto-next-error)
-		(ispell-word))
+		(attila/flyspell-check-word-at-point)))
 
-		:bind
-		("H-[" . flyspell-check-previous-highlighted-word)
-		("H-]" . flyspell-check-next-highlighted-word))
 
 #+end_src
 
 #+RESULTS:
-: flyspell-check-next-highlighted-word
+: t
 
 ** Tools
 *** package search
@@ -1658,7 +1663,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 	(define-key dired-mode-map (kbd ".") 'attila/dired-toggle-listing-switches)
 #+end_src
-**** Allow rerusive dired delets
+**** Allow recursive dired deletes
 
 #+begin_src emacs-lisp :tangle yes
   (setq dired-recursive-deletes  +1)
@@ -1761,7 +1766,7 @@ Break lines when displaying man pages.
 		:diminish helm-descbinds-mode)
 
 #+end_src
-** Programing
+** Programming
 *** Elisp
 **** Evaluation
 #+begin_src emacs-lisp :tangle yes  
@@ -1797,7 +1802,7 @@ Break lines when displaying man pages.
 *** Org mode
 **** Installation workaround
 
-Recent org mode cannot install org-mode directly, because it needs costum build with make. This solution was borrowed from [[https:github.com/raxod502/straight.el#installing-org-with-straightel][here]].
+Recent org mode cannot install org-mode directly, because it needs custom build with make. This solution was borrowed from [[https:github.com/raxod502/straight.el#installing-org-with-straightel][here]].
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1836,7 +1841,7 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 
 #+end_src
 
-**** Orgs headline search with org-rifle
+**** Org headline search with org-rifle
 
 #+begin_src emacs-lisp :tangle yes  
 
@@ -1932,7 +1937,7 @@ Recent org mode cannot install org-mode directly, because it needs costum build 
 #+RESULTS:
 : t
 
-**** Javascript
+**** JavaScript
 ***** js2 mode
 
 #+begin_src emacs-lisp :tangle yes
@@ -2020,7 +2025,7 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 #+end_src
 
 #+RESULTS:
-**** Webkit Color picker
+**** WebKit Color picker
 
 #+begin_src emacs-lisp :tangle yes  
   (when (>= emacs-major-version 26)
@@ -2094,7 +2099,7 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 #+RESULTS:
 
 * Tests
-* Postconfig
+* Post Configuration
 #+begin_src emacs-lisp :tangle yes  
 
 	(when (file-readable-p custom-file)
@@ -2102,18 +2107,25 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 #+end_src
 * Planning
-** TODOS
+** Milestones
 - [ ] Make my line functions prefixable
 - [X] Make my rename file or buffer function notice if the buffer is not associated to a file
-- [ ] Add company and helm nixos optios
+- [ ] Add company and helm NixOS options
 - [ ] More hydras
 	- [ ] flyspell
-	- [ ] emms
+	- [ ] EMMS
+- [ ] make flyspell save misspelled words.
+	- [ ] Write a Editor independent CLI app.
+		- [ ] Choose the right language.
+		- [ ] Choose the right db, PostgreSQL maybe.
+
 ** Decide
 *** helm-mini or helm-buffer-list
-*** parinfer mode
-
-Parnifer mode modifies parenthesis according to indentation and vica versa
 *** expand-region
 Expand/shrink selection by semantic regions
+*** Parinfer mode or Lispy  LocalWords:  Lispy
 
+
+#  LocalWords:  avy GC bidi undefine el elc async Clojure JS ov sexp
+#  LocalWords:  alists eldoc dir tmp editorconfig Yasnippet Yas dired
+#  LocalWords:  searx Edebug js setq flyspell LocalWords Parinfer
