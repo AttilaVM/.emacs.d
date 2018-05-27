@@ -4,7 +4,7 @@
 
 * Introduction
 ** Rationale
-I recently recreate my Linux workflow from the ground, I switched to NixOS with Xmonad, use Ansible for portable user configuration, and more importantly I am rewriting my Emacs configuration in [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org Mode Bable]], using [[https://en.wikipedia.org/wiki/Literate_programming][literate programing]]. A Org Babel is a meta programming language, no not like Lisp ;) with org mode you can meta program and glue together any kind of programming languages, in surprisingly convenient way. It is something what [[https://jupyter.org/][Jupyter Notebook]] will become in one hundred years if we are lucky
+I recently recreate my Linux workflow from the ground, I switched to NixOS with Xmonad, use Ansible for portable user configuration, and more importantly I am rewriting my Emacs configuration in [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org Mode Babel]], using [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]]. A Org Babel is a meta programming language, no not like Lisp ;) with org mode you can meta program and glue together any kind of programming languages, in surprisingly convenient way. It is something what [[https://jupyter.org/][Jupyter Notebook]] will become in one hundred years if we are lucky
 .   
 I have a lot of going on so I have no time to explain everything, yet... Thankfully there are brilliant examples out there, like [[http://pages.sachachua.com/.emacs.d/Sacha.html#babel-init][Sacha Chua's Emacs Configuration]], which has  nice explanations.
 ** Goals
@@ -60,9 +60,14 @@ Solved. If you wonder why on earth we put the =Insert= key to such a convenient 
 Here is where the configuration actually begins.
 
 #+begin_src emacs-lisp :tangle yes  
+
+	(defvar user-cursor-color "#a6e22e")
+	(defvar user-seek-mode-color "#E52B50")
+	(defvar user-revision-mode-color "#60E896")
 	(defvar user-backup-dir "~/.emacs.d/backup/")
 	(defvar user-auto-save-dir "~/.emacs.d/auto-save/")
 	(defvar user-big-buffer-char-limit 100000 "Some feature will be disabled for optimalization if the buffers character number is larger tha this limit")
+
 #+end_src
 
 #+RESULTS:
@@ -78,7 +83,7 @@ Here is where the configuration actually begins.
 
 *** binding and recursion limits
 
-Set the maximum numbers of variable bindings, recursive call limit, garbage collector threshold and set CWD to "~/.emacs.d".
+Set the maximum numbers of variable bindings, recursive call limit, garbage collector threshold and set CWD to =~/.emacs.d=.
 
 #+begin_src emacs-lisp :tangle yes 
   (setq max-specpdl-size 10000)
@@ -506,6 +511,10 @@ Rename buffer or file and buffer if it is already saved.
 *** Theme and font
 #+begin_src emacs-lisp :tangle yes
 
+	(add-hook 'after-init-hook
+						(lambda ()
+							(set-cursor-color user-cursor-color)))
+
 		(use-package monokai-theme
 			:demand t
 			:straight t)
@@ -559,17 +568,19 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 *** Colorize strings, which represent colors
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
+
 	(use-package rainbow-mode
-		:demand t
 		:straight t
 		:diminish rainbow-mode "🌈"
-		:config
+		:init
 		(attila/add-hooks
 		 '(stylus-mode-hook
 			 less-css-mode-hook
+			 web-mode-hook
 			 css-mode-hook)
 		 (lambda () (rainbow-mode))))
+
 #+end_src
 
 #+RESULTS:
@@ -867,6 +878,25 @@ Much better than tainting the =init.el= file.
 
 **** helm swoop
 
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package helm-swoop
+		:commands helm-swoop
+		:straight t
+		:bind
+		(("<insert> s w" . helm-swoop))
+		(:map helm-swoop-map
+					("<insert> j s" . helm-swoop-edit)
+					)
+		(:map helm-swoop-edit-map
+					("<insert> C-c C-c" . helm-swoop--edit-complete)
+					("<insert> C-c C-k" . helm-swoop--edit-cancel)))
+
+#+end_src
+
+#+RESULTS:
+: helm-swoop--edit-cancel
+
 *** GUI interaction
 **** Basic control
 
@@ -1108,7 +1138,10 @@ Bindings defined with hydra
 #+begin_src emacs-lisp :tangle yes
 
 	(use-package expand-region
-	 :straight t)
+		:straight t
+		:commands
+		er/expand-region
+		er/contract-region)
 
 #+end_src
 
@@ -1223,38 +1256,45 @@ Delete backup files older then a week
 		;; Separate hinter and echo area
 		(setq lv-use-separator nil)
 
-		(defun hydra-spell-check/pre ()
-			(set-cursor-color "#60E896"))
+		(defun hydra-revision/pre ()
+			(set-cursor-color user-revision-mode-color)
+			(setq beacon-color user-revision-mode-color)
+			(attila/flyspell-mode))
 
-		(defun hydra-spell-check/post ()
-			(set-cursor-color "#FFFFFF"))
-
-		(defun hydra-seek/pre ()
-			(set-cursor-color "#E52B50"))
-
-		(defun hydra-seek/post ()
-			(set-cursor-color "#FFFFFF"))
+		(defun hydra-revision/post ()
+			(set-cursor-color user-cursor-color)
+			(setq beacon-color user-cursor-color)
+			(git-gutter-mode -1)
+			(flyspell-mode -1))
 
 		(defhydra hydra-sepll-check
 			(global-map "<f2>"
 									:color pink
+									:pre hydra-revision/pre
+									:post hydra-revision/post
 									)
-			"hydra-spell-check"
+			"hydra-revision"
 			("f" attila/flyspell-check-next-highlighted-word "check next")
 			("x" flyspell-buffer "check buffer")
+			("v" git-gutter-mode)
+			("h" git-gutter:popup-hunk)
+			("r" git-gutter:revert-hunk)
 			;; navigation
 			("i" scroll-down-command)
 			("k" scroll-up-command)
 			("j" attila/scroll-down-1-line)
 			("l" attila/scroll-up-1-line)
 			("s" helm-occur "search")
+			(";" git-gutter:previous-hunk)
+			("'" git-gutter:next-hunk)
 			("q" nil))
 
 		(defun hydra-seek/pre ()
-			(set-cursor-color "#E52B50"))
+			(set-cursor-color user-seek-mode-color)
+			(setq beacon-color user-seek-mode-color))
 
 		(defun hydra-seek/post ()
-			(set-cursor-color "#FFFFFF"))
+			(set-cursor-color user-cursor-color))
 
 		(defhydra hydra-zoom
 			(global-map "<insert> SPC"
@@ -1265,6 +1305,7 @@ Delete backup files older then a week
 			("w" kill-ring-save "copy")
 			("SPC" set-mark-command "mark")
 			("s s" helm-occur "search")
+			("s w" helm-swoop "h-swoop")
 			("s m m" helm-rifle-current-buffer)
 			("s p" helm-projectile-ag "p-search")
 			("s l" helm-locate "l-search")
@@ -1332,22 +1373,24 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 #+begin_src emacs-lisp :tangle yes
 
-	(use-package visual-regexp
-    :straight t
+	(use-package visual-regexp-steroids
+		:straight t
+		:commands
+		vr/replace
+		vr/mc-mark
+		:bind
+		("<insert> r r" . vr/query-replace)
+		("<insert> r m" . vr/mc-mark)
 		:config
-		(use-package visual-regexp-steroids
-			:bind
-			("<insert> r r" . vr/replace)))
-
-	;; switch re builder syntax `string` instead of `read`, since it is more convinient
-	;; source: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
-	(setq reb-re-syntax 'string)
+		;; switch re builder syntax `string` instead of `read`, since it is more convinient
+		;; source: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
+		(setq reb-re-syntax 'string))
 
 
 #+end_src
 
 #+RESULTS:
-: string
+: vr/mc-mark
 
 *** Undo tree
 
@@ -1368,12 +1411,12 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 *** Multiple cursors
 
 #+begin_src emacs-lisp :tangle yes  
-  (use-package multiple-cursors
-    :straight t
-    :bind
-    (( "H-m" . mc/mark-next-like-this)
-     ( "M-m" . mc/mark-previous-like-this)
-     ( "C-M-m" . mc/mark-all-like-this)))
+	(use-package multiple-cursors
+		:straight t
+		:bind
+		(( "H-m" . mc/mark-next-like-this)
+		 ( "M-m" . mc/mark-previous-like-this)
+		 ( "C-M-m" . mc/mark-all-like-this)))
 #+end_src
 
 *** Preserve point position relative to the window.
@@ -1437,8 +1480,8 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 																	company-sort-by-backend-importance))
 		:bind
 		(:map company-active-map
-					("H-i" . 'company-select-previous)
-					("H-k" . 'company-select-next)))
+					("C-i" . 'company-select-previous)
+					("C-k" . 'company-select-next)))
 #+end_src
 
 #+RESULTS:
@@ -1551,37 +1594,40 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : attila/line-duplicate-below
 
-*** COMMENT Spell checking 
+*** Spell checking 
 
 #+begin_src emacs-lisp :tangle yes
 
 	(use-package flyspell
 		:straight t
+		:defer t
+		:commands
+		flyspell-mode
+		flyspell-prog-mode
+		attila/flyspell-mode
 		:diminish flyspell-mode "✎"
-		:init
-		(add-hook
-		 'prog-mode-hook
-		 (lambda ()
-			 (flyspell-prog-mode)))
-		(add-hook
-		 'text-mode-hook
-		 (lambda ()
-			 (flyspell-mode 1)))
 		:config
+		(defun attila/flyspell-mode ()
+			(interactive)
+			(if (derived-mode-p 'prog-mode)
+					(flyspell-prog-mode)
+				(flyspell-mode)))
 		;; do not issue errors if not asked
 		(setq flyspell-issue-message-flag nil))
-	
+
 	(use-package helm-flyspell
 		:straight t
+		:commands
+		attila/flyspell-check-word-at-point
+		attila/flyspell-check-next-highlighted-word
 		:config
-
 		(defun attila/flyspell-check-word-at-point ()
 			"Check word at point with helm-flyspell"
 			(interactive)
 			(let ((misspelled-word (car (flyspell-get-word))))
 			(helm-flyspell-correct)		
 			(message (concat misspelled-word " --> " (car (flyspell-get-word))))))
-	
+
 		(defun attila/flyspell-check-next-highlighted-word ()
 		"Custom function to spell check next highlighted word"
 		(interactive)
@@ -1637,6 +1683,40 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : magit-display-noselect-toggle
 
+**** Git gutter
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package git-gutter
+		:straight t
+		:defer t
+		:diminish git-gutter-mode "✓"
+		:config
+
+		(defun my/git-gutter:batch-revert-hunk (beg end)
+			(interactive
+			 (if (use-region-p)
+			 (list (region-beginning) (region-end))
+			 (list (point) (point-max))))
+			(loop t
+				(call-interactively 'git-gutter:next-hunk)
+				(when (> (point) end)
+					(return))
+				(call-interactively 'git-gutter:revert-hunk)))
+
+		:bind
+		(("<insert> v r" . git-gutter:revert-hunk)
+		 ("<insert> v a a" . global-git-gutter-mode)
+		 ("<insert> v a p" . git-gutter:popup-hunk)
+		 ("<insert> v a s" . git-gutter:statistic)
+		 ("<insert> v h p" . git-gutter:previous-hunk)
+		 ("<insert> v h n" . git-gutter:next-hunk)
+		 ("s-[" . git-gutter:previous-hunk)
+		 ("s-]" . git-gutter:next-hunk)
+		 )
+		)
+
+#+end_src
 *** File management
 **** Toggle dired listing modes
 
@@ -1705,9 +1785,14 @@ Break lines when displaying man pages.
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (use-package man :straight t)
+		(use-package man 
+			:straight t
+			:commands
+			helm-man-woman)
 
 #+end_src
+
+#+RESULTS:
 
 *** info pages
 
@@ -1763,9 +1848,16 @@ Break lines when displaying man pages.
 
 	(use-package helm-descbinds
 		:straight t
-		:diminish helm-descbinds-mode)
+		:commands helm-descbinds
+		:diminish helm-descbinds-mode
+		:bind
+		("<insert> h k" . helm-descbinds))
 
 #+end_src
+
+#+RESULTS:
+: helm-descbinds-mode
+
 ** Programming
 *** Elisp
 **** Evaluation
@@ -1806,40 +1898,66 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 
 #+begin_src emacs-lisp :tangle yes
 
-  (require 'subr-x)
-  (straight-use-package 'git)
+	(require 'subr-x)
+	(straight-use-package 'git)
 
-  (defun org-git-version ()
-    "The Git version of org-mode.
-  Inserted by installing org-mode or when a release is made."
-    (require 'git)
-    (let ((git-repo (expand-file-name
-                     "straight/repos/org/" user-emacs-directory)))
-      (string-trim
-       (git-run "describe"
-                "--match=release\*"
-                "--abbrev=6"
-                "HEAD"))))
+	(defun org-git-version ()
+		"The Git version of org-mode.
+	Inserted by installing org-mode or when a release is made."
+		(require 'git)
+		(let ((git-repo (expand-file-name
+										 "straight/repos/org/" user-emacs-directory)))
+			(string-trim
+			 (git-run "describe"
+								"--match=release\*"
+								"--abbrev=6"
+								"HEAD"))))
 
-  (defun org-release ()
-    "The release version of org-mode.
-  Inserted by installing org-mode or when a release is made."
-    (require 'git)
-    (let ((git-repo (expand-file-name
-                     "straight/repos/org/" user-emacs-directory)))
-      (string-trim
-       (string-remove-prefix
-        "release_"
-        (git-run "describe"
-                 "--match=release\*"
-                 "--abbrev=0"
-                 "HEAD")))))
+	(defun org-release ()
+		"The release version of org-mode.
+	Inserted by installing org-mode or when a release is made."
+		(require 'git)
+		(let ((git-repo (expand-file-name
+										 "straight/repos/org/" user-emacs-directory)))
+			(string-trim
+			 (string-remove-prefix
+				"release_"
+				(git-run "describe"
+								 "--match=release\*"
+								 "--abbrev=0"
+								 "HEAD")))))
 
-  (provide 'org-version)
+	(provide 'org-version)
 
-  (straight-use-package 'org) ;; or org-plus-contrib if desired  
+	;; (straight-use-package 'org) ;; or org-plus-contrib if desired  
 
 #+end_src
+
+**** Org core
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package org
+		:straight t
+		:defer t
+		:bind
+		(:map org-mode-map
+					;; headlines
+					("<insert> j g" . org-global-cycle)
+					("<insert> j e t" . org-babel-tangle)
+					;; Specials
+					("<insert> j s s" . org-edit-special)
+					("<insert> j s C-w" . org-cut-special)
+					("<insert> j s M-w" . org-copy-special)
+					("<insert> j s C-y" . org-paste-special))
+		(:map org-src-mode-map
+					("C-c C-c" . 'org-edit-src-exit)))
+
+
+#+end_src
+
+#+RESULTS:
+: org-edit-src-exit
 
 **** Org headline search with org-rifle
 
@@ -1848,60 +1966,26 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 	(use-package helm-org-rifle
 		:straight t
 		:demand t
+		:commands helm-org-rifle-current-buffer
 		:bind
 		(:map org-mode-map
 					("<insert> s m m" . helm-org-rifle-current-buffer)))
+
 #+end_src
 
 #+RESULTS:
 : helm-org-rifle-current-buffer
 
-**** Org tangle source code
-
-#+begin_src emacs-lisp :tangle yes  
-
-	(define-key org-mode-map (kbd "<insert> j e t") 'org-babel-tangle)
-
-#+end_src
-
-#+RESULTS:
-: org-babel-tangle
-
 *** Web
 **** Web mode for HTML and CSS
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle yes :results output
 
 	(use-package web-mode
 		:straight t
 		:defer t
-		:init
-		(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
-		(add-to-list 'auto-mode-alist '("\\.svg\\'" . xml-mode))
-		(add-to-list 'auto-mode-alist '("\\.liq\\'" . liquidsoap-mode))
-
-		;; Becuase of some weird bug concatanation does not work.
-		;; (setq auto-mode-alist (-concat
-		;; 											 '(("\\.phtml\\'" . web-mode)
-		;; 												 ("\\.tpl\\.php\\'" . web-mode)
-		;; 												 ("\\.[agj]sp\\'" . web-mode)
-		;; 												 ("\\.as[cp]x\\'" . web-mode)
-		;; 												 ("\\.erb\\'" . web-mode)
-		;; 												 ("\\.mustache\\'" . web-mode)
-		;; 												 ("\\.djhtml\\'" . web-mode)
-		;; 												 ("\\.html\\'" . web-mode)
-		;; 												 ("\\.css\\'" . web-mode)
-		;; 												 ("\\.svg\\'" . web-mode)
-		;; 												 ("\\.liq\\'" . web-mode))
-		;; 											 'auto-mode-alist))
+		:mode
+		("\\.phtml\\'"	"\\.tpl\\.php\\'"	"\\.[agj]sp\\'"	"\\.as[cp]x\\'"	"\\.erb\\'"	"\\.mustache\\'"	"\\.djhtml\\'"	"\\.html\\'"	"\\.css\\'"	"\\.svg\\'"	"\\.liq\\'")
 		:config
 
 		(add-hook 'web-mode-hook
@@ -1935,7 +2019,6 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 #+end_src
 
 #+RESULTS:
-: t
 
 **** JavaScript
 ***** js2 mode
@@ -1953,7 +2036,6 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 		;; Ignore preprocessor directives for node.js files
 		(setq js2-skip-preprocessor-directives t))
 
-	(concat (vc-root-dir) ".eslintrc.yml")
 #+end_src
 
 #+RESULTS:
@@ -1967,16 +2049,19 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 	(use-package eslint-fix
 		:straight t
-		:config
+		:commands eslint-fix
+		:init
 		;; automaticly fix styling with eslint on save
-		(eval-after-load 'js2-mode
-			'(add-hook
-				'js2-mode-hook
-				(lambda ()
-					(when (file-readable-p (concat (vc-root-dir) ".eslintrc.yml"))
-						(add-hook 'after-save-hook 'eslint-fix nil t))))))
+		(add-hook
+		 'js2-mode-hook
+		 (lambda ()
+			 (when (file-readable-p (concat (vc-root-dir) ".eslintrc.yml"))
+				 (add-hook 'after-save-hook 'eslint-fix nil t)))))
 
 #+end_src
+
+#+RESULTS:
+
 **** Indium JS REPL
 
 #+begin_src emacs-lisp :tangle yes
@@ -2070,6 +2155,7 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 	(use-package ansible
 		:straight t
+		:defer t
 		:init
 		(add-hook
 		 'yaml-mode-hook
@@ -2088,6 +2174,7 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 	(use-package company-ansible
 		:straight t
+		:defer t
 		:init
 		(add-hook 'ansible-hook
 							(lambda ()
@@ -2123,9 +2210,11 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 *** helm-mini or helm-buffer-list
 *** expand-region
 Expand/shrink selection by semantic regions
-*** Parinfer mode or Lispy  LocalWords:  Lispy
+*** Parinfer mode or Lispy  
 
+foo
 
+#  LocalWords:  Lispy toc Chua's Xmodmap src
 #  LocalWords:  avy GC bidi undefine el elc async Clojure JS ov sexp
 #  LocalWords:  alists eldoc dir tmp editorconfig Yasnippet Yas dired
 #  LocalWords:  searx Edebug js setq flyspell LocalWords Parinfer
