@@ -96,12 +96,12 @@ show the relevant section"
                        (concat "file:" filename "::" line)
                                (org-annotate-file-prettyfy-desc line))))
     (with-current-buffer (find-file org-annotate-file-storage-file)
-      (unless (org-mode-p)
+      (unless (eq major-mode 'org-mode)
         (org-mode))
       (goto-char (point-min))
       (widen)
       (when org-annotate-file-always-open
-        (show-all))
+        (outline-show-all))
       (unless (search-forward-regexp
                (concat "^* " (regexp-quote link)) nil t)
         (org-annotate-file-add-upper-level link))
