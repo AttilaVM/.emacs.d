@@ -90,6 +90,7 @@ after the 60th with '...'"
   "Visit the buffer named `org-annotate-file-storage-file' and
 show the relevant section"
   (let* ((filename (abbreviate-file-name (or buffer (buffer-file-name))))
+				 (linum (format-mode-line "%l"))
          (line (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
          (link (org-make-link-string (concat "file:" filename)))
          (search-link (org-make-link-string
@@ -111,17 +112,17 @@ show the relevant section"
       (when org-annotate-file-add-search
         (unless (search-forward-regexp
                  (concat "^** " (regexp-quote search-link)) nil t)
-          (org-annotate-file-add-second-level search-link))))))
+          (org-annotate-file-add-second-level search-link linum))))))
 
 (defun org-annotate-file-add-upper-level (link)
   (goto-char (point-min))
   (call-interactively 'org-insert-heading)
   (insert link))
 
-(defun org-annotate-file-add-second-level (link)
+(defun org-annotate-file-add-second-level (link linum)
   (goto-char (point-at-eol))
   (call-interactively 'org-insert-subheading)
-  (insert link))
+  (insert (concat link " " linum)))
 
 ;;;###autoload
 (defun org-annotate-file-find-storage-file ()
