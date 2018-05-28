@@ -123,5 +123,10 @@ show the relevant section"
   (call-interactively 'org-insert-subheading)
   (insert link))
 
+;;;###autoload
+(defun org-annotate-file-find-storage-file ()
+	(interactive)
+	(find-file org-annotate-file-storage-file)) 
+
 (provide 'org-annotate-file)
 ;;; org-annotate-file.el ends here
