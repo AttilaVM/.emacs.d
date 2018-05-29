@@ -1,4 +1,5 @@
-#+TITLE: Attila Molnar's Emacs configuration
+#+TITLE: Emacs configuration
+#+AUTHOR: Attila V. Molnár
 #+OPTIONS: toc:4 h:4
 #+STARTUP overview 
 
@@ -222,6 +223,17 @@ If a file suffix is not exactly specified do not stop on the first hit, but sear
 #+end_src
 
 ** libraries
+*** Requires
+
+#+begin_src emacs-lisp :tangle yes
+
+	(require 'dired)
+
+#+end_src
+
+#+RESULTS:
+: dired
+
 *** Third-party libraries
 
 loop: convenient loop library
@@ -531,7 +543,6 @@ Rename buffer or file and buffer if it is already saved.
 #+end_src
 
 #+RESULTS:
-: t
 		
 *** Use visual bell instead audio
 
@@ -762,6 +773,7 @@ Much better than tainting the =init.el= file.
 		:bind
 		(
 		 ("<insert> x f" . helm-find-files)
+		 ("<insert> x r" . helm-recentf)
 		 ("<insert> x d" . dired)
 		 ("<insert> b b" . switch-to-buffer)
 		 ;; Use helm for command prompt
@@ -819,6 +831,9 @@ Much better than tainting the =init.el= file.
 		(:map helm-find-files-map
 					("C-j" . helm-find-files-up-one-level)
 					("C-l" . helm-execute-persistent-action))
+		(:map helm-read-file-map
+					("C-j" . helm-find-files-up-one-level)
+					("C-l" . helm-execute-persistent-action))
 		(:map helm-top-map
 					("<insert> j c" . helm-top-run-sort-by-cpu)
 					("<insert> j m" . helm-top-run-sort-by-mem)
@@ -829,7 +844,7 @@ Much better than tainting the =init.el= file.
 #+end_src
 
 #+RESULTS:
-: helm-top-run-sort-by-user
+: t
 
 **** Helm projectile
 
@@ -884,7 +899,9 @@ Much better than tainting the =init.el= file.
 		:commands helm-swoop
 		:straight t
 		:bind
-		(("<insert> s w" . helm-swoop))
+		(("<insert> s w w" . helm-swoop)
+		 ("<insert> s w p" . helm-multi-swoop-projectile)
+		 ("<insert> s w o" . helm-multi-swoop-org))
 		(:map helm-swoop-map
 					("<insert> j s" . helm-swoop-edit)
 					)
@@ -1186,6 +1203,19 @@ Run Emacs as a server and connect to it with =emacsclient= from the CLI. This fu
 
 #+end_src
 
+*** Recently edited files
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(require 'recentf)
+	(setq recentf-max-saved-items 300)
+	(setq recentf-max-menu-items 20)
+
+#+end_src
+
+#+RESULTS:
+: 20
+
 *** Centralized backup and auto-clean backup dir
 
 Make Emacs to write backup and auto-save files in a [[https://www.emacswiki.org/emacs/BackupDirectory][specific directory]] instead of messing up the project file trees. 
@@ -1242,6 +1272,36 @@ Delete backup files older then a week
     (editorconfig-mode 1))
 #+end_src
 
+*** Open files with external app
+
+Borrowed from Sacha's config, original source: http://emacsredux.com/blog/2013/03/27/open-file-in-external-program/
+
+modified it to use async shell command.
+
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/prelude-open-with (arg)
+		"Open visited file in default external program.
+
+	With a prefix ARG always prompt for command to use."
+		(interactive "P")
+		(when buffer-file-name
+			(async-shell-command (concat
+														(cond
+														 ((and (not arg) (eq system-type 'darwin)) "open")
+														 ((and (not arg) (member system-type '(gnu gnu/linux gnu/kfreebsd))) "xdg-open")
+														 (t (read-shell-command "Open current file with: ")))
+														" "
+														(shell-quote-argument buffer-file-name)))))
+
+	(global-set-key (kbd "<insert> x e") 'attila/prelude-open-with)
+
+#+end_src
+
+#+RESULTS:
+: attila/prelude-open-with
+
+
 ** Editing
 *** Hydra
 
@@ -1287,14 +1347,21 @@ Delete backup files older then a week
 			("s" helm-occur "search")
 			(";" git-gutter:previous-hunk)
 			("'" git-gutter:next-hunk)
-			("q" nil))
+			("q" nil)
+			;; annotation
+			("a a" org-annotate-file)
+			("a f a" org-annotate-file-find-storage-file)
+			("a f c" org-capture-file-find-storage-file)
+			("a c" org-capture)
+			)
 
 		(defun hydra-seek/pre ()
 			(set-cursor-color user-seek-mode-color)
 			(setq beacon-color user-seek-mode-color))
 
 		(defun hydra-seek/post ()
-			(set-cursor-color user-cursor-color))
+			(set-cursor-color user-cursor-color)
+			(setq beacon-color user-cursor-color))
 
 		(defhydra hydra-zoom
 			(global-map "<insert> SPC"
@@ -1305,7 +1372,10 @@ Delete backup files older then a week
 			("w" kill-ring-save "copy")
 			("SPC" set-mark-command "mark")
 			("s s" helm-occur "search")
-			("s w" helm-swoop "h-swoop")
+			("s w w" helm-swoop "h-swoop")
+			("s w p" helm-multi-swoop-projectile "h-swoop")
+			("s w o" helm-multi-swoop-org "h-swoop")
+			("s w a" helm-multi-swoop-all "h-swoop")
 			("s m m" helm-rifle-current-buffer)
 			("s p" helm-projectile-ag "p-search")
 			("s l" helm-locate "l-search")
@@ -1328,7 +1398,31 @@ Delete backup files older then a week
 			;; Editing
 			("l d" attila/line-cut)
 			;; git
-			("v v" magit-status)))
+			("v v" magit-status))
+
+		(defun hydra-dired-peep/pre ()
+			(set-cursor-color user-seek-mode-color)
+			(setq beacon-color user-seek-mode-color)
+			(peep-dired t))
+
+		(defun hydra-dired-peep/post ()
+			(set-cursor-color user-cursor-color)
+			(setq beacon-color user-cursor-color)
+			(peep-dired -1))
+
+		(defhydra hydra-dired-peep
+			(:color pink
+							:pre hydra-dired-peep/pre
+							:post hydra-dired-peep/post)
+			"hydra-seek"
+			("i" peep-dired-prev-file "up")
+			("k" peep-dired-next-file "down")
+			("l" peep-dired-scroll-page-down "scroll-down")
+			("j" peep-dired-scroll-page-up "scroll-up")
+			("q" nil)
+			)
+		(define-key dired-mode-map "p" 'hydra-dired-peep/body)
+			)
 #+end_src
 
 #+RESULTS:
@@ -1396,17 +1490,22 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (use-package undo-tree
-    :straight t
-    :diminish undo-tree-mode
-    :config
-    (global-undo-tree-mode)
-    :bind
-    (("H-u" . undo-tree-undo)
-     ("M-u" . undo-tree-redo)
-     ("<insert> u" . undo-tree-visualize)))
+	(use-package undo-tree
+		:straight t
+		:diminish undo-tree-mode
+		:config
+		(global-undo-tree-mode)
+		(setq undo-tree-visualizer-timestamps t)
+		(setq undo-tree-visualizer-diff t)
+		:bind
+		(("H-u" . undo-tree-undo)
+		 ("M-u" . undo-tree-redo)
+		 ("<insert> u" . undo-tree-visualize)))
 
 #+end_src
+
+#+RESULTS:
+: undo-tree-visualize
 
 *** Multiple cursors
 
@@ -1513,42 +1612,43 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 **** Core
 
 #+begin_src emacs-lisp :tangle yes  
-		(use-package yasnippet
-			:straight t
-			:diminish yas-minor-mode
-			:config
-			(yas-global-mode 1)
-			(setq yas-snippet-dirs
-			'("~/.emacs.d/snippets/"))
+	(use-package yasnippet
+		:straight t
+		:diminish yas-minor-mode
+		:demand t
+		:config
+		(yas-global-mode 1)
+		(setq yas-snippet-dirs
+		'("~/.emacs.d/snippets/"))
 
-			;; keybinding for navigating between yas fields are only used inside of a snippet,
-			;; outside they would be useless so I made functions, which navigate inside a snippet
-			;; However outside navigate between symbolic expression
-			(defun my/yas-next-field-or-forward-sexp ()
-				"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
-				(interactive)
-				(condition-case err
-			(yas-next-field)
-					(error
-					 (call-interactively 'attila-smart-move-beginning-of-line))))
+		;; keybinding for navigating between yas fields are only used inside of a snippet,
+		;; outside they would be useless so I made functions, which navigate inside a snippet
+		;; However outside navigate between symbolic expression
+		(defun my/yas-next-field-or-forward-sexp ()
+			"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
+			(interactive)
+			(condition-case err
+		(yas-next-field)
+				(error
+				 (call-interactively 'attila-smart-move-beginning-of-line))))
 
-			(defun my/yas-previous-field-or-backward-sexp ()
-				"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
-				(interactive)
-				(condition-case err
-			(yas-prev-field)
-					(error
-					 (call-interactively 'move-end-of-line))))
+		(defun my/yas-previous-field-or-backward-sexp ()
+			"Try to jump to next yas field if not in a snippet jump forward a symbolic expression"
+			(interactive)
+			(condition-case err
+		(yas-prev-field)
+				(error
+				 (call-interactively 'move-end-of-line))))
 
-			(define-key yas-minor-mode-map (kbd "C-j") 'my/yas-next-field-or-forward-sexp)
-			(define-key yas-minor-mode-map (kbd "C-l") 'my/yas-previous-field-or-backward-sexp)
-			(define-key yas-minor-mode-map (kbd "<tab>") nil)
-			(define-key yas-minor-mode-map (kbd "TAB") nil)
-			(define-key yas-minor-mode-map (kbd "M-e") 'yas/expand)
-	()
-			:bind
-			(:map snippet-mode-map
-						("<insert> j t" . 'yas-tryout-snippet)))
+		(define-key yas-minor-mode-map (kbd "C-j") 'my/yas-next-field-or-forward-sexp)
+		(define-key yas-minor-mode-map (kbd "C-l") 'my/yas-previous-field-or-backward-sexp)
+		(define-key yas-minor-mode-map (kbd "<tab>") nil)
+		(define-key yas-minor-mode-map (kbd "TAB") nil)
+		(define-key yas-minor-mode-map (kbd "M-e") 'yas/expand)
+		:bind
+		(("<insert> e a" . yas-reload-all))
+		(:map snippet-mode-map
+					("<insert> j t" . yas-tryout-snippet)))
 #+end_src
 
 #+RESULTS:
@@ -1580,7 +1680,29 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 : attila/yas-selected-text-replace
 
 *** Smart insertions
-**** TODO Path insertion
+**** Path insertions
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(defun attila/insert-file-name-relative (filename)
+			"Insert relative path to FILENAME into buffer after point"
+			;; Based on insert-file in Emacs -- ashawley 20080926
+			(interactive "*fInsert file name: \n")
+			(insert (file-relative-name filename)))
+
+	(defun attila/insert-file-name-absolute (filename)
+			"Insert absolute path FILENAME into buffer after point."
+			;; Based on insert-file in Emacs -- ashawley 20080926
+			(interactive "*fInsert file name: \n")
+			 (insert (expand-file-name filename)))
+
+	(global-set-key (kbd "<insert> i p r") 'attila/insert-file-name-relative)
+	(global-set-key (kbd "<insert> i p a") 'attila/insert-file-name-absolute)
+
+#+end_src
+
+#+RESULTS:
+: attila/insert-file-name-absolute
 
 *** Line editing
 **** Duplicate line above/below
@@ -1751,6 +1873,45 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 #+RESULTS:
 : 1
+
+**** Act on multiple files from differen dirs
+
+Source: https://www.masteringemacs.org/article/working-multiple-files-dired
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(require 'find-dired)
+	(setq find-ls-option '("-print0 | xargs -0 ls -ld" . "-ld"))
+	(unbind-key (kbd "s") dired-mode-map)
+	(define-key dired-mode-map (kbd "s f") 'find-name-dired)
+
+#+end_src
+
+#+RESULTS:
+: (-print0 | xargs -0 ls -ld . -ld)
+
+**** Automaticly show file contents
+
+For bindigs ceck hydra config
+
+#+begin_src emacs-lisp :tangle yes  
+
+	(use-package peep-dired
+		:straight t
+		:defer t
+		:commands peep-dired
+		:config
+		;; Close peeped buffers on mode end
+		(setq peep-dired-cleanup-on-disable t)
+		;; Activate peep ind peeped directories
+		(setq peep-dired-enable-on-directories t)
+		;; ignore these extensions
+		(setq peep-dired-ignored-extensions '("mkv" "iso" "mp4")))
+
+#+end_src
+
+#+RESULTS:
+: t
 
 ** Information gathering
 *** Default browser
@@ -1940,6 +2101,23 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 	(use-package org
 		:straight t
 		:defer t
+		:commands
+		org-annotate-file
+		org-annotate-file-find-storage-file
+		:config
+		(load "~/.emacs.d/internal/annotate-file.elc")
+		(require 'org-annotate-file)
+		;; Where to store annotations
+		(setq org-annotate-file-storage-file "~/annotated.org")
+		;; Save line numbers
+		(setq org-annotate-file-add-search t)
+		(org-load-modules-maybe t)
+		(setq org-modules (-concat org-modules '(org-annotate-file) ))
+
+		(defun org-capture-file-find-storage-file ()
+		(interactive)
+		(find-file "~/.notes"))
+
 		:bind
 		(:map org-mode-map
 					;; headlines
@@ -1949,7 +2127,11 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 					("<insert> j s s" . org-edit-special)
 					("<insert> j s C-w" . org-cut-special)
 					("<insert> j s M-w" . org-copy-special)
-					("<insert> j s C-y" . org-paste-special))
+					("<insert> j s C-y" . org-paste-special)
+					;; Annotation
+					("<insert> a a" . org-annotate-file)
+					("<insert> a f" . org-annotate-file-find-storage-file)
+					("<insert> a c" . org-capture))
 		(:map org-src-mode-map
 					("C-c C-c" . 'org-edit-src-exit)))
 
@@ -2198,15 +2380,29 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 - [ ] Make my line functions prefixable
 - [X] Make my rename file or buffer function notice if the buffer is not associated to a file
 - [ ] Add company and helm NixOS options
-- [ ] More hydras
-	- [ ] flyspell
+- [ ] Think out new org capture tamplates
+- [-] More hydras
+	- [X] flyspell
 	- [ ] EMMS
 - [ ] make flyspell save misspelled words.
 	- [ ] Write a Editor independent CLI app.
-		- [ ] Choose the right language.
-		- [ ] Choose the right db, PostgreSQL maybe.
+    - [ ] Setup PostgreSQL
+		- [ ] Write CLI client in C
+		- [ ] Write Emacs extansion
+		- [ ] Write server side code in GO or JAVA or Kotlin
+			- [ ] Keep table shorted by number of misspelling
+			- [ ] Multi user
+			- [ ] Federalization
+		- [ ] Create a Web GUI
+			- [ ] TTS word to user and wait written input on mistake show right answer and common errors
+			- [ ] Browse for common errors
 
 ** Decide
+*** Build pdf tools and install org-noter
+- [ ] Write nix expression for PDF tools
+- [ ] Install org noter
+*** Write abbrevations
+*** Hippie expand?
 *** helm-mini or helm-buffer-list
 *** expand-region
 Expand/shrink selection by semantic regions
