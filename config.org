@@ -720,6 +720,22 @@ Much better than tainting the =init.el= file.
 
 #+end_src
 *** Window management
+**** Force horizontal spliting
+
+#+begin_src emacs-lisp :tangle yes
+
+	(setq split-width-threshold 9999)
+
+	(defun attila/window-force-horizontal-split ()
+		"If there's only one window (excluding any possibly active minibuffer), then
+			 split the current window horizontally."
+		(interactive)
+		(if (= (length (window-list nil 'dont-include-minibuffer-even-if-active)) 1)
+				(split-window-horizontally)))
+
+	(add-hook 'temp-buffer-setup-hook 'attila/window-force-horizontal-split)
+
+#+end_src
 **** Basic window-manager commands
 
 #+begin_src emacs-lisp :tangle yes
@@ -1306,6 +1322,7 @@ modified it to use async shell command.
 *** Hydra
 
 #+begin_src emacs-lisp :tangle yes
+
 	(use-package hydra
 		:straight t
 		:config
@@ -1344,7 +1361,6 @@ modified it to use async shell command.
 			("k" scroll-up-command)
 			("j" attila/scroll-down-1-line)
 			("l" attila/scroll-up-1-line)
-			("s" helm-occur "search")
 			(";" git-gutter:previous-hunk)
 			("'" git-gutter:next-hunk)
 			("q" nil)
@@ -1370,6 +1386,7 @@ modified it to use async shell command.
 									:post hydra-seek/post)
 			"hydra-seek"
 			("w" kill-ring-save "copy")
+			("y" yank "yank")
 			("SPC" set-mark-command "mark")
 			("s s" helm-occur "search")
 			("s w w" helm-swoop "h-swoop")
@@ -1792,11 +1809,11 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 		 ("<insert> v c" . magit-clone)
 		 ("<insert> v f" . magit-find-file)
 		 ("<insert> v b" . magit-branch-popup)
-		 ("<insert> v p" . magit-push-popup)
-		 )
+		 ("<insert> v p" . magit-push-popup))
 		:bind
 		(:map magit-mode-map
-					("<tab>" . magit-section-toggle))
+					("<tab>" . magit-section-toggle)
+)
 		(:map magit-log-mode-map
 					("s-<f3>" . magit-display-noselect-toggle)))
 
@@ -1986,8 +2003,44 @@ Break lines when displaying man pages.
 *** Hotkey info
 **** Hotkey hinting
 
- #+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
+	(use-package which-key
+		:straight t
+		:demand t
+		:config
+		(which-key-setup-side-window-right-bottom)
+		(which-key-mode t)
+		;; Prefix labels
+		(which-key-add-key-based-replacements
+			"<insert> SPC" "Editing hydra"
+			"<insert> 1" "Emacs internal tools"
+			"<insert> 2" "applications"
+			"<insert> 3" "Window management"
+			"<insert> s" "Search tools"
+			"<insert> b" "Buffer management"
+			"<insert> p" "Project management"
+			"<insert> a" "Annotation tool"
+			"<insert> e" "Snippet tools"
+			"<insert> d" "Debuging tools"
+			"<insert> i" "Insertion tools"
+			"<insert> l" "Line-edit tools"
+			"<insert> r" "Refactoring tools"
+			"<insert> v" "Version control"
+			"<insert> v a" "analyzing tools"
+			"<insert> x" "I/O actions"
+			"<insert> j" "Major mode actions"
+			"<insert> ;" "Selection tools"
+			"<insert> h" "Help")
+		:bind
+		("<insert> h m " . which-key-show-major-mode))
+
+#+end_src
+
+#+RESULTS:
+: which-key-show-major-mode
+
+ #+begin_src emacs-lisp :tangle no
 
 	 (use-package guide-key
 		 :straight t
@@ -2051,6 +2104,20 @@ Break lines when displaying man pages.
 
 #+RESULTS:
 : edebug-stop
+
+**** Suggest functions from example input and output
+
+#+begin_src emacs-lisp :tangle
+
+		(use-package suggest
+			:straight t
+			:bind
+			("<insert> h e s" . suggest))
+
+#+end_src
+
+#+RESULTS:
+: suggest
 
 *** Org mode
 **** Installation workaround
@@ -2117,23 +2184,35 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 		(defun org-capture-file-find-storage-file ()
 		(interactive)
 		(find-file "~/.notes"))
-
+		;; Prefix labels
+		(which-key-add-major-mode-key-based-replacements 'org-mode
+		"<insert> j e" "Build/Eval/Export tools"
+		"<insert> j s" "Special block management"
+		"<insert> j i" "Insertion tools"
+		"<insert> j v" "Visualization options"
+		"<insert> j t" "Time tracking tools")
 		:bind
 		(:map org-mode-map
 					;; headlines
 					("<insert> j g" . org-global-cycle)
 					("<insert> j e t" . org-babel-tangle)
+					("<insert> j i t" . org-time-stamp)
+					;; Loging work time
+					("<insert> j t i" . org-clock-in)
+					("<insert> j t o" . org-clock-out)
 					;; Specials
 					("<insert> j s s" . org-edit-special)
 					("<insert> j s C-w" . org-cut-special)
 					("<insert> j s M-w" . org-copy-special)
 					("<insert> j s C-y" . org-paste-special)
+					;; Visualization
+					("<insert> j v l" . org-toggle-link-display)
 					;; Annotation
 					("<insert> a a" . org-annotate-file)
 					("<insert> a f" . org-annotate-file-find-storage-file)
-					("<insert> a c" . org-capture))
+					("<insert> a c" . org-capture)
 		(:map org-src-mode-map
-					("C-c C-c" . 'org-edit-src-exit)))
+					("C-c C-c" . 'org-edit-src-exit))))
 
 
 #+end_src
@@ -2244,9 +2323,34 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 #+RESULTS:
 
+***** npm install from require statements
+
+#+begin_src emacs-lisp :tangle no
+
+	(defun my/npm-install-required (save-flag)
+		(interactive
+		 (list
+			(completing-read "Choose one: " '("--save" "--save-dev" ""))))
+				(let* ((beg (region-beginning))
+							 (end (region-end))
+							 (selection (buffer-substring-no-properties beg end)))
+					(->> selection
+							 (s-match-strings-all "['\"].*['\"]")
+							 (mapcar 'car)
+							 (s-join " ")
+							 (s-concat "npm i " save-flag " ")
+							 (async-shell-command))))
+
+	(define-key js2-mode-map (kbd "<insert> j i") 'my/npm-install-required)
+
+#+end_src
+
+#+RESULTS:
+: my/npm-install-required
+
 **** Indium JS REPL
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
 
 	(use-package indium
 		:straight t
@@ -2311,11 +2415,13 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 #+end_src
 *** Shell
-
+**** Shell script mode
 #+begin_src emacs-lisp :tangle yes
 
 	(add-to-list 'magic-mode-alist '("^#![/binuserahz]\\{7,11\\}" "#!/bin/bash" . shell-script-mode))
 	(add-to-list 'magic-mode-alist '("^#![/binusernv]\\{7,13\\}\\ ?[bashz]\\{2,4\\}" . shell-script-mode))
+	(add-to-list 'auto-mode-alist '("\\.?bashrc" . shell-script-mode))
+	(add-to-list 'auto-mode-alist '("\\.?zshrc" . shell-script-mode))
 
 	(use-package company-shell
 		:straight t
@@ -2367,6 +2473,33 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 #+RESULTS:
 
+*** MongoDB
+**** Babel with MongoDB
+#+begin_src emacs-lisp :tangle yes  
+
+	(use-package ob-mongo
+		:straight t
+		:config
+		(org-babel-do-load-languages
+			 'org-babel-load-languages
+			 '((mongo . t)
+				 (shell . t)
+         (js . t)
+				 (python . t))))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+**** mongo REPL
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package inf-mongo
+		:straight t)
+
+#+end_src
 * Tests
 * Post Configuration
 #+begin_src emacs-lisp :tangle yes  
