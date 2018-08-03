@@ -7,6 +7,6 @@
 						"emacs-lisp"
 						"sh"
 						"python"
+						"mongo :host localhost :port 27017 :db"
 						"nix"))} $2 $0
-
 #+end_src
