@@ -5,7 +5,8 @@
 # --
 #+begin_src ${1:$$(yas-choose-value '(
 						"emacs-lisp"
-						"sh"
+						"shell"
+						"shell :dir /ssh:root@localhost:/tmp"
 						"python"
 						"mongo :host localhost :port 27017 :db"
 						"nix"))} $2 $0

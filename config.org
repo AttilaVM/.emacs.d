@@ -816,8 +816,8 @@ Much better than tainting the =init.el= file.
 		 ("<insert> e f" . helm-yas-visit-snippet-file)
 		 ("<insert> e r" . helm-yas-create-snippet-on-region)
 		 ;; helm top
-		 ("<insert> 2 t o" . helm-top)
-		 ("C-x c C-t" . helm-tramp )
+		 ("<insert> 2 s o" . helm-top)
+		 ("<insert> x t" . helm-tramp )
 		 ;; helm locate
 		 ("<insert> s l" . helm-locate)
 		 ;; show killring
@@ -1317,7 +1317,6 @@ modified it to use async shell command.
 #+RESULTS:
 : attila/prelude-open-with
 
-
 ** Editing
 *** Hydra
 
@@ -1564,16 +1563,26 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 						((= (char-before) ?\) )
 						 (call-interactively 'sp-backward-kill-sexp)))
 			)
+
+		(defun attila-sp-unwrap-sexp ()
+			(interactive)
+			(cond ((= (char-after) ?\( )
+						 (call-interactively 'sp-unwrap-sexp))
+						((= (char-before) ?\) )
+						 (call-interactively 'sp-backward-unwrap-sexp)))
+			)
+
 		:config
 		;; Sane defaults for smartparens, like do not double ' for lisp dialects
 		(require 'smartparens-config)
 		(smartparens-global-mode t)
 		:bind
-		(("<insert> k (" . attila-sp-kill-sexp)))
+		(("<insert> 9 k" . attila-sp-kill-sexp)
+		 ("<insert> 9 u" . attila-sp-unwrap-sexp)))
 #+end_src
 
 #+RESULTS:
-: attila-sp-kill-sexp
+: attila-sp-unwrap-sexp
 
 *** Auto-completion with company
 #+begin_src emacs-lisp :tangle yes  
@@ -1792,7 +1801,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 : package-list-packages
 
 *** Version control
-
+**** Magit
 #+begin_src emacs-lisp :tangle yes  
 
 	(use-package magit
@@ -1856,6 +1865,22 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 		)
 
 #+end_src
+**** Generati links to remote git repositories
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package git-link
+		:straight t
+		:bind
+		("<insert> v u u" . git-link)
+		("<insert> v u c" . git-link-commit)
+		("<insert> v u h" . git-link-homepage))
+
+#+end_src
+
+#+RESULTS:
+: git-link-homepage
+
 *** File management
 **** Toggle dired listing modes
 
@@ -1929,6 +1954,49 @@ For bindigs ceck hydra config
 
 #+RESULTS:
 : t
+
+*** Reading log files
+
+#+begin_src emacs-lisp :tangle yes :results none
+
+	(use-package logview
+		:straight t
+		:mode
+		("\\.log\\'")
+		:bind
+		(:map logview-mode-map
+					("i" . logview-previous-entry)
+					("k" . logview-next-entry)
+					("l" . 'scroll-up-command)
+					("j" . 'scroll-down-command)
+					))
+
+#+end_src
+
+*** Multimedia
+**** Remove metadata from .srt files
+
+#+begin_src emacs-lisp :tangle yes
+	(require 'srecode/srt-mode)
+
+		(defun attila/srt-remove-time ()
+			(interactive)
+			(while t
+				(beginning-of-buffer)
+				(search-forward "-->")
+				(next-line)
+				(beginning-of-line)
+				(call-interactively 'set-mark-command) 
+				(previous-line 2)
+				(beginning-of-line)
+				(kill-region (region-beginning) (region-end))))
+
+	(define-key srecode-template-mode-map (kbd "<insert> j t") 'attila/srt-remove-time)
+
+#+end_src
+
+#+RESULTS:
+: attila/srt-remove-time
 
 ** Information gathering
 *** Default browser
@@ -2016,6 +2084,8 @@ Break lines when displaying man pages.
 			"<insert> SPC" "Editing hydra"
 			"<insert> 1" "Emacs internal tools"
 			"<insert> 2" "applications"
+			"<insert> 2 s" "System monitoring"
+			"<insert> 2 d" "Database clients"
 			"<insert> 3" "Window management"
 			"<insert> s" "Search tools"
 			"<insert> b" "Buffer management"
@@ -2437,6 +2507,85 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 #+RESULTS:
 | lambda | nil | (setq-local company-backend (quote company-shell)) |
 
+**** Eshell
+***** Multiple eshell session
+
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/eshell-new(shell-name)
+		"Open a new instance of eshell."
+		(interactive (list (read-string "Shell Name: ")))
+		(setq eshell-buffer-name (concat "*" shell-name "-eshell*"))
+		(eshell 'N))
+
+	(global-set-key (kbd "<insert> 2 e") 'attila/eshell-new)
+
+#+end_src
+
+#+RESULTS:
+: attila/eshell-new
+
+***** Fish-shell like autosuggestions
+
+#+begin_src emacs-lisp :tangle yes
+
+		(use-package esh-autosuggest
+			:straight t
+			:hook (eshell-mode . esh-autosuggest-mode)
+			;; If you have use-package-hook-name-suffix set to nil, uncomment and use the
+			;; line below instead:
+			;; :hook (eshell-mode-hook . esh-autosuggest-mode)
+			:ensure t
+			:config
+			(defun setup-eshell-helm-completion ()
+				(define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete))
+
+			(add-hook 'eshell-mode-hook #'setup-eshell-helm-completion))
+
+
+#+end_src
+
+#+RESULTS:
+| setup-eshell-helm-completion | esh-autosuggest-mode |
+***** Prompt git info
+
+It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825dcc005b488c6366d0b3015fc6686194eea#usage][possible]] to promt info about python virtual envs.
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package eshell-prompt-extras
+		:straight t
+		:ensure t
+		:config
+		(add-hook 'eshell-mode-hook
+							(lambda ()
+								(require 'eshell-prompt-extras)
+								(setq eshell-highlight-prompt nil
+											eshell-prompt-function 'epe-theme-lambda))))
+
+#+end_src
+
+#+RESULTS:
+: t
+***** Eshell eldoc and quick man search support
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package esh-help
+		:straight t)
+
+	(require 'esh-help)
+	(setup-esh-help-eldoc)  ;; To use eldoc in Eshell
+
+	(add-hook 'eshell-mode-hook
+						(lambda ()
+							(define-key eshell-mode-map (kbd "<insert> h h") 'esh-help-run-help)))
+
+#+end_src
+
+#+RESULTS:
+| (lambda nil (define-key eshell-mode-map (kbd <insert> h h) (quote esh-help-run-help))) | #[nil \301\300!\210\302\211\207 [eldoc-documentation-function make-local-variable esh-help-eldoc-command] 2] | (lambda nil (setup-esh-help-eldoc)) | (lambda nil (require (quote eshell-prompt-extras)) (setq eshell-highlight-prompt nil eshell-prompt-function (quote epe-theme-lambda))) | (lambda nil (autoload (quote epe-theme-lambda) eshell-prompt-extras) (setq eshell-highlight-prompt nil eshell-prompt-function (quote epe-theme-lambda))) | eshell-prompt-extras | setup-eshell-helm-completion | esh-autosuggest-mode |
+
 *** Ansible
 **** Syntax highlight
 #+begin_src emacs-lisp :tangle yes
@@ -2497,9 +2646,17 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 #+begin_src emacs-lisp :tangle yes
 
 	(use-package inf-mongo
-		:straight t)
+		:straight t
+		:config
+		(setq inf-mongo-command "mongo 127.0.0.1:27017")
+		:bind
+		("<insert> 2 d m" . inf-mongo))
 
 #+end_src
+
+#+RESULTS:
+: inf-mongo
+
 * Tests
 * Post Configuration
 #+begin_src emacs-lisp :tangle yes  
