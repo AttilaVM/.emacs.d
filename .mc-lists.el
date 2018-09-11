@@ -3,19 +3,23 @@
 
 (setq mc/cmds-to-run-for-all
       '(
-	forward-sexp
-	helm-show-kill-ring
-	indent-for-tab-command
-	indent-new-comment-line
-	js2-line-break
-	kill-region
-	my/line-duplicate-below
-	my/smarter-move-beginning-of-line
-	tern-ac-dot-complete
-	))
+				forward-sexp
+				helm-show-kill-ring
+				indent-for-tab-command
+				indent-new-comment-line
+				js2-line-break
+				kill-region
+				my/line-duplicate-below
+				my/smarter-move-beginning-of-line
+				my/yas-next-field-or-forward-sexp
+				my/yas-previous-field-or-backward-sexp
+				org-self-insert-command
+				tern-ac-dot-complete
+				yaml-electric-dash-and-dot
+				))
 
 (setq mc/cmds-to-run-once
       '(
-	helm-M-x
-	iedit-switch-to-mc-mode
-	))
+				helm-M-x
+				iedit-switch-to-mc-mode
+				))
