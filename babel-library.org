@@ -1,0 +1,106 @@
+#+TITLE: Library of Babel
+#+AUTHOR: Attila V. Molnár
+#+OPTIONS: toc:4 h:4
+#+STARTUP overview
+
+* Filters
+** Remove prompt
+
+Remove shell prompt from input. The =prompt-regexp= variable can be overriden.
+
+ #+name:remove-prompt
+ #+begin_src emacs-lisp :var prompt-regexp=".*\\$" input="my-prompt-32 34$ data"
+	 (replace-regexp-in-string prompt-regexp "" input)
+ #+end_src
+
+ #+RESULTS: remove-prompt
+ :  data
+
+#+call: remove-prompt(prompt-regexp=".*>", input="my-prompt-32 34> data")
+
+#+RESULTS:
+:  data
+
+** Remove ANSI colors
+
+Remove ANSI color controll sequences from =input=. However it should colorize it...
+
+#+name:remove-ansi-sequences
+#+begin_src emacs-lisp :var input="[33mTest text[0m" :results raw
+
+	(insert (ansi-color-apply input))
+
+#+end_src
+
+#+RESULTS: remove-ansi-sequences
+Test text
+
+
+** Remove empty lines
+
+Remove empty lines
+
+#+name: sample-text
+#+begin_sample
+
+second line
+   
+
+fourth line
+#+end_sample
+
+#+name: remove-empty-lines
+#+begin_src emacs-lisp :var input=sample-text
+
+	(-as-> input X
+				 ;; Remove first blank line
+				 (replace-regexp-in-string "^[ \t]*
+	" "" X)
+				 ;; Remove subsequent blank lines
+				 (replace-regexp-in-string "
+	[ \t]**$" "" X))
+
+#+end_src
+
+#+RESULTS: remove-empty-lines
+: second line
+: fourth line
+
+* org metaprograming
+** Table to variables
+	 :PROPERTIES:
+	 :header-args: :var apples="a" melons="b" strawberirs=1
+	 :header-args:shell: :var apples="a" melons="b" strawberirs=1
+	 :END:
+
+It is much cleaner to add org babel global variables in a table format. This code block converts a table (=var-table=) to subtree level *header arguments* wherever it is called. The first column provides the variable names, the second holds the values and subsequent columns are ignored. It can distigvish numbers and strings.
+
+#+name: var-table
+| apples      | a | ignored |
+| melons      | b | ignored |
+| strawberirs | 1 | ignored |
+
+#+name: table-to-variables
+#+begin_src emacs-lisp :var input=var-table lang="" :results silent
+
+	(let ((lang-prefix (if (string-blank-p lang)
+												 ""
+											 (concat ":" lang)))
+				(variable-assignements
+				 (-as-> input X
+								(mapconcat (lambda (prop-value-pair)
+														 (concat (car prop-value-pair)
+																		 "="
+																		 (let ((value (nth 1 prop-value-pair)))
+																			 ;; Insert numbers without qouting
+																			 (if (number-or-marker-p value)
+																					 (number-to-string value)
+																				 (concat "\""  value "\"")))))
+													 X " ")
+								(concat ":var " X))))
+		(org-set-property (concat"header-args" lang-prefix)  variable-assignements))
+
+#+end_src
+
+#+call: table-to-variables(input=var-table)
+#+call: table-to-variables(input=var-table, lang="shell")

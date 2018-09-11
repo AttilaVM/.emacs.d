@@ -1,7 +1,7 @@
 #+TITLE: Emacs configuration
 #+AUTHOR: Attila V. Molnár
 #+OPTIONS: toc:4 h:4
-#+STARTUP overview 
+#+STARTUP overview
 
 * Introduction
 ** Rationale
@@ -165,6 +165,14 @@ Disable auto vertical scroll adjusting for tall lines
 #+end_src
 
 #+RES
+
+** Ingest my Babel library
+
+#+begin_src emacs-lisp
+
+	(org-babel-lob-ingest "~/emacs.d/babel-library.org")
+
+#+end_src
 
 * Configuration
 :PROPERTIES:
@@ -378,6 +386,21 @@ Emacs gets really slow when very long lines are present. We will use this value 
 #+RESULTS:
 : attila/big-buffer-p
 
+**** Easy converters
+
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/to-string (val)
+			(cond ((number-or-marker-p val)
+						 (number-to-string val))
+						((string-or-null-p val)
+						 val)))
+
+#+end_src
+
+#+RESULTS:
+: attila/to-string
+
 *** UX
 **** Smart line beginning
 #+begin_src emacs-lisp :tangle yes  
@@ -544,6 +567,37 @@ Rename buffer or file and buffer if it is already saved.
 
 #+RESULTS:
 		
+*** Relevant syntax highlight
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package color-identifiers-mode
+		:straight t)
+
+
+#+end_src
+
+#+RESULTS:
+
+*** ANSI colorize region or buffer
+
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/ansi-colorize ()
+		(interactive)
+		(if (use-region-p)
+				(ansi-color-apply-on-region
+				 (region-beginning)
+				 (region-end))
+			(ansi-color-apply-on-region
+			 (point-min)
+			 (point-max))))
+
+#+end_src
+
+#+RESULTS:
+: attila/ansi-colorize
+
 *** Use visual bell instead audio
 
 #+begin_src emacs-lisp :tangle yes
@@ -745,11 +799,14 @@ Much better than tainting the =init.el= file.
 	;; expand active window
 	(global-set-key (kbd "<insert> 3 e") 'delete-other-windows) 
 	(global-set-key (kbd "<insert> 3 k") 'delete-window)
+	(global-set-key (kbd "<insert> 3 t") 'toggle-truncate-lines)
+	(global-set-key (kbd "<insert> 3 t") 'toggle-truncate-lines)
+	(global-set-key (kbd "<insert> 3 3") 'toggle-truncate-lines)
 
 #+end_src
 
 #+RESULTS:
-: delete-window
+: toggle-truncate-lines
 
 *** Helm
 **** Helm core
@@ -866,41 +923,42 @@ Much better than tainting the =init.el= file.
 
 #+begin_src emacs-lisp :tangle yes  
 
-  (use-package projectile
-    :straight t
-    :diminish projectile-mode
-    :config
-    (use-package helm-projectile
-      :straight t
-      :config
-      (helm-projectile-on))
-    (projectile-global-mode)
-    (setq projectile-globally-ignored-directories
-          (append '(
-                    "out"
-                    "target"
-                    "venv"
-                    "node_modules"
-                    ) ))
-    (setq projectile-known-projects-file "~/.emacs.d/projectile-bookmarks.eld")
-    (setq projectile-enable-caching t)
-    (use-package helm-ag :straight t)
-    :bind
-    ("<insert> p p" . helm-projectile-switch-project)
-    ("<insert> p +" . projectile-add-known-project)
-    ("<insert> p -" . projectile-remove-known-project)
-    ("<insert> p f" . helm-projectile-find-file)
-    ("<insert> p b" . helm-projectile-switch-to-buffer)
-    ("<insert> p i" . projectile-invalidate-cache)
-    ;; Extreamly fast mehotd search in all recent project files.
-    ("<insert> p a" . helm-projectile-ag)
-    ("<insert> s p" . helm-projectile-ag)
-    ("<insert> x p" . projectile-save-project-buffers)
-    ;; Very slow, when many project is present.
-    ("<insert> p g" . helm-projectile-find-file-in-known-projects)
-    ;; Project level replace, what can go wrong?
-    ("<insert> p r t" . projectile-replace)
-    ("<insert> p r r" . projectile-replace-regexp))
+	(use-package projectile
+		:straight t
+		:diminish projectile-mode
+		:config
+		(use-package helm-projectile
+			:straight t
+			:config
+			(helm-projectile-on))
+		(projectile-global-mode)
+		(setq projectile-globally-ignored-directories
+					(append '(
+										"out"
+										"target"
+										"venv"
+										"node_modules"
+										) ))
+		(setq projectile-known-projects-file "~/.emacs.d/projectile-bookmarks.eld")
+		(setq projectile-enable-caching t)
+		(use-package helm-ag :straight t)
+		:bind
+		("<insert> s a" . helm-do-ag)
+		("<insert> p p" . helm-projectile-switch-project)
+		("<insert> p +" . projectile-add-known-project)
+		("<insert> p -" . projectile-remove-known-project)
+		("<insert> p f" . helm-projectile-find-file)
+		("<insert> p b" . helm-projectile-switch-to-buffer)
+		("<insert> p i" . projectile-invalidate-cache)
+		;; Extreamly fast mehotd search in all recent project files.
+		("<insert> p a" . helm-projectile-ag)
+		("<insert> s p" . helm-projectile-ag)
+		("<insert> x p" . projectile-save-project-buffers)
+		;; Very slow, when many project is present.
+		("<insert> p g" . helm-projectile-find-file-in-known-projects)
+		;; Project level replace, what can go wrong?
+		("<insert> p r t" . projectile-replace)
+		("<insert> p r r" . projectile-replace-regexp))
 
 #+end_src
 
@@ -1023,19 +1081,22 @@ Much better than tainting the =init.el= file.
 **** sub-word jumps
 
 #+begin_src emacs-lisp :tangle yes  
-  (attila/add-hooks
-   '(js-mode-hook
-     clojure-mode-hook
-     python-mode-hook
-     java-mode-hook
-     c-mode-hook
-     haskell-mode-hook
-     jade-mode-hook
-     elm-mode-hook
-     julia-mode-hook
-     stylus-mode-hook)
-   'subword-mode)
+	(attila/add-hooks
+	 '(js-mode-hook
+		 org-mode-hook
+		 clojure-mode-hook
+		 python-mode-hook
+		 java-mode-hook
+		 c-mode-hook
+		 haskell-mode-hook
+		 jade-mode-hook
+		 elm-mode-hook
+		 julia-mode-hook
+		 stylus-mode-hook)
+	 'subword-mode)
 #+end_src
+
+#+RESULTS:
 
 **** Beginning of line and buffer
 
@@ -1378,7 +1439,7 @@ modified it to use async shell command.
 			(set-cursor-color user-cursor-color)
 			(setq beacon-color user-cursor-color))
 
-		(defhydra hydra-zoom
+		(defhydra hydra-seek
 			(global-map "<insert> SPC"
 									:color pink
 									:pre hydra-seek/pre
@@ -1438,7 +1499,55 @@ modified it to use async shell command.
 			("q" nil)
 			)
 		(define-key dired-mode-map "p" 'hydra-dired-peep/body)
-			)
+
+		(defun hydra-table/pre ()
+			(set-cursor-color user-seek-mode-color)
+			(setq beacon-color user-seek-mode-color))
+
+		(defun hydra-table/post ()
+			(set-cursor-color user-cursor-color)
+			(setq beacon-color user-cursor-color))
+
+		(defhydra hidra-table
+			(global-map "<insert> 4 t"
+									:color pink
+									:pre hydra-table/pre
+									:post hydra-table/post)
+			"hydra-table"
+			("j" org-table-previous-field "left")
+			("l" org-table-next-field "right")
+			("f" org-table-edit-field "edit" :color blue)
+			("d f" org-table-blank-field "blank field")
+			("a" org-table-align)
+			("C-j" org-table-move-column-left "col left")
+			("C-l" org-table-move-column-right " right")
+			("C-i" org-table-move-row-up "row up")
+			("C-k" org-table-move-row-down "row down")
+			("d r" org-table-kill-row "kill row")
+			("c r" org-table-insert-row "insert row")
+			("c c" org-table-insert-column "insert column")
+			("c l" org-table-insert-hline "insert h-line")
+			("s" org-table-sort-lines "sort")
+			("M-w" org-table-copy-region "copy region")
+			("C-W" org-table-cut-region "cut region")
+			("C-y" org-table-paste-rectangle "paste")
+			("+" org-table-sum "sum")
+			("b" org-table-import "import")
+			("e" org-table-export "export")
+			("q" nil))
+
+		(defhydra hydra-annotate
+			(global-map "<insert> TAB a"
+									:color pink)
+			"Annotation hydra"
+			("j" bm-previous)
+			("l" bm-next)
+			("e" bm-show-annotations)
+			("a" bm-bookmark-annotate "annotate")
+			("t" bm-toggle)
+			("s" bm-show-all)
+			("q" nil))
+		)
 #+end_src
 
 #+RESULTS:
@@ -1611,6 +1720,20 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 #+RESULTS:
 : company-select-next
+
+*** Company shows help popups
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package company-quickhelp
+		:straight t
+		:config
+		(company-quickhelp-mode))
+
+#+end_src
+
+#+RESULTS:
+: t
 
 *** Yasnippet
 
@@ -1788,6 +1911,80 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : t
 
+*** Bookmarking
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package bm
+					 :ensure t
+					 :demand t
+					 :straight t
+					 :init
+					 ;; restore on load (even before you require bm)
+					 (setq bm-restore-repository-on-load t)
+
+					 :config
+					 ;; Allow cross-buffer 'next'
+					 (setq bm-cycle-all-buffers t)
+
+					 (setq bm-show-annotations t)
+
+					 ;; where to store persistant files
+					 (setq bm-repository-file "~/.emacs.d/bookmark-repository")
+
+					 ;; save bookmarks
+					 (setq-default bm-buffer-persistence t)
+
+					 ;; Loading the repository from file when on start up.
+					 (add-hook' after-init-hook 'bm-repository-load)
+
+					 ;; Restoring bookmarks when on file find.
+					 (add-hook 'find-file-hooks 'bm-buffer-restore)
+
+					 ;; Saving bookmarks
+					 (add-hook 'kill-buffer-hook #'bm-buffer-save)
+
+					 ;; Saving the repository to file when on exit.
+					 ;; kill-buffer-hook is not called when Emacs is killed, so we
+					 ;; must save all bookmarks first.
+					 (add-hook 'kill-emacs-hook #'(lambda nil
+																						(bm-buffer-save-all)
+																						(bm-repository-save)))
+
+					 ;; The `after-save-hook' is not necessary to use to achieve persistence,
+					 ;; but it makes the bookmark data in repository more in sync with the file
+					 ;; state.
+					 (add-hook 'after-save-hook #'bm-buffer-save)
+
+					 ;; Restoring bookmarks
+					 (add-hook 'find-file-hooks   #'bm-buffer-restore)
+					 (add-hook 'after-revert-hook #'bm-buffer-restore)
+
+					 ;; The `after-revert-hook' is not necessary to use to achieve persistence,
+					 ;; but it makes the bookmark data in repository more in sync with the file
+					 ;; state. This hook might cause trouble when using packages
+					 ;; that automatically reverts the buffer (like vc after a check-in).
+					 ;; This can easily be avoided if the package provides a hook that is
+					 ;; called before the buffer is reverted (like `vc-before-checkin-hook').
+					 ;; Then new bookmarks can be saved before the buffer is reverted.
+					 ;; Make sure bookmarks is saved before check-in (and revert-buffer)
+					 (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
+
+
+					 :bind (("<insert> a l" . bm-next)
+									("<insert> a j" . bm-previous)
+									("<insert> a t" . bm-toggle)
+									("<insert> a s" . bm-show-all)
+									("<insert> a a" . bm-show-annotations)
+								
+									)
+					 )
+
+#+end_src
+
+#+RESULTS:
+: bm-show-annotations
+
 ** Tools
 *** package search
 
@@ -1799,6 +1996,17 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 #+RESULTS:
 : package-list-packages
+
+*** Sync shell command
+
+#+begin_src emacs-lisp :tangle yes
+
+	(global-set-key (kbd "<insert> 2 2") 'shell-command)
+
+#+end_src
+
+#+RESULTS:
+: shell-command
 
 *** Version control
 **** Magit
@@ -2250,6 +2458,14 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 		(setq org-annotate-file-add-search t)
 		(org-load-modules-maybe t)
 		(setq org-modules (-concat org-modules '(org-annotate-file) ))
+		;; Do not ask confirmation for evaluating Elisp blocks
+		(defun my-org-confirm-babel-evaluate (lang body)
+			(not (member lang '("emacs-lisp"))))
+		(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+
+	(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+
+		(require 'ansi-color)
 
 		(defun org-capture-file-find-storage-file ()
 		(interactive)
@@ -2266,17 +2482,51 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 					;; headlines
 					("<insert> j g" . org-global-cycle)
 					("<insert> j e t" . org-babel-tangle)
+					("<insert> j e m" . org-md-export-to-markdown)
+					("<insert> j e l" . org-latex-export-to-latex)
+					("<insert> j e p" . 'org-latex-export-to-pdf)
 					("<insert> j i t" . org-time-stamp)
+					("<insert> j i h" . org-babel-insert-header-arg)
+					("<insert> j i l" .  org-insert-link)
+					("<insert> j i p" . org-set-property)
 					;; Loging work time
-					("<insert> j t i" . org-clock-in)
-					("<insert> j t o" . org-clock-out)
+					("<insert> j o i" . org-clock-in)
+					("<insert> j o o" . org-clock-out)
 					;; Specials
 					("<insert> j s s" . org-edit-special)
 					("<insert> j s C-w" . org-cut-special)
 					("<insert> j s M-w" . org-copy-special)
 					("<insert> j s C-y" . org-paste-special)
+					;; tables
+					("<insert> j t j" . org-table-previous-field)
+					("<insert> j t l" . org-table-next-field)
+					("<insert> j t f" . org-table-edit-field)
+					("<insert> j t d f" . org-table-blank-field)
+					("<insert> j t a" . org-table-align)
+					;; table edit
+					("<insert> j t C-j" . org-table-move-column-left)
+					("<insert> j t C-l" . org-table-move-column-right)
+					("<insert> j t C-i" . org-table-move-row-up)
+					("<insert> j t C-k" . org-table-move-row-down)
+					("<insert> j t d r" . org-table-kill-row)
+					("<insert> j t c r" . org-table-insert-row)
+					("<insert> j t c c" . org-table-insert-column)
+					("<insert> j t c l" . org-table-insert-hline)
+					("<insert> j t s" . org-table-sort-lines)
+					("<insert> j t M-w" . org-table-copy-region)
+					("<insert> j t C-W" . org-table-cut-region)
+					("<insert> j t C-y" . org-table-paste-rectangle)
+					;; table analitics
+					("<insert> j t +" . org-table-sum)
+					("<insert> j t b" . org-table-import)
+					("<insert> j t e" . org-table-export)
+
 					;; Visualization
 					("<insert> j v l" . org-toggle-link-display)
+					("<insert> j n n" . org-narrow-to-element)
+					("<insert> j n s" . org-narrow-to-subtree)
+					("<insert> j n e" . org-narrow-to-element)
+					("<insert> j n w" . widen)
 					;; Annotation
 					("<insert> a a" . org-annotate-file)
 					("<insert> a f" . org-annotate-file-find-storage-file)
@@ -2417,6 +2667,34 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 #+RESULTS:
 : my/npm-install-required
+
+**** JSON
+***** Bindigs
+#+begin_src emacs-lisp :tangle yes
+
+	(require 'json-mode)
+	(define-key json-mode-map (kbd "<insert> j v p") 'json-pretty-print-buffer)
+	(define-key json-mode-map (kbd "<insert> j v o") 'json-pretty-print-buffer-ordered)
+
+#+end_src
+
+#+RESULTS:
+: json-pretty-print-buffer-ordered
+
+***** Navigator
+
+#+begin_src emacs-lisp :tangle yes
+
+		(use-package json-navigator
+			:straight t
+			:bind
+			(:map json-mode-map
+						("<insert> j j" . 'json-navigator-navigate-after-point)))
+
+#+end_src
+
+#+RESULTS:
+: json-navigator-navigate-after-point
 
 **** Indium JS REPL
 
@@ -2586,6 +2864,120 @@ It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825d
 #+RESULTS:
 | (lambda nil (define-key eshell-mode-map (kbd <insert> h h) (quote esh-help-run-help))) | #[nil \301\300!\210\302\211\207 [eldoc-documentation-function make-local-variable esh-help-eldoc-command] 2] | (lambda nil (setup-esh-help-eldoc)) | (lambda nil (require (quote eshell-prompt-extras)) (setq eshell-highlight-prompt nil eshell-prompt-function (quote epe-theme-lambda))) | (lambda nil (autoload (quote epe-theme-lambda) eshell-prompt-extras) (setq eshell-highlight-prompt nil eshell-prompt-function (quote epe-theme-lambda))) | eshell-prompt-extras | setup-eshell-helm-completion | esh-autosuggest-mode |
 
+*** python
+**** Basic python-mode config
+
+#+begin_src emacs-lisp :tangle yes
+
+	(require 'python)
+	(define-key python-mode-map (kbd "<insert> c c") 'run-python)
+	(define-key python-mode-map (kbd "<insert> e b") 'python-shell-send-buffer)
+	(define-key python-mode-map (kbd "<insert> e f") 'python-shell-send-defun)
+	(define-key python-mode-map (kbd "<insert> e r") 'python-shell-send-region)
+	(add-hook 'elpy-mode-hook (lambda ()
+																(color-identifiers-mode t)))
+
+#+end_src
+
+#+RESULTS:
+| lambda | nil | (color-identifiers-mode t) |
+
+**** Elpy
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package elpy
+		:straight t
+		:config
+		;; Enable elpy in all python buffers
+		(elpy-enable)
+		(setq python-shell-interpreter "python3")
+		:bind
+		(:map python-mode-map
+					("<insert> d d" . elpy-doc)
+					("<insert> t t" . elpy-test)
+					("<insert> j r r" . elpy-refactor)
+					("<insert> j f f" . elpy-yapf-fix-code)
+					("<insert> j f c" . elpy-check)
+					("<insert> c o" . elpy-shell-switch-to-buffer)
+					))
+
+#+end_src
+
+#+RESULTS:
+: elpy-shell-switch-to-buffer
+
+**** jedi-company autocompletion
+
+Elpy company based completion system does not use company-quickhelp. So I use different packages.
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package company-jedi
+		:ensure t
+		:init
+		(add-hook 'python-mode-hook (lambda () (add-to-list 'company-backends 'company-jedi)))
+		(setq company-jedi-python-bin "python"))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+**** Python virtual environment
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package pyvenv
+		:straight t
+		:bind
+		(:map python-mode-map
+					("<insert> j e w" . pyvenv-workon)
+					("<insert> j e a" . pyvenv-activate)
+					("<insert> j e d" . pyvenv-deactivate)
+					("<insert> j e c" . pyvenv-create)
+					("<insert> c r" . pyvenv-restart-python)))
+
+#+end_src
+
+#+RESULTS:
+: pyvenv-restart-python
+
+*** Nix
+**** Nix mode
+
+#+begin_src emacs-lisp :tangle yes :results none
+
+	(use-package nix-mode
+		:straight t
+		:mode
+		("\\.nix\\'"))
+
+	(use-package company-nixos-options
+		:straight t
+		:demand t
+		:config
+		(add-hook 'nix-mode-hook
+								(lambda ()
+									(setq-local company-backends
+															(append '((company-nixos-options
+																				 :separate
+																				 company-dabbrev)))))))
+
+#+end_src
+
+**** Helm nixos options
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package helm-nixos-options
+		:straight t
+		:bind
+		("<insert> h n" . helm-nixos-options))
+
+#+end_src
+
+#+RESULTS:
+: helm-nixos-options
 *** Ansible
 **** Syntax highlight
 #+begin_src emacs-lisp :tangle yes
@@ -2657,6 +3049,13 @@ It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825d
 #+RESULTS:
 : inf-mongo
 
+**** Async org babel code evaluation
+
+#+begin_src emacs-lisp :tangle yes
+	(use-package ob-async
+		:straight t
+		:demand t)
+#+end_src
 * Tests
 * Post Configuration
 #+begin_src emacs-lisp :tangle yes  
