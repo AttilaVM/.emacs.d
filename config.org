@@ -763,7 +763,7 @@ Much better than tainting the =init.el= file.
 
 #+begin_src emacs-lisp :tangle yes
 
-	(define-key global-map (kbd "H-n") 'universal-argument)
+	(define-key global-map (kbd "<insert> n") 'universal-argument)
 	(define-key universal-argument-map (kbd "C-u") nil)
 	(define-key universal-argument-map (kbd "H-n") 'universal-argument-more)
 	(define-key global-map (kbd "C-u") 'kill-whole-line)
@@ -2089,7 +2089,26 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : git-link-homepage
 
+*** Commint mode
+**** Commint mode bindings
+
+#+begin_src emacs-lisp :tangle yes
+(define-key comint-mode-map (kbd "M-i") 'comint-previous-input)  
+(define-key comint-mode-map (kbd "M-k") 'comint-next-input)
+#+end_src
+
+#+RESULTS:
+: comint-next-input
+
 *** File management
+**** Edit dired as normal buffer
+
+#+begin_src emacs-lisp :tangle yes
+
+(define-key dired-mode-map (kbd "<insert> j e") 'wdired-change-to-wdired-mode)
+  
+#+end_src
+
 **** Toggle dired listing modes
 
 #+begin_src emacs-lisp :tangle yes  
@@ -2462,8 +2481,10 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 		(defun my-org-confirm-babel-evaluate (lang body)
 			(not (member lang '("emacs-lisp"))))
 		(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
-
-	(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+		(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+		;; Use spaces instead of tabs in source code blocks
+		(setq org-src-tab-acts-natively t)
+		(setq org-src-preserve-indentation t)
 
 		(require 'ansi-color)
 
@@ -2539,6 +2560,100 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 
 #+RESULTS:
 : org-edit-src-exit
+
+**** Hooks
+**** Org global properties
+***** Latex header
+
+#+begin_src emacs-lisp :tangle yes
+
+;; (setq org-global-properties '(("LATEX_HEADER" . "\\usepackage{hyperref} \\usepackage{tcolorbox} \\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}")))
+;; (add-to-list 'org-global-properties '("latex_header" . "\\usepackage{hyperref} \\usepackage{tcolorbox} \\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}"))
+
+(setq org-latex-classes '(("article" "\\documentclass[11pt]{article}
+\\usepackage{hyperref}
+\\usepackage{tcolorbox} 
+\\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}"
+	
+	("\\section{%s}" . "\\section*{%s}")
+	("\\subsection{%s}" . "\\subsection*{%s}")
+	("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	("\\paragraph{%s}" . "\\paragraph*{%s}")
+	("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+ ("report" "\\documentclass[11pt]{report}"
+	("\\part{%s}" . "\\part*{%s}")
+	("\\chapter{%s}" . "\\chapter*{%s}")
+	("\\section{%s}" . "\\section*{%s}")
+	("\\subsection{%s}" . "\\subsection*{%s}")
+	("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+ ("book" "\\documentclass[11pt]{book}"
+	("\\part{%s}" . "\\part*{%s}")
+	("\\chapter{%s}" . "\\chapter*{%s}")
+	("\\section{%s}" . "\\section*{%s}")
+	("\\subsection{%s}" . "\\subsection*{%s}")
+	("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+#+end_src
+
+#+RESULTS:
+| article | \documentclass[11pt]{article} |
+
+**** Org helpers
+***** Org list to flat list
+#+begin_src emacs-lisp :tangle yes
+
+	(defun attila/org-list-to-flat-elisp-list (value path-list)
+		(let ((head (car value))
+					(tail (cdr value)))
+			(reverse
+			 (cond
+				((not head)
+				 path-list)
+				((string-or-null-p head)
+				 (attila/org-list-elisp-list tail (add-to-list 'path-list head)))
+				((symbolp head)
+				 (attila/org-list-elisp-list tail path-list))
+				((sequencep head)
+				 (attila/org-list-elisp-list tail (attila/org-list-elisp-list head path-list)))))))
+
+#+end_src
+***** Org list to path list
+
+#+begin_src emacs-lisp :tangle yes
+	(defun attila/org-list-to-path-list (org-list)
+			(let ((my-paths))
+			(defun attila/org-list-to-elisp-list (value dir-list)
+		(let ((head (car value))
+					(tail (cdr value)))
+			 (cond
+				((not head)
+				 (mapconcat 'identity (reverse dir-list) "/"))
+				((string-or-null-p head)
+				 (attila/org-list-to-elisp-list tail (add-to-list 'dir-list head)))
+				((symbolp head)
+				 (attila/org-list-to-elisp-list tail dir-list))
+				((sequencep head)
+				 (add-to-list 'my-paths (attila/org-list-to-elisp-list head dir-list))
+				 (attila/org-list-to-elisp-list tail dir-list)
+				 ))))
+
+			(attila/org-list-to-elisp-list org-list '())
+			my-paths))
+#+end_src
+
+#+RESULTS:
+: attila/org-list-to-path-list
+**** Org customized source blocks
+***** Dockerfile
+
+#+begin_src emacs-lisp :tangle yes
+(defun org-babel-execute:dockerfile (body params)
+  "Execute a block of Foma code with org-babel."
+  (message "executing Foma source code block")
+  (org-babel-eval "dockerfile" body))  
+#+end_src
+
+#+RESULTS:
+: org-babel-execute:dockerfile
 
 **** Org headline search with org-rifle
 
@@ -2942,6 +3057,18 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 #+RESULTS:
 : pyvenv-restart-python
 
+**** Choose python interpreters
+
+#+begin_src emacs-lisp :tangle no
+
+(setq python-shell-interpreter "/docker:base-container:/usr/bin/python3")
+(setq python-shell-interpreter "/ssh:root@172.17.0.3:/usr/bin/python3")
+(setq tramp-histfile-override "/dev/null")
+
+(file-directory-p "/docker:base-container:/usr/bin/python3")
+  
+#+end_src
+
 *** Nix
 **** Nix mode
 
@@ -2978,6 +3105,18 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 
 #+RESULTS:
 : helm-nixos-options
+**** Nix buffer
+
+#+begin_src emacs-lisp :tangle yes
+(use-package nix-buffer
+	:straight t
+	:config
+	(setq nix-buffer-root-file "shell.nix"))  
+#+end_src
+
+#+RESULTS:
+: t
+
 *** Ansible
 **** Syntax highlight
 #+begin_src emacs-lisp :tangle yes

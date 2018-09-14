@@ -3,6 +3,37 @@
 #+OPTIONS: toc:4 h:4
 #+STARTUP overview
 
+* Transform
+** Org list to nested Paths
+
+#+name: celestial-bodies
+- planets
+	- Mercur
+	- Venus
+	- Earth
+		- moon
+- Stars
+	- Sol
+	- Polaris
+	- Betelgeuse
+
+#+name: list-to-path-list
+#+begin_src emacs-lisp :var input=celestial-bodies :results verbatim
+	(attila/org-list-to-path-list input)
+#+end_src
+
+#+RESULTS: list-to-path-list
+: ("Stars" "Stars/Betelgeuse" "Stars/Polaris" "Stars/Sol" "planets" "planets/Earth" "planets/Earth/moon" "planets/Venus" "planets/Mercur")
+
+#+name: flat-list
+- apple
+- peach
+
+#+call: list-to-path-list(input=flat-list)
+
+#+RESULTS:
+: ("peach" "apple")
+
 * Filters
 ** Remove prompt
 
@@ -24,17 +55,19 @@ Remove shell prompt from input. The =prompt-regexp= variable can be overriden.
 ** Remove ANSI colors
 
 Remove ANSI color controll sequences from =input=. However it should colorize it...
+I should look into the =org-babel-insert-result= function to fix this.
 
 #+name:remove-ansi-sequences
-#+begin_src emacs-lisp :var input="[33mTest text[0m" :results raw
+#+begin_src emacs-lisp :var input="[33mTest text[0m" :results raw replace
 
-	(insert (ansi-color-apply input))
+	(ansi-color-apply input)
 
-#+end_src
+#+end_src 
 
 #+RESULTS: remove-ansi-sequences
 Test text
-
+Test text
+Test text
 
 ** Remove empty lines
 
@@ -104,3 +137,44 @@ It is much cleaner to add org babel global variables in a table format. This cod
 
 #+call: table-to-variables(input=var-table)
 #+call: table-to-variables(input=var-table, lang="shell")
+* Effect
+** File-system
+*** File-tree from nested list
+
+
+
+#+name: file-tree
+- app
+	- internal
+- test
+- doc
+	- web
+	- pdf
+- scripts
+	- deploy
+		- azure
+		- hyper
+
+#+name: flat-file-tree
+- app
+- scripts
+
+#+name: mkdir-from-list
+#+begin_src emacs-lisp :var input=file-tree target-dir="" :results silent
+	(string-empty-p target-dir)
+
+	(let* ((path-list (attila/org-list-to-path-list input))
+				(prefix-path (if (string-empty-p target-dir)
+													default-directory
+											 target-dir))
+				(prefixed-paths (mapcar (lambda (path)
+																	(f-join prefix-path path)) path-list)))
+		(dolist (dir-path prefixed-paths)
+			(unless (file-executable-p dir-path)
+				(make-directory dir-path))))
+#+end_src
+
+#+RESULTS: mkdir-from-list
+: nil
+
+#+call: mkdir-from-list(input=flat-file-tree)
