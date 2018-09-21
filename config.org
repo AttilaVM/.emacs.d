@@ -401,6 +401,16 @@ Emacs gets really slow when very long lines are present. We will use this value 
 #+RESULTS:
 : attila/to-string
 
+**** Up Case or Down case
+
+#+begin_src emacs-lisp :tangle yes
+(defun attila/up-case-p (char)
+	(> ?a char))  
+#+end_src
+
+#+RESULTS:
+: attila/up-case-p
+
 *** UX
 **** Smart line beginning
 #+begin_src emacs-lisp :tangle yes  
@@ -534,6 +544,26 @@ Rename buffer or file and buffer if it is already saved.
 				(indent-for-tab-command)))
 
 #+end_src
+**** Up/Down case
+
+#+begin_src emacs-lisp :tangle yes
+
+(defun attila/up-down-case-toggle ()
+	(interactive)
+	(save-excursion
+		(let ((beg (point))
+					(is-upcase (attila/up-case-p
+											(get-byte (- (point) 1)))))
+			(message (symbol-name is-upcase))
+			(if is-upcase
+					(downcase-region beg (search-backward " "))
+				(upcase-region beg (search-backward " "))))))
+
+#+end_src
+
+#+RESULTS:
+: attila/up-down-case-toggle
+
 ** Appearance
 *** Layout
 
@@ -1293,6 +1323,16 @@ Run Emacs as a server and connect to it with =emacsclient= from the CLI. This fu
 #+RESULTS:
 : 20
 
+*** History navigation hotkeys
+
+#+begin_src emacs-lisp :tangle yes
+(global-set-key (kbd "M-i") 'previous-history)  
+(global-set-key (kbd "M-i") 'next-history-element)  
+#+end_src
+
+#+RESULTS:
+: next-history-element
+
 *** Centralized backup and auto-clean backup dir
 
 Make Emacs to write backup and auto-save files in a [[https://www.emacswiki.org/emacs/BackupDirectory][specific directory]] instead of messing up the project file trees. 
@@ -1692,6 +1732,17 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 #+RESULTS:
 : attila-sp-unwrap-sexp
+
+*** Up or down case toggle
+
+#+begin_src emacs-lisp :tangle yes
+
+(global-set-key (kbd "H-n") 'attila/up-down-case-toggle)
+  
+#+end_src
+
+#+RESULTS:
+: attila/up-down-case-toggle
 
 *** Auto-completion with company
 #+begin_src emacs-lisp :tangle yes  
@@ -2224,6 +2275,23 @@ For bindigs ceck hydra config
 
 #+RESULTS:
 : attila/srt-remove-time
+
+*** Debugger
+
+#+begin_src emacs-lisp :tangle yes
+
+(use-package realgud
+	:straight t
+	:config
+	(setq realgud:ipdb-command-name "ipdb")
+	:bind
+	;; Associate source buffers to command buffers
+	("<insert> / a" . realgud-short-key-mode))
+  
+#+end_src
+
+#+RESULTS:
+: realgud-short-key-mode
 
 ** Information gathering
 *** Default browser
@@ -2984,14 +3052,24 @@ It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825d
 
 #+begin_src emacs-lisp :tangle yes
 
-	(require 'python)
-	(define-key python-mode-map (kbd "<insert> c c") 'run-python)
-	(define-key python-mode-map (kbd "<insert> e b") 'python-shell-send-buffer)
-	(define-key python-mode-map (kbd "<insert> e f") 'python-shell-send-defun)
-	(define-key python-mode-map (kbd "<insert> e r") 'python-shell-send-region)
-	(add-hook 'elpy-mode-hook (lambda ()
-																(color-identifiers-mode t)))
+(require 'python)
 
+(defun attila/run-python ()
+	(interactive)
+	(if (buffer-live-p (get-buffer "*Python*"))
+			(progn
+				(kill-buffer "*Python*")
+				(call-interactively 'run-python))
+		(call-interactively 'run-python)))
+
+
+(define-key python-mode-map (kbd "<insert> c c") 'attila/run-python)
+(define-key python-mode-map (kbd "<insert> c m") 'run-python)
+(define-key python-mode-map (kbd "<insert> e b") 'python-shell-send-buffer)
+(define-key python-mode-map (kbd "<insert> e f") 'python-shell-send-defun)
+(define-key python-mode-map (kbd "<insert> e r") 'python-shell-send-region)
+(add-hook 'elpy-mode-hook (lambda ()
+														(color-identifiers-mode t)))
 #+end_src
 
 #+RESULTS:
@@ -3165,6 +3243,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 			 '((mongo . t)
 				 (shell . t)
          (js . t)
+				 (R . t)
 				 (python . t))))
 
 #+end_src
