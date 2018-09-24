@@ -8,9 +8,7 @@
 
 (defvar user-emacs-config-file (getenv "EMACS_CONFIG") "path to user alternative config file")
 
-(if user-emacs-config-file
-		(load user-emacs-config-file)
-	(load "~/.emacs.d/init-old.el"))
+(load "~/.emacs.d/config.el")
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
