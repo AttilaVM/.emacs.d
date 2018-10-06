@@ -13,6 +13,8 @@
 				my/smarter-move-beginning-of-line
 				my/yas-next-field-or-forward-sexp
 				my/yas-previous-field-or-backward-sexp
+				org-ctrl-c-ctrl-c
+				org-force-self-insert
 				org-self-insert-command
 				tern-ac-dot-complete
 				yaml-electric-backspace
