@@ -15,6 +15,7 @@
 				my/yas-previous-field-or-backward-sexp
 				org-self-insert-command
 				tern-ac-dot-complete
+				yaml-electric-backspace
 				yaml-electric-dash-and-dot
 				))
 

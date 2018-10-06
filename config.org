@@ -6,7 +6,7 @@
 * Introduction
 ** Rationale
 I recently recreate my Linux workflow from the ground, I switched to NixOS with Xmonad, use Ansible for portable user configuration, and more importantly I am rewriting my Emacs configuration in [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org Mode Babel]], using [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]]. A Org Babel is a meta programming language, no not like Lisp ;) with org mode you can meta program and glue together any kind of programming languages, in surprisingly convenient way. It is something what [[https://jupyter.org/][Jupyter Notebook]] will become in one hundred years if we are lucky
-.   
+.
 I have a lot of going on so I have no time to explain everything, yet... Thankfully there are brilliant examples out there, like [[http://pages.sachachua.com/.emacs.d/Sacha.html#babel-init][Sacha Chua's Emacs Configuration]], which has  nice explanations.
 ** Goals
 *** Short term
@@ -24,7 +24,7 @@ I have a lot of going on so I have no time to explain everything, yet... Thankfu
 
 You need a rather unique environment to use this configuration. First you need to change your key map. On X you need to create a =~/.Xmodmap= file:
 
-#+begin_src   
+#+begin_src
 
 clear lock
 
@@ -43,8 +43,8 @@ keycode 104 = Return
 
 It maps the =hyper= ([[https://en.wikipedia.org/wiki/Space-cadet_keyboard][big thanks to the ancient Space-cadet keyboard]]) modifier key to physical =Caps Lock= , =Left Alt= to =Tab= and =Right Alt= to =Return= (Enter) and =Caps Lock= to =Insert=. Yep this will eliminate your =Tab=, =Reture= and =Insert= keys. However we can devise a way to make a modifier key act as a regular key if pressed and released without pressing another key by using [[https://github.com/alols/xcape][xcape]]. Use your package manager to install it, and run the following command after your X startup.:
 
-#+begin_src   
-xcape -t 150 -e "Hyper_L=Insert;Alt_L=Tab;Alt_R=Return" 
+#+begin_src
+xcape -t 150 -e "Hyper_L=Insert;Alt_L=Tab;Alt_R=Return"
 #+end_src
 
 Solved. If you wonder why on earth we put the =Insert= key to such a convenient position, since it invokes a totally useless functionality... Well that it is the point, since nobody will miss the text overwriting mode we can bind =Insert= (physically =Caps Lock=) as an universal prefix key in our applications, which has support for concatenating hotkey strokes like *Emacs*, *Tmux*, *Xmonad* and with some python hackery *Blender*. To prove my point I will list some of my Emacs key bindings.
@@ -55,12 +55,12 @@ Solved. If you wonder why on earth we put the =Insert= key to such a convenient 
 | <insert> p f    | List all file in project               |
 | <insert> ; h    | Select whole buffer                    |
 | <insert> ; d    | Select a region between two avy jumps |
-  
+
 * User info
 
 Here is where the configuration actually begins.
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(defvar user-cursor-color "#a6e22e")
 	(defvar user-seek-mode-color "#E52B50")
@@ -78,7 +78,7 @@ Here is where the configuration actually begins.
 ** Elisp
 *** Require common lisp
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
     (require 'cl)
 #+end_src
 
@@ -86,30 +86,30 @@ Here is where the configuration actually begins.
 
 Set the maximum numbers of variable bindings, recursive call limit, garbage collector threshold and set CWD to =~/.emacs.d=.
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
   (setq max-specpdl-size 10000)
   (setq max-lisp-eval-depth 10000)
 #+end_src
 
 *** Garbage collection byte threshold
-		 
+
 Emacs has a blocking garbage collector, and its collection threshold is very low by default (8KB), so much of time is spent by the GC. On a modern machine this can be mitigated by increasing the GC threshold limit to 20MB, as recommended by the [[https://github.com/lewang/flx][flx package documentation]]
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
   (setq gc-cons-threshold 20000000)
 #+end_src
 
 *** Default directory
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
   (setq default-directory "~/.emacs.d")
 #+end_src
 
 ** Localization
 
-Ensure global UTF-8 usage, enable hyper and super key on windows. 
+Ensure global UTF-8 usage, enable hyper and super key on windows.
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(set-language-environment "UTF-8")
 	(set-default-coding-systems 'utf-8)
@@ -126,20 +126,20 @@ Ensure global UTF-8 usage, enable hyper and super key on windows.
 *** Disable bidi reordering
 bidi display reordering makes Emacs significantly slower, especially when [[http://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow][displaying long lines]].
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
   (setq bidi-display-reordering nil)
 #+end_src
 
 *** Disable auto vertical scrolling
 Disable auto vertical scroll adjusting for tall lines
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
   (setq auto-window-vscroll nil)
 #+end_src
 
 ** undefine keys
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(global-unset-key (kbd "<insert>"))
 	(global-unset-key (kbd "<left>"))
@@ -177,12 +177,12 @@ Disable auto vertical scroll adjusting for tall lines
 * Configuration
 :PROPERTIES:
 :CUSTOM_ID: babel-init
-:END:      
+:END:
 	<<babel-init>>
 ** Bootstrap
 *** Set repositories
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(unless (assoc-default "melpa" package-archives)
 		(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
@@ -197,7 +197,7 @@ Disable auto vertical scroll adjusting for tall lines
 
 =straight.el= git clone given packages and byte compiles them, while inter-operates with =use-package=.
 
- #+begin_src emacs-lisp :tangle yes 
+ #+begin_src emacs-lisp :tangle yes
 		 (let ((bootstrap-file
 						(concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
 					 (bootstrap-version 3))
@@ -262,7 +262,7 @@ request: convenient HTTP request library
 	(use-package loop          :defer  :straight t)
 	(use-package async         :defer  :straight t)
 	(use-package deferred      :defer  :straight t)
-	(use-package diminish      :demand :straight t) 
+	(use-package diminish      :demand :straight t)
 	(use-package el-mock       :defer  :straight t)
 	(use-package ghub          :defer  :straight t)
 	(use-package ghub+         :defer  :straight t)
@@ -280,7 +280,7 @@ request: convenient HTTP request library
 
 Emacs built-in function =server-running-p= can only speak for its own Emacs instance.
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(defun attila/server-running-p ()
 		"Returs true if an Emacs server is running on the system."
@@ -296,7 +296,7 @@ Emacs built-in function =server-running-p= can only speak for its own Emacs inst
 **** Add function to multiple hooks
 
  #+begin_src emacs-lisp :tangle yes
- 
+
    (defun attila/add-hooks (hooks mode)
      "Add one mode to multiple hooks"
      (dolist (hook hooks)
@@ -309,7 +309,7 @@ Emacs built-in function =server-running-p= can only speak for its own Emacs inst
 
 **** Get first value from list which evaluates true by predicate
 
- #+begin_src emacs-lisp :tangle yes  
+ #+begin_src emacs-lisp :tangle yes
 
    (defun attila/get-first-true (list filter)
      "Get first value from list which evaluates true by predicate"
@@ -325,7 +325,7 @@ Emacs built-in function =server-running-p= can only speak for its own Emacs inst
 
 Borrowed from marshal.el
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
 
 	(defun attila/alist-merge (alist1 alist2 &optional append)
 		(let ((res alist1))
@@ -359,7 +359,7 @@ Borrowed from marshal.el
 
 Emacs gets really slow when very long lines are present. We will use this value for disable some feature in favor of speed in that scenario.
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
 
 	(defun attila/buffer-line-char-ratio ()
 		(interactive)
@@ -373,7 +373,7 @@ Emacs gets really slow when very long lines are present. We will use this value 
 
 **** Big buffer predicate
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(defun attila/big-buffer-p ()
 		(if (and (> (attila/buffer-line-char-ratio) 0.1)
@@ -405,7 +405,7 @@ Emacs gets really slow when very long lines are present. We will use this value 
 
 #+begin_src emacs-lisp :tangle yes
 (defun attila/up-case-p (char)
-	(> ?a char))  
+	(> ?a char))
 #+end_src
 
 #+RESULTS:
@@ -413,7 +413,7 @@ Emacs gets really slow when very long lines are present. We will use this value 
 
 *** UX
 **** Smart line beginning
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
   (defun attila-smart-move-beginning-of-line (arg)
     "Move point back to indentation of beginning of line.
 
@@ -595,7 +595,7 @@ Rename buffer or file and buffer if it is already saved.
 #+end_src
 
 #+RESULTS:
-		
+
 *** Relevant syntax highlight
 
 #+begin_src emacs-lisp :tangle yes
@@ -640,7 +640,7 @@ Rename buffer or file and buffer if it is already saved.
 
 Highlight parentheses at point and its pair. Use rainbow colors for the different nesting levels of parenthesis.
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
 (show-paren-mode 1)
 
 (use-package rainbow-delimiters
@@ -682,7 +682,7 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 *** Colorize compilation buffer
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
 (require 'ansi-color)
 
 (defun colorize-compilation-buffer ()
@@ -695,7 +695,7 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 *** Highlight point on window scroll
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package beacon
 		:straight t
@@ -714,7 +714,7 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 *** Highlight  page intersection on scrolling
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
   (use-package highlight-context-line
     :straight t
@@ -734,16 +734,16 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 		(sublimity-mode 1))
 
 #+end_src
-*** Visual line wrapping 
+*** Visual line wrapping
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 		(attila/add-hooks
 		 '(Man-mode-hook
 			 org-mode-hook
 			 markdown-mode-hook)
 		 (lambda ()
-			 (visual-line-mode)))  
+			 (visual-line-mode)))
 
 	(diminish 'visual-line-mode "𝌓")
 #+end_src
@@ -752,7 +752,7 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 *** Indentation adaptive visual line wrapping
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package adaptive-wrap
 		:straight t
@@ -826,7 +826,7 @@ Much better than tainting the =init.el= file.
 	(global-set-key (kbd "<insert> 3 v") 'split-window-below)
 	(global-set-key (kbd "<insert> 3 h") 'split-window-horizontally)
 	;; expand active window
-	(global-set-key (kbd "<insert> 3 e") 'delete-other-windows) 
+	(global-set-key (kbd "<insert> 3 e") 'delete-other-windows)
 	(global-set-key (kbd "<insert> 3 k") 'delete-window)
 	(global-set-key (kbd "<insert> 3 t") 'toggle-truncate-lines)
 	(global-set-key (kbd "<insert> 3 t") 'toggle-truncate-lines)
@@ -839,7 +839,7 @@ Much better than tainting the =init.el= file.
 
 *** Helm
 **** Helm core
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package helm
 		:straight t
@@ -862,7 +862,7 @@ Much better than tainting the =init.el= file.
 		 helm-scroll-amount                    8
 		 ;; simultanusly displayed candiate limit
 		 helm-candidate-number-limit 100
-		 ;; delay to update candidate list 
+		 ;; delay to update candidate list
 		 helm-input-idle-delay 0.1
 		 ;; Use the recent file, when finding files
 		 helm-ff-file-name-history-use-recentf t)
@@ -917,7 +917,7 @@ Much better than tainting the =init.el= file.
 		 ("<insert> h e f" . describe-function)
 		 ("<insert> h e k" . describe-key-briefly)
 		 ("<insert> h e m" . describe-mode)
-		 ;; ??? 
+		 ;; ???
 		 ("<C-kp-4>" . sm/toggle-showcss)
 		 ("<insert> i c" . helm-colors))
 		:bind
@@ -925,8 +925,8 @@ Much better than tainting the =init.el= file.
 					("<insert> j j" . helm-select-action)
 					("<insert> r" . helm-ff-run-find-file-as-root)
 					("<insert> d d" . dired-find-file)
-					("<insert> d o" . dired-find-file) 
-					("C-k" . helm-next-line) 
+					("<insert> d o" . dired-find-file)
+					("C-k" . helm-next-line)
 					("C-i" . helm-previous-line)
 					("C-j" . helm-execute-persistent-action)
 					)
@@ -950,7 +950,7 @@ Much better than tainting the =init.el= file.
 
 **** Helm projectile
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package projectile
 		:straight t
@@ -1033,7 +1033,7 @@ Much better than tainting the =init.el= file.
   (when (display-graphic-p)
     (progn
       (global-unset-key (kbd "C-z"))
-      (global-unset-key (kbd "C-x C-z"))))  
+      (global-unset-key (kbd "C-x C-z"))))
 
 #+end_src
 
@@ -1058,7 +1058,7 @@ Much better than tainting the =init.el= file.
 
 *** Navigation
 **** Switch&rotate windows, switch frames
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
   (defun rotate-windows (arg)
     "Rotate your windows; use the prefix argument to rotate the other direction"
@@ -1088,8 +1088,8 @@ Much better than tainting the =init.el= file.
 #+end_src
 
 **** Move chars and lines
-		 
-#+begin_src emacs-lisp :tangle yes  
+
+#+begin_src emacs-lisp :tangle yes
   (global-set-key (kbd "H-j") 'backward-char)
   (global-set-key (kbd "H-l") 'forward-char)
   (global-set-key (kbd "H-k") 'next-line)
@@ -1109,7 +1109,7 @@ Much better than tainting the =init.el= file.
 
 **** sub-word jumps
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 	(attila/add-hooks
 	 '(js-mode-hook
 		 org-mode-hook
@@ -1155,7 +1155,7 @@ I use key-chords to invoke avy functions
 			(call-interactively 'avy-goto-char)
 			(call-interactively 'set-mark-command)
 			(call-interactively 'avy-goto-char))
-	
+
 		(defun attila/avy-select-char-2 ()
 			(interactive)
 			(call-interactively 'avy-goto-char-2)
@@ -1195,7 +1195,7 @@ I use key-chords to invoke avy functions
 
 **** Forward/backward sexp and sentences
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
 
 	(global-set-key (kbd "H-'") 'forward-sexp)
 	(global-set-key (kbd "H-;") 'backward-sexp)
@@ -1209,7 +1209,7 @@ I use key-chords to invoke avy functions
 
 **** Forward/backward sentence
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(global-set-key (kbd "H-M-;") 'backward-sentence)
   (global-set-key (kbd "H-M-'") 'forward-sentence)
@@ -1221,11 +1221,11 @@ I use key-chords to invoke avy functions
 
 *** key chords
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package key-chord
 		:straight t
-		:init 
+		:init
 		(add-hook 'after-init-hook
 							(lambda () (key-chord-mode t)))
 		:config
@@ -1246,7 +1246,7 @@ I use key-chords to invoke avy functions
 *** Selection
 **** Select whole buffer
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(global-set-key (kbd "<insert> ; h") 'mark-whole-buffer)
 
@@ -1272,7 +1272,7 @@ Bindings defined with hydra
 
 Allow eldoc to show function synopsis in the echo area in multiple line if needed.
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
   (use-package eldoc
     :straight t
@@ -1284,7 +1284,7 @@ Allow eldoc to show function synopsis in the echo area in multiple line if neede
      'turn-on-eldoc-mode)
     :config
     (setq eldoc-echo-area-use-multiline-p t))
-    
+
 
 #+end_src
 
@@ -1311,7 +1311,7 @@ Run Emacs as a server and connect to it with =emacsclient= from the CLI. This fu
 
 *** Recently edited files
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(require 'recentf)
 	(setq recentf-max-saved-items 300)
@@ -1325,8 +1325,8 @@ Run Emacs as a server and connect to it with =emacsclient= from the CLI. This fu
 *** History navigation hotkeys
 
 #+begin_src emacs-lisp :tangle yes
-(global-set-key (kbd "M-i") 'previous-history)  
-(global-set-key (kbd "M-i") 'next-history-element)  
+(define-key comint-mode-map (kbd "M-i") 'previous-history)
+(define-key comint-mode-map (kbd "M-i") 'next-history-element)
 #+end_src
 
 #+RESULTS:
@@ -1334,7 +1334,7 @@ Run Emacs as a server and connect to it with =emacsclient= from the CLI. This fu
 
 *** Centralized backup and auto-clean backup dir
 
-Make Emacs to write backup and auto-save files in a [[https://www.emacswiki.org/emacs/BackupDirectory][specific directory]] instead of messing up the project file trees. 
+Make Emacs to write backup and auto-save files in a [[https://www.emacswiki.org/emacs/BackupDirectory][specific directory]] instead of messing up the project file trees.
 
 #+begin_src emacs-lisp :tangle yes
 (setq delete-old-versions -1)
@@ -1359,7 +1359,7 @@ Make Emacs to write backup and auto-save files in a [[https://www.emacswiki.org/
 
 Delete backup files older then a week
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
   (let ((week (* 60 60 24 7))
         (current (float-time (current-time))))
@@ -1422,6 +1422,33 @@ modified it to use async shell command.
 
 #+RESULTS:
 : attila/prelude-open-with
+
+*** Whitespace cleaning
+
+Trimming whitespaces from line endings is important, except when a project is already reaaly messed up, so this will be a switchable feature.
+
+#+begin_src emacs-lisp :tangle yes
+
+(defvar attila/whitespace-clean-p t "If t whitespace triming will be executed on every save.")
+
+(defun attila/whitespace-clean-toggle ()
+	(interactive)
+	(setq attila/whitespace-clean-p (not attila/whitespace-clean-p))
+	(if attila/whitespace-clean-p
+			(message "Whitespace cleaning is ON")
+		(message "Whitespace cleaning is OFF")))
+
+(add-hook 'before-save-hook (lambda ()
+															(when attila/whitespace-clean-p
+																(delete-trailing-whitespace))))
+
+(global-set-key (kbd "<insert> o w t") 'attila/whitespace-clean-toggle)
+(global-set-key (kbd "<insert> o w s") 'whitespace-mode)
+
+#+end_src
+
+#+RESULTS:
+: whitespace-mode
 
 ** Editing
 *** Hydra
@@ -1658,7 +1685,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 *** Undo tree
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package undo-tree
 		:straight t
@@ -1679,7 +1706,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 *** Multiple cursors
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 	(use-package multiple-cursors
 		:straight t
 		:bind
@@ -1696,17 +1723,17 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 *** Ask for "y" or "n" for saving
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
 *** Parentheses
 **** Kill sexp when point is at ( or )
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package smartparens
-		:straight t 
+		:straight t
 		:defer 2
 		:diminish smartparens-mode "⚖"
 		:init
@@ -1743,14 +1770,14 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+begin_src emacs-lisp :tangle yes
 
 (global-set-key (kbd "H-n") 'attila/up-down-case-toggle)
-  
+
 #+end_src
 
 #+RESULTS:
 : attila/up-down-case-toggle
 
 *** Auto-completion with company
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package company
 		:straight t
@@ -1795,7 +1822,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 **** Data
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 	(defvar my/yas-data-og-types '("website"
 																"article"
 																"book"
@@ -1816,7 +1843,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 **** Core
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 	(use-package yasnippet
 		:straight t
 		:diminish yas-minor-mode
@@ -1887,7 +1914,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 *** Smart insertions
 **** Path insertions
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(defun attila/insert-file-name-relative (filename)
 			"Insert relative path to FILENAME into buffer after point"
@@ -1921,7 +1948,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : attila/line-duplicate-below
 
-*** Spell checking 
+*** Spell checking
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1952,7 +1979,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 			"Check word at point with helm-flyspell"
 			(interactive)
 			(let ((misspelled-word (car (flyspell-get-word))))
-			(helm-flyspell-correct)		
+			(helm-flyspell-correct)
 			(message (concat misspelled-word " --> " (car (flyspell-get-word))))))
 
 		(defun attila/flyspell-check-next-highlighted-word ()
@@ -2032,7 +2059,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 									("<insert> a t" . bm-toggle)
 									("<insert> a s" . bm-show-all)
 									("<insert> a a" . bm-show-annotations)
-								
+
 									)
 					 )
 
@@ -2066,7 +2093,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 *** Version control
 **** Magit
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package magit
 		:straight t
@@ -2149,7 +2176,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 **** Commint mode bindings
 
 #+begin_src emacs-lisp :tangle yes
-(define-key comint-mode-map (kbd "M-i") 'comint-previous-input)  
+(define-key comint-mode-map (kbd "M-i") 'comint-previous-input)
 (define-key comint-mode-map (kbd "M-k") 'comint-next-input)
 #+end_src
 
@@ -2162,12 +2189,12 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+begin_src emacs-lisp :tangle yes
 
 (define-key dired-mode-map (kbd "<insert> j e") 'wdired-change-to-wdired-mode)
-  
+
 #+end_src
 
 **** Toggle dired listing modes
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 	(require 'dired)
 
 	(setq dired-listing-switches "-lh")
@@ -2203,7 +2230,7 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 
 Source: https://www.masteringemacs.org/article/working-multiple-files-dired
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(require 'find-dired)
 	(setq find-ls-option '("-print0 | xargs -0 ls -ld" . "-ld"))
@@ -2219,7 +2246,7 @@ Source: https://www.masteringemacs.org/article/working-multiple-files-dired
 
 For bindigs ceck hydra config
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package peep-dired
 		:straight t
@@ -2269,7 +2296,7 @@ For bindigs ceck hydra config
 				(search-forward "-->")
 				(next-line)
 				(beginning-of-line)
-				(call-interactively 'set-mark-command) 
+				(call-interactively 'set-mark-command)
 				(previous-line 2)
 				(beginning-of-line)
 				(kill-region (region-beginning) (region-end))))
@@ -2292,16 +2319,24 @@ For bindigs ceck hydra config
 	:bind
 	;; Associate source buffers to command buffers
 	("<insert> / a" . realgud-short-key-mode))
-  
+
 #+end_src
 
 #+RESULTS:
 : realgud-short-key-mode
 
+*** Network
+
+#+begin_src emacs-lisp :tangle yes
+
+(use-package pcap-mode
+	:straight t)
+
+#+end_src
 ** Information gathering
 *** Default browser
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
   (setq gnus-button-url 'browse-url-generic
         browse-url-browser-function gnus-button-url
@@ -2329,9 +2364,9 @@ For bindigs ceck hydra config
 
 Break lines when displaying man pages.
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
-		(use-package man 
+		(use-package man
 			:straight t
 			:commands
 			helm-man-woman)
@@ -2342,7 +2377,7 @@ Break lines when displaying man pages.
 
 *** info pages
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
   (use-package info-buffer
     :straight t
@@ -2445,7 +2480,7 @@ Break lines when displaying man pages.
 ** Programming
 *** Elisp
 **** Evaluation
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(defun attila/lisp-eval-region-or-buffer ()
 		"Eval region if selected, otherwise eval the buffer"
@@ -2463,7 +2498,7 @@ Break lines when displaying man pages.
 
 **** Edebug
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(define-key emacs-lisp-mode-map (kbd "<insert> d f") 'edebug-defun)
 	(define-key lisp-mode-map (kbd "<insert> d f") 'edebug-defun)
@@ -2527,7 +2562,7 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 
 	(provide 'org-version)
 
-	;; (straight-use-package 'org) ;; or org-plus-contrib if desired  
+	;; (straight-use-package 'org) ;; or org-plus-contrib if desired
 
 #+end_src
 
@@ -2645,9 +2680,9 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 
 (setq org-latex-classes '(("article" "\\documentclass[11pt]{article}
 \\usepackage{hyperref}
-\\usepackage{tcolorbox} 
+\\usepackage{tcolorbox}
 \\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}"
-	
+
 	("\\section{%s}" . "\\section*{%s}")
 	("\\subsection{%s}" . "\\subsection*{%s}")
 	("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -2722,7 +2757,7 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 (defun org-babel-execute:dockerfile (body params)
   "Execute a block of Foma code with org-babel."
   (message "executing Foma source code block")
-  (org-babel-eval "dockerfile" body))  
+  (org-babel-eval "dockerfile" body))
 #+end_src
 
 #+RESULTS:
@@ -2730,7 +2765,7 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 
 **** Org headline search with org-rifle
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package helm-org-rifle
 		:straight t
@@ -2875,17 +2910,17 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 ***** Navigator
 
 #+begin_src emacs-lisp :tangle yes
-
-		(use-package json-navigator
-			:straight t
-			:bind
-			(:map json-mode-map
-						("<insert> j j" . 'json-navigator-navigate-after-point)))
+(require 'json-mode)
+(use-package json-navigator
+	:straight t
+	:bind
+	(:map json-mode-map
+				("<insert> j j" . 'json-navigator-navigate-after-point)))
 
 #+end_src
 
 #+RESULTS:
-: json-navigator-navigate-after-point
+: t
 
 **** Indium JS REPL
 
@@ -2924,7 +2959,7 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 **** LESS
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package less-css-mode
 		:straight t
@@ -2937,7 +2972,7 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 #+RESULTS:
 **** WebKit Color picker
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
   (when (>= emacs-major-version 26)
           (use-package webkit-color-picker
     :ensure t
@@ -2950,7 +2985,7 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 #+begin_src emacs-lisp :tangle yes
 
-  
+
 
 #+end_src
 *** Shell
@@ -3152,7 +3187,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 (setq tramp-histfile-override "/dev/null")
 
 (file-directory-p "/docker:base-container:/usr/bin/python3")
-  
+
 #+end_src
 
 **** Jinja2 templating
@@ -3161,7 +3196,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 
 (use-package jinja2-mode
 	:straight t)
-  
+
 #+end_src
 
 #+RESULTS:
@@ -3208,7 +3243,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 (use-package nix-buffer
 	:straight t
 	:config
-	(setq nix-buffer-root-file "shell.nix"))  
+	(setq nix-buffer-root-file "shell.nix"))
 #+end_src
 
 #+RESULTS:
@@ -3235,7 +3270,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 #+end_src
 **** Code completion
 
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package company-ansible
 		:straight t
@@ -3252,7 +3287,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 
 *** MongoDB
 **** Babel with MongoDB
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package ob-mongo
 		:straight t
@@ -3298,7 +3333,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 #+begin_src emacs-lisp :tangle yes
 (use-package ini-mode
 	:straight t
-	:mode ("\\.ini\\'"))  
+	:mode ("\\.ini\\'"))
 #+end_src
 
 #+RESULTS:
@@ -3306,7 +3341,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 
 * Tests
 * Post Configuration
-#+begin_src emacs-lisp :tangle yes  
+#+begin_src emacs-lisp :tangle yes
 
 	(when (file-readable-p custom-file)
 		(load custom-file))
@@ -3343,7 +3378,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 *** helm-mini or helm-buffer-list
 *** expand-region
 Expand/shrink selection by semantic regions
-*** Parinfer mode or Lispy  
+*** Parinfer mode or Lispy
 
 foo
 
