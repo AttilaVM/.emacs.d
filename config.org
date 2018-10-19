@@ -2070,7 +2070,59 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 : bm-show-annotations
 
 ** Tools
-*** package search
+*** Terminal
+
+#+begin_src emacs-lisp :tangle yes
+(use-package multi-term
+	:straight t
+	:config
+	(setq multi-term-buffer-name "term"
+        multi-term-program "/bin/zsh")
+
+	(defun attila/term-toggle-line-char-modes ()
+		(interactive)
+		(if (term-in-line-mode)
+				(term-char-mode)
+			(term-line-mode)))
+
+  (defun attila/paste-text ()
+			(interactive)
+		(comint-send-string "*term<0>*" "ls\n"))
+
+	(defun attila/term-send-tab () (interactive) (term-send-raw-string "\t"))
+
+	 (define-key term-raw-map (kbd "<insert>") nil)
+	 (setq term-bind-key-alist
+         (list
+					(cons "<insert> b b" 'switch-to-buffer)
+					(cons "C-c C-c" 'term-interrupt-subjob)
+              (cons "M-l" 'term-send-forward-word)
+              (cons "M-j" 'term-send-backward-word)
+              (cons "H-i" 'term-send-up)
+              (cons "H-k" 'term-send-down)
+              (cons "<tab>" 'attila/term-send-tab)
+              (cons "<insert> 0" 'attila/term-toggle-line-char-modes)
+              (cons "M-DEL" 'term-send-backward-kill-word)
+              (cons "M-d" 'term-send-forward-kill-word)
+              (cons "<C-left>" 'term-send-backward-word)
+              (cons "<C-right>" 'term-send-forward-word)
+              (cons "C-r" 'term-send-reverse-search-history)
+              (cons "M-p" 'term-send-raw-meta)
+              (cons "M-y" 'term-send-raw-meta)
+              (cons "C-y" 'term-send-raw)))
+
+	:bind
+	("<insert> t t" . multi-term)
+  (:map term-mode-map
+	 ("<insert> 0" . attila/term-toggle-line-char-modes))
+
+	)
+#+end_src
+
+#+RESULTS:
+: attila/term-toggle-line-char-modes
+
+*** Package search
 
 #+begin_src emacs-lisp :tangle yes
 
