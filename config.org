@@ -2318,6 +2318,88 @@ For bindigs ceck hydra config
 #+RESULTS:
 : t
 
+*** Desktop search
+
+#+begin_src emacs-lisp :tangle yes
+(use-package helm-recoll
+	:straight t
+	:config
+	(helm-recoll-create-source "all" "~/.recoll"))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** Read PDF
+
+#+begin_src emacs-lisp :tangle yes
+(use-package pdf-tools
+	:straight t
+	:bind
+	(:map pdf-view-mode-map
+				("l" . pdf-view-next-line-or-next-page)
+				("j" . pdf-view-previous-line-or-previous-page)
+				("k" . pdf-view-next-page)
+				("i" . pdf-view-previous-page)
+				("C-i" . pdf-view-first-page)
+				("C-k" . pdf-view-last-page)
+				("s" . pdf-occur)
+				("H" . pdf-history-backward)
+				("h" . pdf-history-forward)
+				("o" . pdf-outline)
+				("g" . pdf-view-goto-page)
+				("a l" . pdf-annot-list-annotations)
+				("a a" . pdf-annot-add-annotation)
+				("a h" . pdf-annot-add-highlight-markup-annotation)
+				("a t" . pdf-annot-add-text-annotation)
+				("a m" . pdf-annot-add-markup-annotation)
+				("a u" . pdf-annot-add-underline-markup-annotation)
+				("a x" . pdf-annot-add-strikeout-markup-annotation)
+				("a s" . pdf-annot-add-squiggly-markup-annotation)
+				("1" . pdf-annot-add-highlight-markup-annotation)
+				("2" . pdf-annot-add-text-annotation)
+				("3" . pdf-annot-add-markup-annotation)
+				("4" . pdf-annot-add-underline-markup-annotation)
+				("5" . pdf-annot-add-strikeout-markup-annotation)
+				("6" . pdf-annot-add-squiggly-markup-annotation)
+				))
+
+(pdf-tools-install)
+
+(define-key pdf-occur-buffer-mode-map (kbd "i") 'previous-line)
+(define-key pdf-occur-buffer-mode-map (kbd "k") 'next-line)
+(require 'pdf-outline)
+(define-key pdf-outline-buffer-mode-map (kbd "<tab>") 'outline-toggle-children)
+#+end_src
+
+#+RESULTS:
+: outline-toggle-children
+
+*** Read EPUB
+
+#+begin_src emacs-lisp :tangle yes
+(use-package nov
+	:straight t
+	:bind
+	(:map nov-mode-map
+				("l" . attila/scroll-up-1-line)
+				("j" . attila/scroll-down-1-line)
+				("k" . nov-scroll-up)
+				("i" . nov-scroll-down)
+				("o" . nov-goto-toc)
+				("f" . nov-browse-url)
+				("v" . nov-view-source)
+				("V" . nov-view-content-source)
+				("]" . nov-next-document)
+				("[" . nov-previous-document)
+				("e" . nov-render-document)
+				("m" . nov-display-metadata)
+				))
+#+end_src
+
+#+RESULTS:
+: nov-display-metadata
+
 *** Reading log files
 
 #+begin_src emacs-lisp :tangle yes :results none
