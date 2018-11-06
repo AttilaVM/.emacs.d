@@ -8,6 +8,7 @@ elpa
 /image-dired
 /recentf
 /tramp
+/config.el
 user.el
 .floo
 ac-comphist.dat
@@ -20,3 +21,8 @@ persp-confs
 nix-buffer
 /.markdown-preview.html
 straight
+/.python-environments
+/semanticdb
+/bookmark-repository
+/nov-places
+/abbrev_defs

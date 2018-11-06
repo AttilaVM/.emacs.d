@@ -6,6 +6,9 @@
  '(company-quickhelp-color-background "dim gray")
  '(company-quickhelp-color-foreground "gainsboro")
  '(company-quickhelp-use-propertized-text t)
+ '(custom-safe-themes
+	 (quote
+		("944e706816bc594367bc16a745b746a38aecc55b9ed5b5209e05289df22a5c52" "ff7a12f1932abcdc754511b5c5c6416e769d7f1a44e64690e2c98433b18bd67e" "2925ed246fb757da0e8784ecf03b9523bccd8b7996464e587b081037e0e98001" default)))
  '(dired-filter-saved-filters
 	 (quote
 		(("disk-images"

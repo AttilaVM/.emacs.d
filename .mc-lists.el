@@ -3,6 +3,9 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+				c-electric-delete-forward
+				ess-smart-S-assign
+				ess-smart-comma
 				forward-sexp
 				helm-show-kill-ring
 				indent-for-tab-command
@@ -14,6 +17,7 @@
 				my/yas-next-field-or-forward-sexp
 				my/yas-previous-field-or-backward-sexp
 				org-ctrl-c-ctrl-c
+				org-delete-char
 				org-force-self-insert
 				org-self-insert-command
 				tern-ac-dot-complete

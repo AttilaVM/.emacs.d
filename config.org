@@ -438,6 +438,19 @@ Emacs gets really slow when very long lines are present. We will use this value 
         (move-beginning-of-line 1))))
 #+end_src
 
+**** Select line
+
+#+begin_src emacs-lisp :tangle yes
+(defun attila/line-select ()
+	"Select active line"
+	(interactive)
+	(end-of-line)
+	(set-mark (line-beginning-position)))
+#+end_src
+
+#+RESULTS:
+: attila/line-select
+
 **** small step scrolls
 
 #+begin_src emacs-lisp :tangle yes
@@ -575,22 +588,22 @@ Rename buffer or file and buffer if it is already saved.
 *** Theme and font
 #+begin_src emacs-lisp :tangle yes
 
-	(add-hook 'after-init-hook
-						(lambda ()
-							(set-cursor-color user-cursor-color)))
+(add-hook 'after-init-hook
+					(lambda ()
+						(set-cursor-color user-cursor-color)))
 
-		(use-package monokai-theme
-			:demand t
-			:straight t)
+(use-package monokai-theme
+	:demand t
+	:straight t)
 
-	(when (window-system)
-			(set-default-font "Fira Code"))
+(when (window-system)
+	(set-default-font "Fira Code"))
 
-	;; (use-package unicode-fonts
-	;; 	:straight t
-	;; 	:demand t
-	;; 	:config
-	;; 	(unicode-fonts-setup))
+;; (use-package unicode-fonts
+;; 	:straight t
+;; 	:demand t
+;; 	:config
+;; 	(unicode-fonts-setup))
 
 #+end_src
 
@@ -600,7 +613,9 @@ Rename buffer or file and buffer if it is already saved.
 
 #+begin_src emacs-lisp :tangle yes
 
-	(use-package color-identifiers-mode
+(use-package color-identifiers-mode
+	:config
+	(add-to-list 'color-identifiers:modes-alist '(ess-julia-mode "[^$][[:space:]]*" "\\_<\\(\\(?:\\s_\\|\\sw\\)+\\)" ))
 		:straight t)
 
 
@@ -723,17 +738,6 @@ Highlight parentheses at point and its pair. Use rainbow colors for the differen
 
 #+end_src
 
-*** Smooth scrolling
-
-#+begin_src emacs-lisp :tangle yes
-
-	(use-package sublimity
-		:straight t
-		:config
-		(require 'sublimity-scroll)
-		(sublimity-mode 1))
-
-#+end_src
 *** Visual line wrapping
 
 #+begin_src emacs-lisp :tangle yes
@@ -947,6 +951,17 @@ Much better than tainting the =init.el= file.
 
 #+RESULTS:
 : t
+
+**** Helm company
+
+#+begin_src emacs-lisp :tangle yes
+
+(use-package helm-company
+	:straight t)
+
+#+end_src
+
+#+RESULTS:
 
 **** Helm projectile
 
@@ -2090,6 +2105,8 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 		(comint-send-string "*term<0>*" "ls\n"))
 
 	(defun attila/term-send-tab () (interactive) (term-send-raw-string "\t"))
+	(defun attila/term-send-c-a () (interactive) (term-send-raw-string "\C-a"))
+	(defun attila/term-send-c-e () (interactive) (term-send-raw-string "\C-e"))
 
 	 (define-key term-raw-map (kbd "<insert>") nil)
 	 (setq term-bind-key-alist
@@ -2100,6 +2117,11 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
               (cons "M-j" 'term-send-backward-word)
               (cons "H-i" 'term-send-up)
               (cons "H-k" 'term-send-down)
+              (cons "<tab>" 'attila/term-send-tab)
+              (cons "H-l" 'term-send-right)
+              (cons "H-j" 'term-send-left)
+              (cons "C-j" 'attila/term-send-c-a)
+              (cons "C-l" 'attila/term-send-c-e)
               (cons "<tab>" 'attila/term-send-tab)
               (cons "<insert> 0" 'attila/term-toggle-line-char-modes)
               (cons "M-DEL" 'term-send-backward-kill-word)
@@ -2337,6 +2359,8 @@ For bindigs ceck hydra config
 	:straight t
 	:bind
 	(:map pdf-view-mode-map
+				("w" . pdf-view-kill-ring-save)
+				("l" . pdf-view-next-line-or-next-page)
 				("l" . pdf-view-next-line-or-next-page)
 				("j" . pdf-view-previous-line-or-previous-page)
 				("k" . pdf-view-next-page)
@@ -2487,6 +2511,18 @@ For bindigs ceck hydra config
   (tarsius/mapc-tracked-files
 	 (lambda () (message buffer-file-name))))
 #+end_src
+*** Howdoi
+
+#+begin_src emacs-lisp :tangle yes
+(use-package howdoi
+	:straight t
+	:bind
+	("<insert> h h" . 'howdoi-query))
+#+end_src
+
+#+RESULTS:
+: howdoi-query
+
 ** Information gathering
 *** Default browser
 
@@ -2523,11 +2559,17 @@ Break lines when displaying man pages.
 		(use-package man
 			:straight t
 			:commands
-			helm-man-woman)
+			helm-man-woman
+			:bind
+			(:map Man-mode-map
+						("l" . scroll-down-command)
+						("j" . scroll-up-command)
+						))
 
 #+end_src
 
 #+RESULTS:
+: scroll-up-command
 
 *** info pages
 
@@ -2666,7 +2708,7 @@ Break lines when displaying man pages.
 
 **** Suggest functions from example input and output
 
-#+begin_src emacs-lisp :tangle
+#+begin_src emacs-lisp :tangle no
 
 		(use-package suggest
 			:straight t
@@ -2931,7 +2973,7 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 **** Reveal.js
 
 #+begin_src emacs-lisp :tangle yes
-(load "~/.emacs.d/extensions/org-reveal/ox-reveal.el")
+;; (load "~/.emacs.d/extensions/org-reveal/ox-reveal.el")
 #+end_src
 
 *** Web
@@ -3045,6 +3087,38 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 #+RESULTS:
 : my/npm-install-required
 
+**** XML
+
+#+begin_src emacs-lisp :tangle yes
+(require 'hideshow)
+(require 'sgml-mode)
+(require 'nxml-mode)
+
+(add-to-list 'hs-special-modes-alist
+             '(nxml-mode
+               "<!--\\|<[^/>]*[^/]>"
+               "-->\\|</[^/>]*[^/]>"
+
+               "<!--"
+               sgml-skip-tag-forward
+               nil))
+
+
+
+(add-hook 'nxml-mode-hook 'hs-minor-mode)
+
+(defun attila/smart-hs-toggle-hiding ()
+	(interactive)
+	(end-of-line)
+	(hs-toggle-hiding))
+
+;; optional key bindings, easier than hs defaults
+(define-key nxml-mode-map (kbd "H-[") 'attila/smart-hs-toggle-hiding)
+#+end_src
+
+#+RESULTS:
+: attila/smart-hs-toggle-hiding
+
 **** JSON
 ***** Bindigs
 #+begin_src emacs-lisp :tangle yes
@@ -3077,6 +3151,44 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 
 #+RESULTS:
 : t
+
+**** YAML
+
+#+begin_src emacs-lisp :tangle yes
+
+	(use-package yaml-mode
+		:straight t
+		:mode ("//.yml//'" "//.yaml//'")
+)
+
+#+end_src
+
+#+RESULTS:
+: ((\.yml\' . yaml-mode) (\.yaml\' . yaml-mode) (//.hs//' . haskell-mode) (\.?zshrc . shell-script-mode) (\.?bashrc . shell-script-mode) (//.yaml//' . yaml-mode) (//.yml//' . yaml-mode) (\(?:\(?:\(?:\.\(?:b\(?:\(?:abel\|ower\)rc\)\|json\(?:ld\)?\)\|composer\.lock\)\)\'\) . json-mode) (\.js\' . js2-mode) (\.liq\' . web-mode) (\.svg\' . web-mode) (\.css\' . web-mode) (\.html\' . web-mode) (\.djhtml\' . web-mode) (\.mustache\' . web-mode) (\.erb\' . web-mode) (\.as[cp]x\' . web-mode) (\.[agj]sp\' . web-mode) (\.tpl\.php\' . web-mode) (\.phtml\' . web-mode) (\.log\' . logview) (\.[pP][dD][fF]\' . pdf-view-mode) (\.editorconfig\' . editorconfig-conf-mode) (\.lsp\' . XLS-mode) (\.ado\' . STA-mode) (\.do\' . STA-mode) (\.SSC\' . S-mode) (\.ssc\' . S-mode) (\.[qsS]\' . S-mode) (\.sp\' . S-mode) (\.[Ss][Aa][Ss]\' . SAS-mode) (\.Sout . S-transcript-mode) (\.[Ss]t\' . S-transcript-mode) (\.Rd\' . Rd-mode) (/Makevars\(\.win\)?$ . makefile-mode) (\.[Rr]out . R-transcript-mode) (\.[sS]nw\' . Snw-mode) (\.[rR]nw\' . Rnw-mode) (CITATION\' . R-mode) (NAMESPACE\' . R-mode) (\.[rR]profile\' . R-mode) (\.[rR]\' . R-mode) (/R/.*\.q\' . R-mode) (\.hat\' . omegahat-mode) (\.omg\' . omegahat-mode) (\.[Jj][Aa][Gg]\' . ess-jags-mode) (\.[Bb][Mm][Dd]\' . ess-bugs-mode) (\.[Bb][Oo][Gg]\' . ess-bugs-mode) (\.[Bb][Uu][Gg]\' . ess-bugs-mode) (\.hsc\' . haskell-mode) (\.l[gh]s\' . literate-haskell-mode) (\.hsig\' . haskell-mode) (\.[gh]s\' . haskell-mode) (\.cabal\' . haskell-cabal-mode) (\.chs\' . haskell-c2hs-mode) (\.ghci\' . ghci-script-mode) (\.dump-simpl\' . ghc-core-mode) (\.hcr\' . ghc-core-mode) (\.ini\' . ini-mode) (\.jinja2\' . jinja2-mode) (\.jl\' . julia-mode) (/git-rebase-todo\' . git-rebase-mode) (\.nix\' . nix-mode) (\.pcap\' . pcap-mode) (\.\(e?ya?\|ra\)ml\' . yaml-mode) (\.desktop\(\.in\)?$ . desktop-entry-mode) (CMakeLists\.txt\' . cmake-mode) (\.cmake\' . cmake-mode) (.at' . autotest-mode) (\.asy$ . asy-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:r[tw]\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|exr\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:2c\|ng\|p\(?:eg\|[2cg]\)\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|wd\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.zst\' nil jka-compr) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.py[iw]?\' . python-mode) (\.less\' . less-css-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.h\' . c-or-c++-mode) (\.c\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . mhtml-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|zshrc\|m?kshrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|cbr\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|CBR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.jsx\' . js-jsx-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.la\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\.toml\' . conf-toml-mode) (\.desktop\' . conf-desktop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.tzst\' . tar-mode) (\.log\(?:\.[0-9]+\)?\' . logview-mode))
+
+**** CSV
+
+#+begin_src emacs-lisp :tangle yes
+(use-package csv-mode
+	:straight t
+	:mode ("\\.csv\\'")
+	:bind
+	(:map csv-mode-map
+	 ("<insert> j j" . csv-align-fields)))
+#+end_src
+
+#+RESULTS:
+: csv-align-fields
+
+**** ROFF for man page generation
+
+#+begin_src emacs-lisp :tangle yes
+(require 'nroff-mode)
+(define-key nroff-mode-map (kbd "<insert> j j") 'nroff-view)
+#+end_src
+
+#+RESULTS:
+: nroff-view
 
 **** Indium JS REPL
 
@@ -3246,6 +3358,90 @@ It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825d
 #+RESULTS:
 | (lambda nil (define-key eshell-mode-map (kbd <insert> h h) (quote esh-help-run-help))) | #[nil \301\300!\210\302\211\207 [eldoc-documentation-function make-local-variable esh-help-eldoc-command] 2] | (lambda nil (setup-esh-help-eldoc)) | (lambda nil (require (quote eshell-prompt-extras)) (setq eshell-highlight-prompt nil eshell-prompt-function (quote epe-theme-lambda))) | (lambda nil (autoload (quote epe-theme-lambda) eshell-prompt-extras) (setq eshell-highlight-prompt nil eshell-prompt-function (quote epe-theme-lambda))) | eshell-prompt-extras | setup-eshell-helm-completion | esh-autosuggest-mode |
 
+*** C
+**** Jump to header files
+#+begin_src emacs-lisp :tangle yes
+(defun attila/find-other-file-in-other-window () (interactive) (ff-find-other-file t))
+(define-key c-mode-map (kbd "<insert> f h") 'attila/find-other-file-in-other-window)
+#+end_src
+
+#+RESULTS:
+: attila/find-other-file-in-other-window
+**** Configure gtags
+
+#+begin_src emacs-lisp :tangle yes
+
+(use-package ggtags
+	:straight t
+	:config
+	(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+              (ggtags-mode 1))))
+	:bind (:map c-mode-map
+							("<insert> f d" . ggtags-find-definition)))
+
+(use-package helm-gtags
+	:straight t
+	:config
+	(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+              (helm-gtags-mode 1))))
+	:bind (:map c-mode-map
+							("<insert> f f" . helm-gtags-select)))
+;; (require 'ggtags)
+#+end_src
+
+#+RESULTS:
+: helm-gtags-select
+
+**** Semantic mode
+
+#+begin_src emacs-lisp
+(defun semantic-display-tag (&optional pt)
+  "Display tag at point."
+  (interactive "d")
+  (unless pt (setq pt (point)))
+  (let (analyze tag buf loc start pt)
+    (when (and (setq analyze (semantic-analyze-current-context pt))
+							 (setq tag (semantic-analyze-interesting-tag analyze))
+							 (setq buf (semantic-tag-buffer tag))
+							 (setq start (semantic-tag-start tag)))
+      (with-selected-window (display-buffer buf #'display-buffer-pop-up-window)
+				(goto-char start)
+				(recenter))
+      )))
+
+;;(global-set-key (kbd "C-c , d") #'semantic-display-tag)
+#+end_src
+
+#+RESULTS:
+: semantic-display-tag
+
+**** CEDET
+
+#+begin_src emacs-lisp :tangle yes
+(require 'cedet)
+(global-semanticdb-minor-mode 1)
+(global-semantic-idle-scheduler-mode 1)
+
+(semantic-add-system-include "/usr/include")
+(define-key c-mode-map (kbd "<insert> s d") 'helm-semantic)
+
+(add-hook 'c-mode-hook
+							(lambda ()
+								(setq-local company-backends
+														(append '((company-semantic
+																			 :separate
+																			 company-gtags
+																			 :separate
+																			 company-dabbrev))))))
+#+end_src
+
+#+RESULTS:
+| (lambda nil (setq-local company-backends (append (quote ((company-semantic :separate company-gtags :separate company-dabbrev)))))) | subword-mode |
+
 *** python
 **** Basic python-mode config
 
@@ -3261,12 +3457,18 @@ It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825d
 				(call-interactively 'run-python))
 		(call-interactively 'run-python)))
 
+(defun attila/eval-line-or-region ()
+	(interactive)
+	(unless (region-active-p)
+		(attila/line-select))
+	(call-interactively 'python-shell-send-region)
+	(deactivate-mark))
 
 (define-key python-mode-map (kbd "<insert> c c") 'attila/run-python)
 (define-key python-mode-map (kbd "<insert> c m") 'run-python)
 (define-key python-mode-map (kbd "<insert> e b") 'python-shell-send-buffer)
 (define-key python-mode-map (kbd "<insert> e f") 'python-shell-send-defun)
-(define-key python-mode-map (kbd "<insert> e r") 'python-shell-send-region)
+(define-key python-mode-map (kbd "<insert> e e") 'attila/eval-line-or-region)
 (add-hook 'elpy-mode-hook (lambda ()
 														(color-identifiers-mode t)))
 #+end_src
@@ -3282,6 +3484,7 @@ It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825d
 		:config
 		;; Enable elpy in all python buffers
 		(elpy-enable)
+
 		(setq python-shell-interpreter "python3")
 		:bind
 		(:map python-mode-map
@@ -3291,12 +3494,16 @@ It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825d
 					("<insert> j f f" . elpy-yapf-fix-code)
 					("<insert> j f c" . elpy-check)
 					("<insert> c o" . elpy-shell-switch-to-buffer)
+					("<insert> . ." . elpy-goto-definition-other-window)
+					("<insert> j . ." . elpy-goto-definition-other-window)
+					("<insert> j . a a" . 'elpy-goto-assignment)
+					("<insert> j . a o" . 'elpy-goto-assignment-other-window)
 					))
 
 #+end_src
 
 #+RESULTS:
-: elpy-shell-switch-to-buffer
+: elpy-goto-assignment-other-window
 
 **** jedi-company autocompletion
 
@@ -3339,8 +3546,12 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 #+begin_src emacs-lisp :tangle no
 
 (setq python-shell-interpreter "/docker:base-container:/usr/bin/python3")
-(setq python-shell-interpreter "/ssh:root@172.17.0.3:/usr/bin/python3")
+(setq python-shell-interpreter "/ssh:root@172.17.s0.3:/usr/bin/python3")
+(setq python-shell-interpreter "/usr/bin/python2")
 (setq tramp-histfile-override "/dev/null")
+(setq python-shell-interpreter "/home/attila/anaconda2/bin/python")
+(setq elpy-rpc-python-command "/home/attila/anaconda2/bin/python")
+(setq elpy-rpc-python-command "/usr/bin/python2")
 
 (file-directory-p "/docker:base-container:/usr/bin/python3")
 
@@ -3359,9 +3570,62 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 
 #+RESULTS:
 
+*** ESS
+#+begin_src emacs-lisp :tangle yes
+(use-package ess
+	:straight t
+	:config
+	;; Do not use IDO instead of Helm for the sake of everyhing sacred.
+	(setq ess-use-ido nil)
+	;; Undefine some masking bindings
+	(define-key ess-mode-map (kbd "C-i") nil)
+	:bind
+	(:map ess-mode-map
+				("<insert> d d" . ess-display-help-on-object)
+				("<insert> e e" . ess-eval-region-or-line-and-step)
+				("<insert> e b" . ess-eval-buffer)
+				("<insert> e [" . ess-eval-buffer-from-beg-to-here)
+				("<insert> e ]" . ess-eval-buffer-from-here-to-end)
+				("<insert> e f" . ess-eval-function-or-paragraph-and-step)
+				("<insert> e p" . ess-eval-paragraph-and-step)
+				))
+#+end_src
+
+#+RESULTS:
+: ess-eval-paragraph-and-step
+
+#+
+*** julia
+**** Julia mode
+
+#+begin_src emacs-lisp :tangle yes
+
+(use-package julia-mode
+	:straight t)
+
+#+end_src
+
+**** Julia shell
+
+#+begin_src emacs-lisp :tangle yes
+(use-package julia-shell
+	:straight t)
+#+end_src
+
+#+RESULTS:
+
+**** Julia REPL
+
+#+begin_src emacs-lisp :tangle yes
+(use-package julia-repl
+	:straight t)
+#+end_src
+
+#+RESULTS:
+
 *** Haskell
 
-#+begin_src emacs-lisp :tangle
+#+begin_src emacs-lisp :tangle yes
 
 	(use-package haskell-mode
 		:straight t
@@ -3467,6 +3731,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 			 'org-babel-load-languages
 			 '((mongo . t)
 				 (shell . t)
+				 (C . t)
          (js . t)
 				 (python . t))))
 
