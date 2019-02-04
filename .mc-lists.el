@@ -3,7 +3,12 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+				attila/line-cut
+				attila/up-down-case-toggle
 				c-electric-delete-forward
+				c-electric-paren
+				c-electric-star
+				c-indent-line-or-region
 				ess-smart-S-assign
 				ess-smart-comma
 				forward-sexp
@@ -19,7 +24,9 @@
 				org-ctrl-c-ctrl-c
 				org-delete-char
 				org-force-self-insert
+				org-metaleft
 				org-self-insert-command
+				org-yank
 				tern-ac-dot-complete
 				yaml-electric-backspace
 				yaml-electric-dash-and-dot
@@ -28,5 +35,8 @@
 (setq mc/cmds-to-run-once
       '(
 				helm-M-x
+				helm-confirm-and-exit-minibuffer
 				iedit-switch-to-mc-mode
+				org-babel-tangle
+				org-cycle
 				))
