@@ -539,8 +539,9 @@ Rename buffer or file and buffer if it is already saved.
 					(filename (buffer-file-name)))
 			(if (get-buffer new-name)
 					(message "A buffer named '%s' already exists!" new-name)
-				(progn
-					(when (file-exists-p filename)
+			  (progn
+				;; in case of terminals the value of filename is nil, which would result in a error
+					(when (and filename (file-exists-p filename))
 						(rename-file filename new-name 1))
 					(rename-buffer new-name)
 					(set-visited-file-name new-name)
