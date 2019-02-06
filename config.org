@@ -999,7 +999,7 @@ Much better than tainting the =init.el= file.
 		 ;; show killring
 		 ("<insert> q" . helm-show-kill-ring)
 		 ;; helm help
-		 ("<insert> h w" . helm-man-woman)
+		 ("<insert> h w w" . helm-man-woman)
 		 ("<insert> h i e" . helm-info-elisp)
 		 ("<insert> h i m" . helm-info-magit)
 		 ("<insert> h i z" . helm-info-zsh)
@@ -2819,6 +2819,36 @@ Break lines when displaying man pages.
 
 #+RESULTS:
 : scroll-up-command
+
+**** Remote
+
+#+begin_src emacs-lisp :tangle yes
+(defun attila/man-fontify-on-success (process status)
+  (message (concat "STATUS: " status))
+  (when (string= status "finished\n")
+	(let ((remote-man-buffer (process-buffer process)))
+	  (with-current-buffer remote-man-buffer
+		(Man-fontify-manpage)
+		(switch-to-buffer remote-man-buffer)
+		(Man-mode)))))
+
+(defun attila/man-read-page-on-remote (host page)
+  (interactive (list
+				(read-string "connection: ")
+				(read-string "page: ")))
+  ;; Call man on remote
+  (let ((man-buffer-name (concat "*" host "-" page "*"))
+		(default-directory (concat "/ssh:" host ":")))
+	(if (get-buffer man-buffer-name)
+		(switch-to-buffer man-buffer-name)
+	  (let ((remote-man-process
+			 (start-file-process "remote-man" (get-buffer-create man-buffer-name)
+								 "/bin/bash" "-c" (concat "man " page))))
+		(if remote-man-process
+			(set-process-sentinel remote-man-process 'attila/man-fontify-on-success))))))
+
+(global-set-key (kbd "<insert> h w r") 'attila/man-read-page-on-remote)
+#+end_src
 
 *** info pages
 
