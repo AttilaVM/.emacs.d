@@ -75,6 +75,12 @@ Here is where the configuration actually begins.
 : user-big-buffer-char-limit
 
 * pre-configuration
+** Toggle debug
+
+#+begin_src emacs-lisp :tangle no
+(toggle-debug-on-error)
+#+end_src
+
 ** Elisp
 *** Require common lisp
 
@@ -1189,6 +1195,15 @@ Much better than tainting the =init.el= file.
 
 #+end_src
 
+**** ibuffer
+
+#+begin_src emacs-lisp :tangle yes
+(global-set-key (kbd "<insert> b i") 'ibuffer)
+#+end_src
+
+#+RESULTS:
+: ibuffer
+
 **** Move chars and lines
 
 #+begin_src emacs-lisp :tangle yes
@@ -1225,6 +1240,8 @@ Much better than tainting the =init.el= file.
 		 julia-mode-hook
 		 yaml-mode-hook
 		 sh-mode-hook
+         yaml-mode-hook
+         conf-space-mode-hook
 		 stylus-mode-hook)
 	 'subword-mode)
 #+end_src
@@ -2799,6 +2816,7 @@ For bindigs ceck hydra config
 
 #+end_src
 *** man
+**** Local
 
 Break lines when displaying man pages.
 
