@@ -4214,6 +4214,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 #+RESULTS:
 
 *** Kubernetes
+**** Kubernetes porcalin
 
 #+begin_src emacs-lisp :tangle yes
 (use-package kubernetes
@@ -4223,6 +4224,61 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 #+end_src
 
 #+RESULTS:
+
+**** helm kubernetes
+
+#+begin_src emacs-lisp :tangle yes
+(defun helm-kube/choose-item-from-buffer (buffer)
+  (helm :sources
+			(helm-build-sync-source
+				"helm-kubectl-namespaces"
+				:candidates
+				(-as-> (buffer-string) X
+					   (split-string X "\n")
+					   (cdr X)
+					   (-map (lambda (line)
+							   (replace-regexp-in-string " .*$" "" line)) X)))
+			:buffer
+			"*helm-kubectl-namespaces*")
+  )
+
+(defun helm-kube/choose-item-from-process-output (process status)
+  (when (string= status "finished\n")
+	(with-current-buffer (process-buffer process)
+	  (helm-kube/choose-item-from-buffer (current-buffer)))))
+
+(defun helm-kube/insert-item (process status)
+  (attila/smart-insert (helm-kube/choose-item-from-process-output process status))
+  (kill-buffer (process-buffer process)))
+
+(defun helm-kube/namespace ()
+  (interactive)
+	(with-current-buffer (get-buffer-create "*kubectl-get-ns*")
+	  (let ((kubectl-get-ns (start-process "kubectl-get-ns"
+										   (current-buffer)
+										   "kubectl" "get" "ns")))
+		(set-process-sentinel kubectl-get-ns 'helm-kube/insert-item))))
+
+(defun helm-kube/pod-sentinel (process status)
+  (let ((namespace (helm-kube/choose-item-from-process-output process status)))
+	(kill-buffer (process-buffer process))
+	(with-current-buffer (get-buffer-create "*kubectl-get-pods*")
+	 (let ((kubectl-get-ns (start-process "kubectl-get-ns"
+										   (current-buffer)
+										   "kubectl" "get" "-n" namespace "pods")))
+		(set-process-sentinel kubectl-get-ns 'helm-kube/insert-item)))))
+
+(defun helm-kube/pod ()
+  (interactive)
+  (with-current-buffer (get-buffer-create "*kubectl-get-ns*")
+	  (let ((kubectl-get-ns (start-process "kubectl-get-ns"
+										   (current-buffer)
+										   "kubectl" "get" "ns")))
+		(set-process-sentinel kubectl-get-ns 'helm-kube/pod-sentinel))))
+#+end_src
+
+#+RESULTS:
+: helm-kube/pod
 
 *** elf-mode
 
