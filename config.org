@@ -3081,6 +3081,9 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 		;; Use spaces instead of tabs in source code blocks
 		(setq org-src-tab-acts-natively t)
 		(setq org-src-preserve-indentation t)
+	    (setq org-src-window-setup 'current-window)
+
+        (add-to-list 'org-latex-packages-alist '("" "tabularx"))
 
 		(setq org-table-convert-region-max-lines 9999)
 
@@ -3168,15 +3171,6 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 
 **** Hooks
 **** Org global properties
-***** Latex packages
-
-#+begin_src emacs-lisp :tangle yes
-(add-to-list 'org-latex-packages-alist '("" "tabularx"))
-#+end_src
-
-#+RESULTS:
-|   | tabularx  |
-
 ***** Latex header
 
 #+begin_src emacs-lisp :tangle yes
