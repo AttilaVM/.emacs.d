@@ -3592,8 +3592,8 @@ Lint JS files on save when ".eslintrc.yml" is in the project root.
 		:mode ("//.yml//'" "//.yaml//'")
 		:bind
 		(:map yaml-mode-map
-			  ("h-]" . python-indent-shift-right)
-			  ("h-[" . python-indent-shift-left)))
+			  ("H-]" . python-indent-shift-right)
+			  ("H-[" . python-indent-shift-left)))
 
 #+end_src
 
@@ -3890,6 +3890,23 @@ It would be also [[https://github.com/kaihaosw/eshell-prompt-extras/tree/1d8825d
 #+RESULTS:
 | lambda | nil | (color-identifiers-mode t) |
 
+**** Python env
+
+#+begin_src emacs-lisp :tangle yes
+
+(setenv "PYTHONPATH"
+		(mapconcat (lambda (item)
+					 (if (stringp item)
+						 item
+					   (eval item)))
+				   '((f-join (getenv "HOME") ".local/lib/python3.6/")
+					 (getenv "PYTHONPATH"))
+				   ":"))
+#+end_src
+
+#+RESULTS:
+: /home/attila/.local/lib/python3.6/:/home/attila/.local/lib/python3.6/:
+
 **** Elpy
 #+begin_src emacs-lisp :tangle yes
 
@@ -3961,7 +3978,7 @@ Elpy company based completion system does not use company-quickhelp. So I use di
 
 (setq python-shell-interpreter "/docker:base-container:/usr/bin/python3")
 (setq python-shell-interpreter "/ssh:root@172.17.s0.3:/usr/bin/python3")
-(setq python-shell-interpreter "/usr/bin/python2")
+(setq python-shell-interpreter "/usr/bin/python3")
 (setq tramp-histfile-override "/dev/null")
 (setq python-shell-interpreter "/home/attila/anaconda2/bin/python")
 (setq elpy-rpc-python-command "/home/attila/anaconda2/bin/python")
