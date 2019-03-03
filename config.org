@@ -321,6 +321,7 @@ request: convenient HTTP request library
 	(use-package dash          :defer  :straight t)
 	(use-package s             :defer  :straight t)
 	(use-package f             :defer  :straight t)
+    (use-package a             :defer  :straight t)
 	(use-package loop          :defer  :straight t)
 	(use-package async         :defer  :straight t)
 	(use-package deferred      :defer  :straight t)
@@ -332,6 +333,8 @@ request: convenient HTTP request library
 	(use-package ov            :defer  :straight t)
 	(use-package pfuture       :defer  :straight t)
 	(use-package request       :defer  :straight t)
+
+    (require 'a)
 #+end_src
 
 #+RESULTS:
@@ -1113,6 +1116,33 @@ Much better than tainting the =init.el= file.
 
 #+RESULTS:
 : projectile-replace-regexp
+
+**** Helm do ag search list
+
+#+begin_src emacs-lisp :tangle yes
+(setq attila/ag-search-alist
+	  (a-list "linux-doc" "/home/attila/projects/c-examples/linux/Documentation/"
+			  "linux-all" "/home/attila/projects/c-examples/linux/"
+			  "org" "/home/attila/.emacs.d/straight/repos/org/doc/org-manual.org"))
+
+(defun attila/doc-search ()
+  (interactive)
+  (let* ((search-target (helm :sources
+			(helm-build-sync-source
+				"kubernetes-actions"
+			  :candidates (a-keys attila/ag-search-alist))))
+	   (search-path (a-get attila/ag-search-alist search-target)))
+  (cond
+   ((f-directory-p search-path)
+	(helm-do-ag search-path))
+   ((f-file-p search-path)
+	(helm-do-ag (f-dirname search-path) (f-filename search-path))))))
+
+(global-set-key (kbd "<insert> h f") 'attila/doc-search)
+#+end_src
+
+#+RESULTS:
+: attila/doc-search
 
 **** helm swoop
 
