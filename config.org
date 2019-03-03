@@ -3191,6 +3191,10 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 
 		(define-key org-mode-map (kbd "C-i") nil)
 
+		(defun attila/org-show-all-inline-images ()
+		  (interactive)
+		  (org-display-inline-images t t))
+
 		(defun org-capture-file-find-storage-file ()
 		(interactive)
 		(find-file "~/.notes"))
@@ -3253,6 +3257,7 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 
 					;; Visualization
 					("<insert> j v l" . org-toggle-link-display)
+					("<insert> j v i" . attila/org-show-all-inline-images)
 					("<insert> j n n" . org-narrow-to-element)
 					("<insert> j n s" . org-narrow-to-subtree)
 					("<insert> j n e" . org-narrow-to-element)
@@ -3270,6 +3275,21 @@ Recent org mode cannot install org-mode directly, because it needs custom build 
 : org-compat
 
 **** Hooks
+***** C-c C-c hooks
+****** toggle inline images
+
+#+begin_src emacs-lisp :tangle yes :results silent
+(add-hook
+ 'org-ctrl-c-ctrl-c-final-hook
+ (lambda ()
+   (narrow-to-region (line-beginning-position) (line-end-position))
+   (beginning-of-line)
+   (let ((match (search-forward-regexp "\\.svg\\ ?\\]" nil t)))
+	 (widen)
+	 (when match
+	   (org-toggle-inline-images)))))
+#+end_src
+
 **** Org global properties
 ***** Latex header
 
