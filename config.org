@@ -1012,10 +1012,6 @@ Much better than tainting the =init.el= file.
 		 ("C-<f6>" . helm-browse-project)
 		 ;; helm imenu
 		 ("<insert> s i" . helm-imenu)
-		 ;; helm-c-source-yasnippet
-		 ("<insert> e e" . helm-yas-complete)
-		 ("<insert> e f" . helm-yas-visit-snippet-file)
-		 ("<insert> e r" . helm-yas-create-snippet-on-region)
 		 ;; helm top
 		 ("<insert> 2 s o" . helm-top)
 		 ("<insert> x t" . helm-tramp )
