@@ -688,6 +688,18 @@ Rename buffer or file and buffer if it is already saved.
 
 #+RESULTS:
 
+*** Do not popup
+
+#+begin_src emacs-lisp :tanlge yes
+(setq x-gtk-use-system-tooltips nil)
+(setq use-dialog-box nil)
+(setq use-file-dialog nil)
+(setq epa-pinentry-mode 'loopback)
+#+end_src
+
+#+RESULTS:
+: loopback
+
 *** ANSI colorize region or buffer
 
 #+begin_src emacs-lisp :tangle yes
