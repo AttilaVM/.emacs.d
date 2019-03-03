@@ -2529,6 +2529,21 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : comint-next-input
 
+*** edit config files
+
+#+begin_src emacs-lisp :tangle yes
+(use-package conf-mode
+  :straight t
+  :mode
+  (
+   ;; iptables
+   "\\.v4\\'"
+   "\\.v6\\'"
+   )
+  :config
+  )
+#+end_src
+
 *** File management
 **** Edit dired as normal buffer
 
