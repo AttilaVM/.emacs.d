@@ -1185,10 +1185,15 @@ Much better than tainting the =init.el= file.
 
 #+begin_src emacs-lisp :tangle yes
 
-  (global-set-key (kbd "<insert> <escape>") 'save-buffers-kill-terminal)
-  (global-set-key (kbd "<insert> x x") 'save-buffer)
+(global-set-key (kbd "<insert> <escape>") 'save-buffers-kill-terminal)
+(global-set-key (kbd "<insert> x x") 'save-buffer)
+(global-set-key (kbd "<insert> x n") 'revert-buffer)
 
 #+end_src
+
+#+RESULTS:
+: revert-buffer
+
 **** Prevent backgrounding
 
 #+begin_src emacs-lisp :tangle yes
@@ -2120,6 +2125,17 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 		attila/flyspell-mode
 		:diminish flyspell-mode "✎"
 		:config
+
+		(setq ispell-program-name (executable-find "hunspell"))
+		(setq attila/ispell-languages '("en_US" "hu_HU"))
+
+		(defun attila/choose-flyspell-dictionary ()
+		  (interactive)
+		  (setq ispell-dictionary (helm :sources
+				(helm-build-sync-source
+					"ispell-languages"
+				  :candidates attila/ispell-languages))))
+
 		(defun attila/flyspell-mode ()
 			(interactive)
 			(if (derived-mode-p 'prog-mode)
