@@ -1060,6 +1060,20 @@ Much better than tainting the =init.el= file.
 #+RESULTS:
 : t
 
+**** Helm yasnipptet
+
+#+begin_src emacs-lisp :tangle yes
+(use-package helm-c-yasnippet
+  :straight t
+  :bind
+  ("<insert> e e" . helm-yas-complete)
+  ("<insert> e f" . helm-yas-visit-snippet-file)
+  ("<insert> e r" . helm-yas-create-snippet-on-region))
+#+end_src
+
+#+RESULTS:
+: helm-yas-create-snippet-on-region
+
 **** Helm company
 
 #+begin_src emacs-lisp :tangle yes
