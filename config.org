@@ -335,6 +335,7 @@ request: convenient HTTP request library
 	(use-package request       :defer  :straight t)
 
     (require 'a)
+    (require 'f)
 #+end_src
 
 #+RESULTS:
@@ -2873,6 +2874,19 @@ For bindigs ceck hydra config
 
 #+RESULTS:
 : howdoi-query
+
+*** Maxima
+
+#+begin_src emacs-lisp :tangle yes :results silent
+(when (f-dir-p "/usr/share/emacs/site-lisp/maxima/")
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/maxima/")
+  (autoload 'maxima-mode "maxima" "Maxima mode" t)
+  (autoload 'imaxima "imaxima" "Frontend for maxima with Image support" t)
+  (autoload 'maxima "maxima" "Maxima interaction" t)
+  (autoload 'imath-mode "imath" "Imath mode for math formula input" t)
+  (setq imaxima-use-maxima-mode-flag t)
+  (add-to-list 'auto-mode-alist '("\\.ma[cx]" . maxima-mode)))
+#+end_src
 
 ** Information gathering
 *** Default browser
