@@ -1259,11 +1259,48 @@ Much better than tainting the =init.el= file.
 **** ibuffer
 
 #+begin_src emacs-lisp :tangle yes
+(require 'ibuffer)
+(setq ibuffer-saved-filter-groups nil)
+
+(setq ibuffer-saved-filter-groups
+	  '(("Default"
+		 ("modified" (and
+					  (modified . t)
+					  (not (name . "\*"))
+					  (not (name . "magit-process:"))
+					  (not (mode . dired-mode))
+					  )))
+		("Development"
+         ("dired" (mode . dired-mode))
+		 ("Magit" (name . "\*magit"))
+         ("emacs" (or
+                   (name . "^\\*scratch\\*$")
+                   (name . "^\\*Messages\\*$"))))))
+
+(defun attila/helm-ibuffer-filter-group ()
+  (interactive)
+  (when (string-equal major-mode "ibuffer-mode")
+	(let* ((candidates
+			(-as-> ibuffer-saved-filter-groups X
+				   (-map (lambda (x) (car x)) X)))
+		   (selected-filter-group
+			(helm :sources
+				  (helm-build-sync-source
+					  "ibuffer-filter-groups"
+					:candidates candidates)
+				  :buffer
+				  "*helm-ibuffer-filter-groups*")))
+	  (ibuffer-switch-to-saved-filter-groups selected-filter-group))))
+
 (global-set-key (kbd "<insert> b i") 'ibuffer)
+(define-key ibuffer-mode-map (kbd "<insert> j f") 'attila/helm-ibuffer-filter-group)
+(define-key ibuffer-mode-map (kbd "c") 'ibuffer-diff-with-file)
+(define-key ibuffer-mode-map (kbd "x") 'ibuffer-do-save)
+
 #+end_src
 
 #+RESULTS:
-: ibuffer
+: ibuffer-diff-with-file
 
 **** Move chars and lines
 
