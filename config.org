@@ -2556,6 +2556,35 @@ Eloy's prefers spaces over tabs so do I. =tab-stop-list= is a fallback when =ind
 #+RESULTS:
 : git-link-homepage
 
+**** Go style elisp extension fetcher
+
+For packages which are not in melpa :(
+
+#+begin_src emacs-lisp :tangle yes
+(setq attila/elisp-path "~/.emacs.d/extensions")
+
+(require 'magit)
+(defun attila/clone-repo (url)
+  "Go style repository cloning"
+  (let* ((components
+		(split-string url "/"))
+	   (platform
+		(nth 2 components))
+	   (author
+		(nth 3 components))
+	   (repository
+		(nth 4 components))
+	   (import-path
+		(f-join attila/elisp-path platform author repository)))
+	(make-directory import-path t)
+	(magit-run-git "clone" url import-path)
+	(push import-path  load-path)
+	import-path))
+#+end_src
+
+#+RESULTS:
+: attila/clone-repo
+
 *** Commint mode
 **** Commint mode bindings
 
